@@ -1,18 +1,36 @@
 "use client";
-
+import { fetchUserwalletBalance } from "@/lib/actions/user.actions";
 import { useUser } from "@clerk/nextjs";
 import { AlertCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export const PhoneAlert = () => {
   const { user, isLoaded } = useUser();
+  const [hasPhone, setHasPhone] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!isLoaded) return null;
+  useEffect(() => {
+    const checkPhoneStatus = async () => {
+      if (!isLoaded || !user) return;
+      
+      try {
+        const result = await fetchUserwalletBalance();
+        const dbPhone = result?.success && result?.data?.phone_number;
+        const clerkPhone = user?.primaryPhoneNumber?.phoneNumber;
+        
+        setHasPhone(!!(dbPhone || clerkPhone));
+      } catch (error) {
+        console.error("Erreur vérification téléphone:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // On vérifie si le numéro existe chez Clerk 
-  // (ou tu peux vérifier une donnée venant de ta DB si tu as un hook useProfile)
-  const hasPhone = user?.primaryPhoneNumber || user?.unsafeMetadata?.phone_number;
+    checkPhoneStatus();
+  }, [isLoaded, user]);
 
+  if (!isLoaded || loading) return null;
   if (hasPhone) return null;
 
   return (
