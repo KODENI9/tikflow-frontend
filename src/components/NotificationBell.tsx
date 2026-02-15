@@ -1,0 +1,205 @@
+"use client";
+
+import React, { useEffect, useState, useRef } from "react";
+import { Bell, Check, Info, AlertCircle, ShoppingCart, CreditCard } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
+import { notificationApi } from "@/lib/api";
+import { Notification } from "@/types/api";
+import { formatDistanceToNow } from "date-fns";
+import { fr } from "date-fns/locale";
+import Link from "next/link";
+import { db } from "@/lib/firebase";
+import { collection, query, where, onSnapshot, orderBy, limit as firestoreLimit } from "firebase/firestore";
+
+interface NotificationBellProps {
+  isAdmin?: boolean;
+}
+
+const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) => {
+  const { getToken, userId, isLoaded } = useAuth();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+    if (!userId && !isAdmin) return;
+
+    const targetId = isAdmin ? 'admin' : userId;
+    if (!targetId) return;
+
+    console.log(`[NotificationBell] Setting up real-time listener for: ${targetId}`);
+
+    const q = query(
+      collection(db, "notifications"),
+      where("user_id", "==", targetId),
+      orderBy("created_at", "desc"),
+      firestoreLimit(20)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const notifs = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        // Convert Firestore Timestamp to Date
+        created_at: (doc.data() as any).created_at?.toDate ? (doc.data() as any).created_at.toDate() : (doc.data() as any).created_at
+      } as Notification));
+      
+      setNotifications(notifs);
+      setUnreadCount(notifs.filter(n => !n.read).length);
+      setError(null);
+    }, (err) => {
+      console.error("Firestore onSnapshot error:", err);
+      if (err.code === 'failed-precondition') {
+        setError("Index Firestore manquant. Veuillez créer l'index recommandé dans les logs.");
+      } else {
+        setError("Erreur de connexion temps réel. Vérifiez votre configuration Firebase.");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [isAdmin, userId]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleMarkAsRead = async (id: string) => {
+    try {
+      const token = await getToken();
+      if (!token) return;
+
+      await notificationApi.markAsRead(token, id);
+      setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+      setUnreadCount(prev => Math.max(0, prev - 1));
+    } catch (error) {
+      console.error("Erreur marquage lecture:", error);
+    }
+  };
+
+  const handleMarkAllRead = async () => {
+    try {
+      const token = await getToken();
+      if (!token) return;
+
+      await notificationApi.markAllAsRead(token);
+      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+      setUnreadCount(0);
+    } catch (error) {
+      console.error("Erreur marquage tout lu:", error);
+    }
+  };
+
+  const getIcon = (type: Notification["type"]) => {
+    switch (type) {
+      case "recharge_success": return <div className="p-2 bg-green-100 text-green-600 rounded-full"><CreditCard size={16} /></div>;
+      case "order_delivered": return <div className="p-2 bg-blue-100 text-blue-600 rounded-full"><ShoppingCart size={16} /></div>;
+      case "payment_received": return <div className="p-2 bg-purple-100 text-purple-600 rounded-full"><Check size={16} /></div>;
+      case "system_alert": return <div className="p-2 bg-red-100 text-red-600 rounded-full"><AlertCircle size={16} /></div>;
+      default: return <div className="p-2 bg-gray-100 text-gray-600 rounded-full"><Info size={16} /></div>;
+    }
+  };
+
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="relative p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+      >
+        <Bell size={20} />
+        {unreadCount > 0 && (
+          <span className="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white border-2 border-white">
+            {unreadCount > 9 ? "9+" : unreadCount}
+          </span>
+        )}
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="p-4 border-b border-gray-50 flex items-center justify-between">
+            <h3 className="font-semibold text-gray-900">Notifications</h3>
+            {unreadCount > 0 && (
+              <button 
+                onClick={handleMarkAllRead}
+                className="text-xs text-blue-600 hover:underline font-medium"
+              >
+                Tout marquer comme lu
+              </button>
+            )}
+          </div>
+
+          <div className="max-h-[400px] overflow-y-auto">
+            {error ? (
+              <div className="p-8 text-center bg-red-50/50">
+                <AlertCircle size={32} className="mx-auto text-red-400 mb-2" />
+                <p className="text-sm text-red-600 font-medium">Erreur temps réel</p>
+                <p className="text-[10px] text-red-500 mt-1">{error}</p>
+              </div>
+            ) : notifications.length > 0 ? (
+              notifications.map((notif) => (
+                <div 
+                  key={notif.id}
+                  className={`p-4 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors flex gap-3 ${!notif.read ? 'bg-blue-50/30' : ''}`}
+                  onClick={() => !notif.read && handleMarkAsRead(notif.id)}
+                >
+                  <div className="flex-shrink-0 mt-1">
+                    {getIcon(notif.type)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start">
+                      <p className={`text-sm ${!notif.read ? 'font-bold' : 'font-medium'} text-gray-900 truncate`}>
+                        {notif.title}
+                      </p>
+                      {!notif.read && <div className="w-2 h-2 bg-blue-500 rounded-full mt-1"></div>}
+                    </div>
+                    <p className="text-xs text-gray-600 line-clamp-2 mt-0.5">
+                      {notif.message}
+                    </p>
+                    <div className="flex justify-between items-center mt-2">
+                       <span className="text-[10px] text-gray-400">
+                        {formatDistanceToNow(new Date(notif.created_at), { addSuffix: true, locale: fr })}
+                      </span>
+                      {notif.link && (
+                        <Link 
+                          href={notif.link}
+                          className="text-[10px] text-blue-600 font-semibold hover:underline"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          Voir détails
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="p-8 text-center bg-gray-50/50">
+                <Bell size={32} className="mx-auto text-gray-300 mb-2" />
+                <p className="text-sm text-gray-500">Aucune notification pour le moment.</p>
+              </div>
+            )}
+          </div>
+
+          {notifications.length > 0 && (
+            <div className="p-3 bg-gray-50 text-center border-t border-gray-100">
+               <button className="text-xs text-gray-600 font-medium hover:text-gray-900">
+                 Voir toutes les notifications
+               </button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default NotificationBell;
