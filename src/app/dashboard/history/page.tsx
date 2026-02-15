@@ -11,7 +11,8 @@ import {
   AlertCircle,
   TrendingUp,
   TrendingDown,
-  Loader2
+  Loader2,
+  ChevronRight
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -150,7 +151,11 @@ useEffect(() => {
                   : new Date(txn.created_at);
 
                 return (
-                  <tr key={txn.id} className="group hover:bg-slate-50/50 transition-colors">
+                  <tr 
+                    key={txn.id} 
+                    className="group hover:bg-slate-50 transition-all cursor-pointer relative"
+                    onClick={() => window.location.href = `/dashboard/history/${txn.id}`}
+                  >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
                         <div className={`size-10 rounded-xl flex items-center justify-center shrink-0 ${config.color}`}>
@@ -176,7 +181,10 @@ useEffect(() => {
                       </span>
                     </td>
                     <td className={`px-6 py-4 text-right font-black text-sm ${txn.type === 'recharge' ? 'text-green-600' : 'text-slate-900'}`}>
-                      {txn.type === 'recharge' ? "+" : "-"} {(txn.amount_cfa || 0).toLocaleString()} FCFA
+                      <div className="flex items-center justify-end gap-2">
+                        <span>{txn.type === 'recharge' ? "+" : "-"} {(txn.amount_cfa || 0).toLocaleString()} FCFA</span>
+                        <ChevronRight size={14} className="text-slate-300 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                      </div>
                     </td>
                   </tr>
                 );

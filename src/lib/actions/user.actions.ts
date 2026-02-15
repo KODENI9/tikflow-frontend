@@ -175,6 +175,32 @@ export async function getTransactionHistory() {
   }
 }
 
+export async function getTransactionByIdAction(id: string) {
+  try {
+    const session = await auth();
+    const token = await session.getToken();
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/transactions/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      cache: 'no-store',
+    });
+
+    const result = await response.json();
+
+    if (response.ok && result.success) {
+      return { success: true, transaction: result.data };
+    }
+    
+    return { success: false, error: result.message || "Erreur lors de la récupération de la transaction" };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
 
 // Action pour l'achat de coins TikTok
 export async function purchaseCoins(formData: { 
