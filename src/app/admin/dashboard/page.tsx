@@ -57,8 +57,8 @@ const [stats, setStats] = useState<any>(null);
       {/* --- HEADER --- */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">Dashboard Overview</h1>
-          <span className="px-3 py-1 bg-green-100 text-green-600 text-[10px] font-black rounded-lg uppercase border border-green-200">
+          <h1 className="text-2xl font-black text-foreground tracking-tight">Dashboard Overview</h1>
+          <span className="px-3 py-1 bg-tikflow-accent/10 text-tikflow-accent text-[10px] font-black rounded-lg uppercase border border-tikflow-accent/20">
             System Healthy
           </span>
           <button 
@@ -72,15 +72,15 @@ const [stats, setStats] = useState<any>(null);
         {/* Recherche & Notifs */}
         <div className="flex items-center gap-4 w-full md:w-auto">
           <div className="relative flex-1 md:w-80 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={18} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-tikflow-slate group-focus-within:text-tikflow-primary transition-colors" size={18} />
             <input 
-              className="w-full pl-12 pr-4 py-3 bg-slate-100/50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-blue-600/20 outline-none transition-all font-medium" 
+              className="w-full pl-12 pr-4 py-3 bg-foreground/5 border-none rounded-2xl text-sm focus:ring-2 focus:ring-tikflow-primary/20 outline-none transition-all font-medium text-foreground placeholder:text-tikflow-slate" 
               placeholder="Search Ref ID or User..." 
             />
           </div>
-          <button className="p-3 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:text-blue-600 shadow-sm relative">
+          <button className="p-3 bg-card-bg border border-glass-border rounded-2xl text-tikflow-slate hover:text-tikflow-primary shadow-sm relative">
             <Bell size={20} />
-            <span className="absolute top-3 right-3 size-2 bg-red-500 rounded-full border-2 border-white"></span>
+            <span className="absolute top-3 right-3 size-2 bg-tikflow-accent rounded-full border-2 border-background"></span>
           </button>
         </div>
       </div>
@@ -135,17 +135,17 @@ const [stats, setStats] = useState<any>(null);
       </div>
 
       {/* --- TABLE (Chargement des transactions réelles) --- */}
-      <div className="bg-white rounded-[2.5rem] border border-slate-50 shadow-sm overflow-hidden min-h-[500px] flex flex-col">
+      <div className="bg-card-bg rounded-[2.5rem] border border-glass-border shadow-sm overflow-hidden min-h-[500px] flex flex-col">
         {/* On passe handleRefresh pour pouvoir recharger la liste après une validation */}
         <TransactionTable onActionSuccess={handleRefresh} />
         
-        <div className="mt-auto border-t border-slate-50 p-6 flex items-center justify-between">
-            <p className="text-xs font-bold text-slate-400">
+        <div className="mt-auto border-t border-glass-border p-6 flex items-center justify-between">
+            <p className="text-xs font-bold text-tikflow-slate">
               {loading ? "Chargement..." : `Total Pending: ${stats?.pendingCount || 0}`}
             </p>
             <div className="flex gap-2">
-                <button className="px-5 py-2 rounded-xl text-xs font-bold text-slate-400 border border-slate-100 hover:bg-slate-50 transition-colors">Previous</button>
-                <button className="px-5 py-2 rounded-xl text-xs font-bold text-slate-900 border border-slate-100 hover:bg-slate-50 transition-colors">Next</button>
+                <button className="px-5 py-2 rounded-xl text-xs font-bold text-tikflow-slate border border-glass-border hover:bg-foreground/5 transition-colors">Previous</button>
+                <button className="px-5 py-2 rounded-xl text-xs font-bold text-foreground border border-glass-border hover:bg-foreground/5 transition-colors">Next</button>
             </div>
         </div>
       </div>

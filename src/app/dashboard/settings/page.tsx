@@ -15,8 +15,8 @@ export default function SettingsPage() {
   return (
     <div className="max-w-6xl mx-auto space-y-8 pb-16">
       <div>
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Paramètres</h1>
-        <p className="text-slate-500 font-medium">Gérez votre profil, votre sécurité et vos préférences.</p>
+        <h1 className="text-3xl font-black text-foreground tracking-tight">Paramètres</h1>
+        <p className="text-tikflow-slate font-medium">Gérez votre profil, votre sécurité et vos préférences.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

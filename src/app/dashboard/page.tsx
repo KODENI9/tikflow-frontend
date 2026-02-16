@@ -50,10 +50,10 @@ export default function DashboardPage() {
   if (!isLoaded) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-5 pb-10 animate-pulse">
-         <div className="h-64 bg-slate-100 rounded-3xl w-full mb-6"></div>
+         <div className="h-64 bg-foreground/5 rounded-3xl w-full mb-6"></div>
          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-8 h-48 bg-slate-100 rounded-3xl"></div>
-            <div className="lg:col-span-4 h-48 bg-slate-100 rounded-3xl"></div>
+            <div className="lg:col-span-8 h-48 bg-foreground/5 rounded-3xl"></div>
+            <div className="lg:col-span-4 h-48 bg-foreground/5 rounded-3xl"></div>
          </div>
       </div>
     );
@@ -64,27 +64,27 @@ export default function DashboardPage() {
       <PhoneAlert />
 
       {/* Banner */}
-      <div className="bg-slate-900 rounded-3xl p-6 md:p-10 text-white relative overflow-hidden shadow-xl">
+      <div className="bg-foreground text-background rounded-3xl p-6 md:p-10 relative overflow-hidden shadow-xl">
         <div className="relative z-10 space-y-3">
           <p className="opacity-70 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em]">Tableau de Bord</p>
           <h1 className="text-2xl md:text-4xl font-black">
-            Bonjour, <span className="text-[#1152d4]">{user?.firstName || "Utilisateur"}</span> 👋
+            Bonjour, <span className="text-tikflow-primary">{user?.firstName || "Utilisateur"}</span> 👋
           </h1>
-          <p className="text-slate-400 max-w-md text-sm leading-relaxed">
+          <p className="opacity-60 max-w-md text-sm leading-relaxed">
             Gérez vos transactions TikTok coins et suivez vos dépenses en temps réel.
           </p>
         </div>
-        <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-[#1152d4] rounded-full blur-[100px] opacity-20"></div>
+        <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-tikflow-primary rounded-full blur-[100px] opacity-20"></div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
         {/* COLONNE GAUCHE - Portefeuille */}
         <div className="lg:col-span-8 space-y-6">
-          <div className="bg-white rounded-3xl p-5 md:p-8 shadow-sm border border-gray-100 flex flex-col xl:flex-row gap-8 items-center">
+          <div className="bg-card-bg rounded-3xl p-5 md:p-8 shadow-sm border border-glass-border flex flex-col xl:flex-row gap-8 items-center">
             
             {/* Wallet Card */}
-            <div className="w-full xl:w-80 h-48 rounded-2xl bg-gradient-to-br from-[#1152d4] to-[#0d3a94] p-6 text-white flex flex-col justify-between shadow-lg shadow-blue-500/20 shrink-0 relative overflow-hidden">
+            <div className="w-full xl:w-80 h-48 rounded-2xl bg-gradient-to-br from-tikflow-primary to-[#0d3a94] p-6 text-white flex flex-col justify-between shadow-lg shadow-tikflow-primary/20 shrink-0 relative overflow-hidden">
               <div className="flex justify-between items-start">
                 <span className="text-[10px] font-mono opacity-80 uppercase tracking-tighter">TikFlow Wallet</span>
                 <Diamond size={20} className="opacity-50" />
@@ -105,18 +105,18 @@ export default function DashboardPage() {
             {/* Actions */}
             <div className="w-full flex-1 space-y-5">
               <div className="text-center xl:text-left">
-                <h3 className="font-black text-gray-900 text-lg">Portefeuille Principal</h3>
-                <p className="text-gray-500 text-sm mt-1">Votre solde est prêt à l'emploi pour vos achats.</p>
+                <h3 className="font-black text-foreground text-lg">Portefeuille Principal</h3>
+                <p className="text-tikflow-slate text-sm mt-1">Votre solde est prêt à l'emploi pour vos achats.</p>
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Link 
                   href="/dashboard/wallet/deposit" 
-                  className="flex items-center justify-center gap-2 bg-[#1152d4] text-white py-4 rounded-2xl text-sm font-black shadow-lg shadow-blue-500/10 hover:bg-blue-700 transition-all active:scale-95"
+                  className="flex items-center justify-center gap-2 bg-tikflow-primary text-white py-4 rounded-2xl text-sm font-black shadow-lg shadow-tikflow-primary/10 hover:bg-tikflow-primary/90 transition-all active:scale-95"
                 >
                   <PlusCircle size={18} /> Recharger
                 </Link>
-                <button className="flex items-center justify-center gap-2 bg-gray-50 text-gray-700 py-4 rounded-2xl text-sm font-bold border border-gray-100 hover:bg-gray-100 transition-all active:scale-95">
+                <button className="flex items-center justify-center gap-2 bg-foreground/5 text-foreground py-4 rounded-2xl text-sm font-bold border border-glass-border hover:bg-foreground/10 transition-all active:scale-95">
                   <Send size={18} /> Transférer
                 </button>
               </div>

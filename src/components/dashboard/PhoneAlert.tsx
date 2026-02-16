@@ -34,17 +34,17 @@ export const PhoneAlert = () => {
   if (hasPhone) return null;
 
   return (
-    <div className="mb-6 group relative overflow-hidden bg-gradient-to-r from-orange-500 to-amber-500 p-[1px] rounded-2xl shadow-lg shadow-orange-200/50">
-      <div className="bg-white dark:bg-slate-900 rounded-[15px] p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div className="mb-6 group relative overflow-hidden bg-gradient-to-r from-orange-500 to-amber-500 p-[1px] rounded-2xl shadow-lg shadow-orange-500/10">
+      <div className="bg-card-bg rounded-[15px] p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="size-10 rounded-xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600">
+          <div className="size-10 rounded-xl bg-tikflow-accent/10 flex items-center justify-center text-tikflow-accent">
             <AlertCircle size={24} />
           </div>
           <div>
-            <h4 className="font-black text-slate-900 dark:text-white text-sm uppercase tracking-tight">
+            <h4 className="font-black text-foreground text-sm uppercase tracking-tight">
               Profil incomplet
             </h4>
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <p className="text-xs text-tikflow-slate font-medium">
               Ajoutez votre numéro pour activer les rechargements Mobile Money.
             </p>
           </div>
@@ -52,7 +52,7 @@ export const PhoneAlert = () => {
         
         <Link 
           href="/dashboard/settings" 
-          className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-xs font-black uppercase transition-all hover:scale-105"
+          className="flex items-center gap-2 bg-tikflow-accent hover:bg-tikflow-accent/90 text-white px-4 py-2 rounded-xl text-xs font-black uppercase transition-all hover:scale-105"
         >
           Compléter <ArrowRight size={14} />
         </Link>

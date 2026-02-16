@@ -75,18 +75,18 @@ export default function WalletManagementPage() {
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight">Wallet Management Overview</h1>
-            <span className="px-3 py-1 bg-green-100 text-green-600 text-[10px] font-black rounded-lg uppercase border border-green-200">
+            <h1 className="text-2xl font-black text-foreground tracking-tight">Wallet Management Overview</h1>
+            <span className="px-3 py-1 bg-green-500/10 text-green-500 text-[10px] font-black rounded-lg uppercase border border-green-500/20">
               System Live
             </span>
           </div>
         </div>
         
         <div className="flex items-center gap-3 w-full md:w-auto">
-          <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-black hover:bg-slate-50 transition-all">
+          <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-card-bg border border-glass-border text-tikflow-slate rounded-xl text-xs font-black hover:bg-foreground/5 transition-all">
             <Download size={16} /> Export Ledger
           </button>
-          <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-[#1152d4] text-white rounded-xl text-xs font-black hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">
+          <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-tikflow-primary text-white rounded-xl text-xs font-black hover:bg-tikflow-primary/90 transition-all shadow-lg shadow-tikflow-primary/10">
             <PlusCircle size={16} /> Manual Credit/Debit
           </button>
         </div>
@@ -99,43 +99,43 @@ export default function WalletManagementPage() {
             label: "TOTAL REVENUE", 
             val: formatCurrency(stats?.totalRevenue || 0), 
             sub: "Total earnings", 
-            color: "text-blue-600", 
-            bg: "bg-blue-50", 
+            color: "text-tikflow-primary", 
+            bg: "bg-tikflow-primary/5", 
             icon: Wallet 
           },
           { 
             label: "TODAY'S VOLUME", 
             val: formatCurrency(stats?.todayVolume || 0), 
             sub: `${stats?.todayCount || 0} transactions today`, 
-            color: "text-purple-600", 
-            bg: "bg-purple-50", 
+            color: "text-purple-500", 
+            bg: "bg-purple-500/5", 
             icon: ArrowUpRight 
           },
           { 
             label: "PENDING REQUESTS", 
             val: (stats?.pendingCount || 0).toString(), 
             sub: "Awaiting approval", 
-            color: "text-orange-600", 
-            bg: "bg-orange-50", 
+            color: "text-orange-500", 
+            bg: "bg-orange-500/5", 
             icon: Clock 
           },
           { 
             label: "SUCCESS RATE", 
             val: `${stats?.successRate || 0}%`, 
             sub: "Platform efficiency", 
-            color: "text-green-600", 
-            bg: "bg-green-50", 
+            color: "text-green-500", 
+            bg: "bg-green-500/5", 
             icon: TrendingUp 
           },
         ].map((stat, i) => (
-          <div key={i} className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm relative overflow-hidden">
+          <div key={i} className="bg-card-bg p-6 rounded-[2rem] border border-glass-border shadow-sm relative overflow-hidden">
             <div className="flex justify-between items-start mb-4">
               <div className={`p-3 rounded-xl ${stat.bg} ${stat.color}`}>
                 <stat.icon size={20} />
               </div>
             </div>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{stat.label}</p>
-            <h3 className="text-xl font-black text-slate-900 tracking-tight">{stat.val}</h3>
+            <p className="text-[10px] font-black text-tikflow-slate uppercase tracking-widest mb-1">{stat.label}</p>
+            <h3 className="text-xl font-black text-foreground tracking-tight">{stat.val}</h3>
             <p className={`text-[10px] font-bold mt-1 ${stat.color}`}>{stat.sub}</p>
           </div>
         ))}
@@ -144,32 +144,32 @@ export default function WalletManagementPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* --- LEFT: SYSTEM WALLETS (FLOAT) --- */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8">
-            <h3 className="font-black text-sm text-slate-900 uppercase tracking-wider mb-6">System Wallets (Inflow)</h3>
+          <div className="bg-card-bg rounded-[2.5rem] border border-glass-border shadow-sm p-8">
+            <h3 className="font-black text-sm text-foreground uppercase tracking-wider mb-6">System Wallets (Inflow)</h3>
             <div className="space-y-6">
               {[
-                { name: "TMoney (Togo)", sub: "AGGREGATED VOLUME", balance: methodVolumes['tmoney'] || 0, color: "text-yellow-600", bg: "bg-yellow-500", width: "w-[85%]" },
-                { name: "Flooz (Moov Money)", sub: "AGGREGATED VOLUME", balance: methodVolumes['flooz'] || 0, color: "text-blue-600", bg: "bg-blue-500", width: "w-[65%]" },
+                { name: "TMoney (Togo)", sub: "AGGREGATED VOLUME", balance: methodVolumes['tmoney'] || 0, color: "text-tikflow-accent", bg: "bg-tikflow-accent", width: "w-[85%]" },
+                { name: "Flooz (Moov Money)", sub: "AGGREGATED VOLUME", balance: methodVolumes['flooz'] || 0, color: "text-tikflow-primary", bg: "bg-tikflow-primary", width: "w-[65%]" },
                 // { name: "MTN Mobile Money", sub: "CARRIER WALLET", balance: methodVolumes['mtn'] || 0, color: "text-green-600", bg: "bg-green-500", width: "w-[30%]" },
               ].map((wallet, i) => (
                 <div key={i} className="space-y-2">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
-                      <div className="size-10 bg-slate-50 rounded-xl flex items-center justify-center text-[10px] font-black text-blue-600 border border-slate-100">
+                      <div className="size-10 bg-foreground/5 rounded-xl flex items-center justify-center text-[10px] font-black text-tikflow-primary border border-glass-border">
                         {wallet.name.substring(0,2).toUpperCase()}
                       </div>
                       <div>
-                        <p className="text-xs font-black text-slate-900">{wallet.name}</p>
-                        <p className="text-[9px] font-bold text-slate-400">{wallet.sub}</p>
+                        <p className="text-xs font-black text-foreground">{wallet.name}</p>
+                        <p className="text-[9px] font-bold text-tikflow-slate">{wallet.sub}</p>
                       </div>
                     </div>
                     {/* <span className={`text-[9px] font-black px-2 py-0.5 rounded-md bg-slate-50 ${wallet.color}`}>Active</span> */}
                   </div>
                   <div className="flex justify-between items-center pt-1">
-                    <p className="text-sm font-black text-slate-900">{formatCurrency(wallet.balance)}</p>
+                    <p className="text-sm font-black text-foreground">{formatCurrency(wallet.balance)}</p>
                   </div>
-                  <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                    <div className={`h-full ${wallet.bg} w-full rounded-full`} style={{ width: '100%' }} /> 
+                  <div className="h-1.5 w-full bg-foreground/5 rounded-full overflow-hidden">
+                    <div className={`h-full ${wallet.bg} w-full rounded-full opacity-80`} style={{ width: '100%' }} /> 
                     {/* Width is 100% just for visuals, normally we'd calc percentage */}
                   </div>
                 </div>
@@ -182,15 +182,15 @@ export default function WalletManagementPage() {
         </div>
 
         {/* --- RIGHT: RECENT WALLET TRANSACTIONS --- */}
-        <div className="lg:col-span-2 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col">
-          <div className="p-8 border-b border-slate-50 flex justify-between items-center">
-            <h3 className="font-black text-sm text-slate-900 uppercase tracking-wider">Recent Transactions</h3>
-            <Filter size={18} className="text-slate-400 cursor-pointer" />
+        <div className="lg:col-span-2 bg-card-bg rounded-[2.5rem] border border-glass-border shadow-sm flex flex-col">
+          <div className="p-8 border-b border-glass-border flex justify-between items-center">
+            <h3 className="font-black text-sm text-foreground uppercase tracking-wider">Recent Transactions</h3>
+            <Filter size={18} className="text-tikflow-slate cursor-pointer" />
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">
+                <tr className="text-[10px] font-black text-tikflow-slate uppercase tracking-widest border-b border-glass-border">
                   <th className="px-8 py-4">User ID</th>
                   <th className="px-4 py-4">Type</th>
                   <th className="px-4 py-4">Method</th>
@@ -201,17 +201,16 @@ export default function WalletManagementPage() {
               </thead>
               <tbody className="divide-y divide-slate-50">
                 {transactions.slice(0, 10).map((tx) => (
-                  <tr key={tx.id} className="text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors">
-                    <td className="px-8 py-4 text-slate-900 truncate max-w-[150px]">{tx.user_id}</td>
+                  <tr key={tx.id} className="text-xs font-bold text-tikflow-slate hover:bg-foreground/5 transition-colors">
+                    <td className="px-8 py-4 text-foreground truncate max-w-[150px]">{tx.user_id}</td>
                     <td className="px-4 py-4">
-                      <span className="px-2 py-1 bg-blue-50 text-blue-600 rounded-md text-[9px] uppercase font-black">{tx.type}</span>
+                      <span className="px-2 py-1 bg-tikflow-primary/10 text-tikflow-primary rounded-md text-[9px] uppercase font-black">{tx.type}</span>
                     </td>
                     <td className="px-4 py-4 flex items-center gap-2 uppercase">
-                       {/* <div className="size-4 bg-slate-200 rounded-sm" /> */}
                        {tx.payment_method}
                     </td>
-                    <td className="px-4 py-4 text-slate-400 text-[10px]">{tx.ref_id}</td>
-                    <td className={`px-4 py-4 font-black ${tx.type === 'achat_coins' ? 'text-slate-900' : 'text-green-600'}`}>
+                    <td className="px-4 py-4 text-tikflow-slate text-[10px]">{tx.ref_id}</td>
+                    <td className={`px-4 py-4 font-black ${tx.type === 'achat_coins' ? 'text-foreground' : 'text-green-500'}`}>
                         {tx.type === 'recharge' ? '+' : ''} {formatCurrency(tx.amount_cfa)}
                     </td>
                     <td className="px-8 py-4">
@@ -238,8 +237,8 @@ export default function WalletManagementPage() {
               </tbody>
             </table>
           </div>
-          <div className="p-6 text-center border-t border-slate-50">
-            <button className="text-xs font-black text-blue-600 hover:underline">View All Transactions</button>
+          <div className="p-6 text-center border-t border-glass-border">
+            <button className="text-xs font-black text-tikflow-primary hover:underline">View All Transactions</button>
           </div>
         </div>
       </div>

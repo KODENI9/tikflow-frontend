@@ -23,43 +23,43 @@ export default function SupportSection() {
   }, []);
 
   return (
-    <section className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 bg-gradient-to-br from-white to-blue-50/30">
+    <section className="bg-card-bg rounded-3xl border border-glass-border shadow-sm p-8 bg-gradient-to-br from-card-bg to-tikflow-primary/5">
         <div className="flex items-center gap-4 mb-8">
-            <div className="p-3 rounded-2xl bg-[#1152d4] text-white shadow-lg shadow-blue-200">
+            <div className="p-3 rounded-2xl bg-tikflow-primary text-white shadow-lg shadow-tikflow-primary/20">
             <Headset size={24} />
             </div>
             <div>
-            <h3 className="text-lg font-black text-slate-900 tracking-tight">Centre de Support</h3>
-            <p className="text-sm text-slate-500 font-medium">Nous sommes là pour vous aider 24j/7.</p>
+            <h3 className="text-lg font-black text-foreground tracking-tight">Centre de Support</h3>
+            <p className="text-sm text-tikflow-slate font-medium">Nous sommes là pour vous aider 24j/7.</p>
             </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-col gap-4">
-            <div className="flex items-center gap-3 text-green-600">
+            <div className="p-6 bg-foreground/5 rounded-2xl border border-glass-border shadow-sm flex flex-col gap-4">
+            <div className="flex items-center gap-3 text-green-500">
                 <MessageCircle size={20} />
                 <span className="text-[10px] font-black uppercase tracking-widest">WhatsApp Express</span>
             </div>
-            <p className="text-xs text-slate-500 font-medium">Réponse instantanée pour vos problèmes de recharge ou de coins.</p>
+            <p className="text-xs text-tikflow-slate font-medium">Réponse instantanée pour vos problèmes de recharge ou de coins.</p>
             <a 
                 href={`https://wa.me/${supportPhone.replace(/\s+/g, '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl text-center text-xs font-black uppercase transition-all shadow-md shadow-green-100"
+                className="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl text-center text-xs font-black uppercase transition-all shadow-md shadow-green-500/10"
             >
                 Ouvrir WhatsApp
             </a>
             </div>
 
-            <div className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-col gap-4">
-            <div className="flex items-center gap-3 text-[#1152d4]">
+            <div className="p-6 bg-foreground/5 rounded-2xl border border-glass-border shadow-sm flex flex-col gap-4">
+            <div className="flex items-center gap-3 text-tikflow-primary">
                 <Phone size={20} />
                 <span className="text-[10px] font-black uppercase tracking-widest">Numéro Vert (Support)</span>
             </div>
-            <p className="text-xs text-slate-500 font-medium">Appelez-nous directement pour une assistance vocale personnalisée.</p>
+            <p className="text-xs text-tikflow-slate font-medium">Appelez-nous directement pour une assistance vocale personnalisée.</p>
             <a 
                 href={`tel:${supportPhone.replace(/\s+/g, '')}`}
-                className="w-full py-3 bg-slate-900 hover:bg-black text-white rounded-xl text-center text-xs font-black uppercase transition-all shadow-md shadow-slate-100"
+                className="w-full py-3 bg-foreground hover:bg-foreground/90 text-background rounded-xl text-center text-xs font-black uppercase transition-all shadow-md shadow-tikflow-primary/5"
             >
                 {supportPhone}
             </a>

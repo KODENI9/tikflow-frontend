@@ -212,24 +212,24 @@ export default function SettingsAuditPage() {
       {/* --- HEADER --- */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">Platform Settings & Audit</h1>
-          <p className="text-slate-500 text-sm font-medium">Configurez les tarifs et surveillez la sécurité du système.</p>
+          <h1 className="text-2xl font-black text-foreground tracking-tight">Platform Settings & Audit</h1>
+          <p className="text-tikflow-slate text-sm font-medium">Configurez les tarifs et surveillez la sécurité du système.</p>
         </div>
-        <button className="flex items-center gap-2 px-6 py-2.5 bg-[#1152d4] text-white rounded-xl text-xs font-black hover:bg-blue-700 transition-all shadow-lg shadow-blue-100">
+        <button className="flex items-center gap-2 px-6 py-2.5 bg-tikflow-primary text-white rounded-xl text-xs font-black hover:bg-tikflow-primary/90 transition-all shadow-lg shadow-tikflow-primary/10">
           <Save size={16} /> Save Changes
         </button>
       </div>
 
       {/* --- COIN PACK MANAGEMENT --- */}
-      <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
-        <div className="p-8 border-b border-slate-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="bg-card-bg rounded-[2.5rem] border border-glass-border shadow-sm overflow-hidden">
+        <div className="p-8 border-b border-glass-border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h3 className="font-black text-sm text-slate-900 uppercase tracking-wider">Coin Pack Management</h3>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Configure pricing for TikTok coin bundles</p>
+            <h3 className="font-black text-sm text-foreground uppercase tracking-wider">Coin Pack Management</h3>
+            <p className="text-[10px] font-bold text-tikflow-slate uppercase tracking-tighter">Configure pricing for TikTok coin bundles</p>
           </div>
           <button 
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-[10px] font-black hover:bg-blue-100 transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-tikflow-primary/10 text-tikflow-primary rounded-xl text-[10px] font-black hover:bg-tikflow-primary/20 transition-all"
           >
             <Plus size={14} /> Add New Pack
           </button>
@@ -238,7 +238,7 @@ export default function SettingsAuditPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 bg-slate-50/30">
+              <tr className="text-[10px] font-black text-tikflow-slate uppercase tracking-widest border-b border-glass-border bg-foreground/5">
                 <th className="px-8 py-4">Pack Name</th>
                 <th className="px-4 py-4">Coins</th>
                 <th className="px-4 py-4">Price (Local)</th>
@@ -246,25 +246,25 @@ export default function SettingsAuditPage() {
                 <th className="px-8 py-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-glass-border">
               {packages.length === 0 ? (
-                <tr><td colSpan={5} className="text-center py-8 text-xs text-slate-400">Aucun pack configuré.</td></tr>
+                <tr><td colSpan={5} className="text-center py-8 text-xs text-tikflow-slate">Aucun pack configuré.</td></tr>
               ) : (
                 packages.map((pack) => (
-                  <tr key={pack.id} className="group hover:bg-slate-50/50 transition-all">
+                  <tr key={pack.id} className="group hover:bg-foreground/5 transition-all">
                     <td className="px-8 py-5">
                       <div className="flex items-center gap-3">
-                        <div className={`size-8 rounded-full flex items-center justify-center text-white font-black text-[10px] ${pack.active ? 'bg-orange-500 shadow-md shadow-orange-100' : 'bg-slate-300'}`}>
+                        <div className={`size-8 rounded-full flex items-center justify-center text-white font-black text-[10px] ${pack.active ? 'bg-tikflow-accent shadow-md shadow-tikflow-accent/20' : 'bg-tikflow-slate'}`}>
                           $
                         </div>
-                        <span className="text-sm font-black text-slate-900">{pack.name}</span>
+                        <span className="text-sm font-black text-foreground">{pack.name}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-5 text-sm font-bold text-slate-600">{pack.coins}</td>
-                    <td className="px-4 py-5 text-sm font-black text-slate-900">{pack.price_cfa.toLocaleString()} XOF</td>
+                    <td className="px-4 py-5 text-sm font-bold text-tikflow-slate">{pack.coins}</td>
+                    <td className="px-4 py-5 text-sm font-black text-foreground">{pack.price_cfa.toLocaleString()} XOF</td>
                     <td className="px-4 py-5">
                       <div className="flex justify-center">
-                        <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter ${pack.active ? 'bg-green-100 text-green-600' : 'bg-slate-100 text-slate-400'}`}>
+                        <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter ${pack.active ? 'bg-tikflow-primary/10 text-tikflow-primary' : 'bg-foreground/10 text-tikflow-slate'}`}>
                           {pack.active ? 'Active' : 'Inactive'}
                         </span>
                       </div>
@@ -275,7 +275,7 @@ export default function SettingsAuditPage() {
                           setEditingPackage(pack);
                           setShowEditModal(true);
                         }}
-                        className="text-[10px] font-black text-blue-600 hover:underline"
+                        className="text-[10px] font-black text-tikflow-primary hover:underline"
                       >
                         Edit Pack
                       </button>
@@ -290,50 +290,50 @@ export default function SettingsAuditPage() {
 
       {/* --- ADD PACKAGE MODAL --- */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-[2rem] w-full max-w-md p-8 shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-card-bg border border-glass-border rounded-[2rem] w-full max-w-md p-8 shadow-2xl animate-in fade-in zoom-in duration-200">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-black text-slate-900">Nouveau Pack</h3>
-              <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-slate-100 rounded-full text-slate-400">
+              <h3 className="text-lg font-black text-foreground">Nouveau Pack</h3>
+              <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-foreground/5 rounded-full text-tikflow-slate">
                 <X size={20} />
               </button>
             </div>
             <form onSubmit={handleCreatePackage} className="space-y-4">
               <div>
-                <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Nom du Pack</label>
+                <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Nom du Pack</label>
                 <input 
                   autoFocus
                   placeholder="Ex: TikFlow Starter" 
                   value={newPackage.name}
                   onChange={e => setNewPackage({...newPackage, name: e.target.value})}
-                  className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold focus:ring-2 ring-blue-500/20"
+                  className="w-full bg-foreground/5 border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Coins TikTok</label>
+                    <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Coins TikTok</label>
                     <input 
                     type="number"
                     placeholder="Ex: 70" 
                     value={newPackage.coins}
                     onChange={e => setNewPackage({...newPackage, coins: e.target.value})}
-                    className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold focus:ring-2 ring-blue-500/20"
+                    className="w-full bg-foreground/5 border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
                     />
                 </div>
                 <div>
-                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Prix (CFA)</label>
+                    <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Prix (CFA)</label>
                     <input 
                     type="number"
                     placeholder="Ex: 1500" 
                     value={newPackage.price}
                     onChange={e => setNewPackage({...newPackage, price: e.target.value})}
-                    className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold focus:ring-2 ring-blue-500/20"
+                    className="w-full bg-foreground/5 border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
                     />
                 </div>
               </div>
               <button 
                 disabled={creating}
-                className="w-full py-3 bg-blue-600 text-white rounded-xl font-black text-sm hover:bg-blue-700 transition-all mt-4 disabled:opacity-50"
+                className="w-full py-3 bg-tikflow-primary text-white rounded-xl font-black text-sm hover:bg-tikflow-primary/90 transition-all mt-4 disabled:opacity-50 shadow-lg shadow-tikflow-primary/10"
               >
                 {creating ? "Création..." : "Créer le Pack"}
               </button>
@@ -344,44 +344,44 @@ export default function SettingsAuditPage() {
 
       {/* --- EDIT PACKAGE MODAL --- */}
       {showEditModal && editingPackage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-[2rem] w-full max-w-md p-8 shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-card-bg border border-glass-border rounded-[2rem] w-full max-w-md p-8 shadow-2xl animate-in fade-in zoom-in duration-200">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-black text-slate-900">Modifier le Pack</h3>
-              <button onClick={() => setShowEditModal(false)} className="p-2 hover:bg-slate-100 rounded-full text-slate-400">
+              <h3 className="text-lg font-black text-foreground">Modifier le Pack</h3>
+              <button onClick={() => setShowEditModal(false)} className="p-2 hover:bg-foreground/5 rounded-full text-tikflow-slate">
                 <X size={20} />
               </button>
             </div>
             <form onSubmit={handleUpdatePackage} className="space-y-4">
               <div>
-                <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Nom du Pack</label>
+                <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Nom du Pack</label>
                 <input 
                   autoFocus
                   placeholder="Ex: TikFlow Starter" 
                   value={editingPackage.name}
                   onChange={e => setEditingPackage({...editingPackage, name: e.target.value})}
-                  className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold focus:ring-2 ring-blue-500/20"
+                  className="w-full bg-foreground/5 border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Coins TikTok</label>
+                    <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Coins TikTok</label>
                     <input 
                     type="number"
                     placeholder="Ex: 70" 
                     value={editingPackage.coins}
                     onChange={e => setEditingPackage({...editingPackage, coins: Number(e.target.value)})}
-                    className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold focus:ring-2 ring-blue-500/20"
+                    className="w-full bg-foreground/5 border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
                     />
                 </div>
                 <div>
-                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Prix (CFA)</label>
+                    <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Prix (CFA)</label>
                     <input 
                     type="number"
                     placeholder="Ex: 1500" 
                     value={editingPackage.price_cfa}
                     onChange={e => setEditingPackage({...editingPackage, price_cfa: Number(e.target.value)})}
-                    className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold focus:ring-2 ring-blue-500/20"
+                    className="w-full bg-foreground/5 border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
                     />
                 </div>
               </div>
@@ -391,12 +391,13 @@ export default function SettingsAuditPage() {
                   id="active"
                   checked={editingPackage.active}
                   onChange={e => setEditingPackage({...editingPackage, active: e.target.checked})}
+                  className="rounded border-glass-border bg-foreground/5 text-tikflow-primary"
                 />
-                <label htmlFor="active" className="text-xs font-bold text-slate-600 uppercase">Pack Actif</label>
+                <label htmlFor="active" className="text-xs font-bold text-tikflow-slate uppercase">Pack Actif</label>
               </div>
               <button 
                 disabled={updating}
-                className="w-full py-3 bg-blue-600 text-white rounded-xl font-black text-sm hover:bg-blue-700 transition-all mt-4 disabled:opacity-50"
+                className="w-full py-3 bg-tikflow-primary text-white rounded-xl font-black text-sm hover:bg-tikflow-primary/90 transition-all mt-4 disabled:opacity-50 shadow-lg shadow-tikflow-primary/10"
               >
                 {updating ? "Mise à jour..." : "Enregistrer les modifications"}
               </button>
@@ -406,45 +407,45 @@ export default function SettingsAuditPage() {
       )}
 
       {/* --- PLATFORM SETTINGS (Support Number, etc.) --- */}
-      <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8 space-y-6">
+      <div className="bg-card-bg rounded-[2.5rem] border border-glass-border shadow-sm p-8 space-y-6">
           <div>
-            <h3 className="font-black text-sm text-slate-900 uppercase tracking-wider">Configuration de la Plateforme</h3>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Paramètres globaux visibles par tous les utilisateurs.</p>
+            <h3 className="font-black text-sm text-foreground uppercase tracking-wider">Configuration de la Plateforme</h3>
+            <p className="text-[10px] font-bold text-tikflow-slate uppercase tracking-tighter">Paramètres globaux visibles par tous les utilisateurs.</p>
           </div>
           
           <div className="max-w-md space-y-4">
               <div>
-                <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Numéro de Support (WhatsApp / Appel)</label>
+                <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Numéro de Support (WhatsApp / Appel)</label>
                 <div className="flex gap-2">
                     <input 
                         placeholder="Ex: +228 90 51 32 79"
                         value={globalSettings.support_phone}
                         onChange={e => setGlobalSettings({...globalSettings, support_phone: e.target.value})}
-                        className="flex-1 bg-slate-50 border-none rounded-xl p-3 text-sm font-bold focus:ring-2 ring-blue-500/20"
+                        className="flex-1 bg-foreground/5 border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
                     />
                     <button 
                         onClick={handleUpdateGlobalSettings}
                         disabled={savingSettings}
-                        className="px-6 bg-blue-600 text-white rounded-xl font-black text-[10px] hover:bg-blue-700 transition-all disabled:opacity-50"
+                        className="px-6 bg-tikflow-primary text-white rounded-xl font-black text-[10px] hover:bg-tikflow-primary/90 transition-all disabled:opacity-50 shadow-lg shadow-tikflow-primary/10"
                     >
                         {savingSettings ? "Enregistrement..." : "Mettre à jour"}
                     </button>
                 </div>
-                <p className="text-[9px] font-bold text-slate-400 mt-2 italic px-1">Ce numéro sera mis à jour partout sur le site (Sidebar, Aide, Paiement, etc.)</p>
+                <p className="text-[9px] font-bold text-tikflow-slate mt-2 italic px-1">Ce numéro sera mis à jour partout sur le site (Sidebar, Aide, Paiement, etc.)</p>
               </div>
           </div>
       </div>
 
       {/* --- PAYMENT RECIPIENTS MANAGEMENT --- */}
-      <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
-        <div className="p-8 border-b border-slate-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="bg-card-bg rounded-[2.5rem] border border-glass-border shadow-sm overflow-hidden">
+        <div className="p-8 border-b border-glass-border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h3 className="font-black text-sm text-slate-900 uppercase tracking-wider">Payment Recipients (Numbers)</h3>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Manage numbers for Flooz, TMoney, Wave, etc.</p>
+            <h3 className="font-black text-sm text-foreground uppercase tracking-wider">Payment Recipients (Numbers)</h3>
+            <p className="text-[10px] font-bold text-tikflow-slate uppercase tracking-tighter">Manage numbers for Flooz, TMoney, Wave, etc.</p>
           </div>
           <button 
             onClick={() => setShowAddRecipientModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-[10px] font-black hover:bg-blue-100 transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-tikflow-primary/10 text-tikflow-primary rounded-xl text-[10px] font-black hover:bg-tikflow-primary/20 transition-all"
           >
             <Plus size={14} /> Add New Number
           </button>
@@ -453,7 +454,7 @@ export default function SettingsAuditPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 bg-slate-50/30">
+              <tr className="text-[10px] font-black text-tikflow-slate uppercase tracking-widest border-b border-glass-border bg-foreground/5">
                 <th className="px-8 py-4">Operator</th>
                 <th className="px-4 py-4">Phone Number</th>
                 <th className="px-4 py-4">Beneficiary</th>
@@ -461,22 +462,22 @@ export default function SettingsAuditPage() {
                 <th className="px-8 py-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-glass-border">
               {recipients.length === 0 ? (
-                <tr><td colSpan={5} className="text-center py-8 text-xs text-slate-400">Aucun destinataire configuré.</td></tr>
+                <tr><td colSpan={5} className="text-center py-8 text-xs text-tikflow-slate">Aucun destinataire configuré.</td></tr>
               ) : (
                 recipients.map((rec) => (
-                  <tr key={rec.id} className="group hover:bg-slate-50/50 transition-all">
+                  <tr key={rec.id} className="group hover:bg-foreground/5 transition-all">
                     <td className="px-8 py-5">
-                      <span className="text-xs font-black uppercase px-3 py-1 bg-slate-100 rounded-lg text-slate-600">
+                      <span className="text-xs font-black uppercase px-3 py-1 bg-foreground/5 rounded-lg text-tikflow-slate border border-glass-border">
                         {rec.operator}
                       </span>
                     </td>
-                    <td className="px-4 py-5 text-sm font-black text-slate-900">{rec.phone}</td>
-                    <td className="px-4 py-5 text-sm font-bold text-slate-600">{rec.beneficiary_name}</td>
+                    <td className="px-4 py-5 text-sm font-black text-foreground">{rec.phone}</td>
+                    <td className="px-4 py-5 text-sm font-bold text-tikflow-slate">{rec.beneficiary_name}</td>
                     <td className="px-4 py-5">
                       <div className="flex justify-center">
-                         <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter ${rec.active ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-500'}`}>
+                         <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter ${rec.active ? 'bg-tikflow-primary/10 text-tikflow-primary' : 'bg-tikflow-accent/10 text-tikflow-accent'}`}>
                           {rec.active ? 'Actif' : 'Inactif'}
                         </span>
                       </div>
@@ -487,13 +488,13 @@ export default function SettingsAuditPage() {
                           setEditingRecipient(rec);
                           setShowEditRecipientModal(true);
                         }}
-                        className="text-[10px] font-black text-blue-600 hover:underline"
+                        className="text-[10px] font-black text-tikflow-primary hover:underline"
                       >
                         Edit
                       </button>
                       <button 
                         onClick={() => handleDeleteRecipient(rec.id)}
-                        className="text-[10px] font-black text-red-500 hover:underline"
+                        className="text-[10px] font-black text-tikflow-accent hover:underline"
                       >
                         Delete
                       </button>
@@ -508,19 +509,19 @@ export default function SettingsAuditPage() {
 
       {/* --- ADD RECIPIENT MODAL --- */}
       {showAddRecipientModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-[2rem] w-full max-w-md p-8 shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-card-bg border border-glass-border rounded-[2rem] w-full max-w-md p-8 shadow-2xl animate-in fade-in zoom-in duration-200">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-black text-slate-900">Nouveau Numéro</h3>
-              <button onClick={() => setShowAddRecipientModal(false)} className="p-2 hover:bg-slate-100 rounded-full text-slate-400">
+              <h3 className="text-lg font-black text-foreground">Nouveau Numéro</h3>
+              <button onClick={() => setShowAddRecipientModal(false)} className="p-2 hover:bg-foreground/5 rounded-full text-tikflow-slate">
                 <X size={20} />
               </button>
             </div>
             <form onSubmit={handleCreateRecipient} className="space-y-4">
               <div>
-                <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Opérateur</label>
+                <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Opérateur</label>
                 <select 
-                  className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold focus:ring-2 ring-blue-500/20"
+                  className="w-full bg-foreground/5 border border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
                   value={newRecipient.operator}
                   onChange={e => setNewRecipient({...newRecipient, operator: e.target.value})}
                 >
@@ -535,27 +536,27 @@ export default function SettingsAuditPage() {
               </div>
               <div className="space-y-4">
                 <div>
-                   <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Numéro de Téléphone</label>
+                   <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Numéro de Téléphone</label>
                    <input 
                     placeholder="Ex: +228 90..." 
                     value={newRecipient.phone}
                     onChange={e => setNewRecipient({...newRecipient, phone: e.target.value})}
-                    className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold focus:ring-2 ring-blue-500/20"
+                    className="w-full bg-foreground/5 border border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
                    />
                 </div>
                 <div>
-                   <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Nom du bénéficiaire</label>
+                   <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Nom du bénéficiaire</label>
                    <input 
                     placeholder="Ex: TikFlow Official" 
                     value={newRecipient.beneficiary_name}
                     onChange={e => setNewRecipient({...newRecipient, beneficiary_name: e.target.value})}
-                    className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold focus:ring-2 ring-blue-500/20"
+                    className="w-full bg-foreground/5 border border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
                    />
                 </div>
               </div>
               <button 
                 disabled={creatingRecipient}
-                className="w-full py-3 bg-blue-600 text-white rounded-xl font-black text-sm hover:bg-blue-700 transition-all mt-4 disabled:opacity-50"
+                className="w-full py-3 bg-tikflow-primary text-white rounded-xl font-black text-sm hover:bg-tikflow-primary/90 transition-all mt-4 disabled:opacity-50 shadow-lg shadow-tikflow-primary/10"
               >
                 {creatingRecipient ? "Ajout..." : "Ajouter le Numéro"}
               </button>
@@ -566,19 +567,19 @@ export default function SettingsAuditPage() {
 
       {/* --- EDIT RECIPIENT MODAL --- */}
       {showEditRecipientModal && editingRecipient && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-[2rem] w-full max-w-md p-8 shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-card-bg border border-glass-border rounded-[2rem] w-full max-w-md p-8 shadow-2xl animate-in fade-in zoom-in duration-200">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-black text-slate-900">Modifier le Numéro</h3>
-              <button onClick={() => setShowEditRecipientModal(false)} className="p-2 hover:bg-slate-100 rounded-full text-slate-400">
+              <h3 className="text-lg font-black text-foreground">Modifier le Numéro</h3>
+              <button onClick={() => setShowEditRecipientModal(false)} className="p-2 hover:bg-foreground/5 rounded-full text-tikflow-slate">
                 <X size={20} />
               </button>
             </div>
             <form onSubmit={handleUpdateRecipient} className="space-y-4">
               <div>
-                <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Opérateur</label>
+                <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Opérateur</label>
                 <select 
-                  className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold focus:ring-2 ring-blue-500/20"
+                  className="w-full bg-foreground/5 border border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
                   value={editingRecipient.operator}
                   onChange={e => setEditingRecipient({...editingRecipient, operator: e.target.value as any})}
                 >
@@ -593,19 +594,19 @@ export default function SettingsAuditPage() {
               </div>
               <div className="space-y-4">
                 <div>
-                   <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Numéro de Téléphone</label>
+                   <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Numéro de Téléphone</label>
                    <input 
                     value={editingRecipient.phone}
                     onChange={e => setEditingRecipient({...editingRecipient, phone: e.target.value})}
-                    className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold focus:ring-2 ring-blue-500/20"
+                    className="w-full bg-foreground/5 border border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
                    />
                 </div>
                 <div>
-                   <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Nom du bénéficiaire</label>
+                   <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Nom du bénéficiaire</label>
                    <input 
                     value={editingRecipient.beneficiary_name}
                     onChange={e => setEditingRecipient({...editingRecipient, beneficiary_name: e.target.value})}
-                    className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold focus:ring-2 ring-blue-500/20"
+                    className="w-full bg-foreground/5 border border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
                    />
                 </div>
               </div>
@@ -615,12 +616,13 @@ export default function SettingsAuditPage() {
                   id="rec-active"
                   checked={editingRecipient.active}
                   onChange={e => setEditingRecipient({...editingRecipient, active: e.target.checked})}
+                  className="rounded border-glass-border bg-foreground/5 text-tikflow-primary"
                 />
-                <label htmlFor="rec-active" className="text-xs font-bold text-slate-600 uppercase">Numéro Actif</label>
+                <label htmlFor="rec-active" className="text-xs font-bold text-tikflow-slate uppercase">Numéro Actif</label>
               </div>
               <button 
                 disabled={updatingRecipient}
-                className="w-full py-3 bg-blue-600 text-white rounded-xl font-black text-sm hover:bg-blue-700 transition-all mt-4 disabled:opacity-50"
+                className="w-full py-3 bg-tikflow-primary text-white rounded-xl font-black text-sm hover:bg-tikflow-primary/90 transition-all mt-4 disabled:opacity-50 shadow-lg shadow-tikflow-primary/10"
               >
                 {updatingRecipient ? "Mise à jour..." : "Enregistrer"}
               </button>
@@ -630,25 +632,25 @@ export default function SettingsAuditPage() {
       )}
 
       {/* --- SECURITY & AUDIT LOGS --- */}
-      <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col">
-        <div className="p-8 border-b border-slate-50 space-y-4">
+      <div className="bg-card-bg rounded-[2.5rem] border border-glass-border shadow-sm flex flex-col">
+        <div className="p-8 border-b border-glass-border space-y-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="flex items-center gap-3">
-              <div className="size-10 bg-red-50 text-red-500 rounded-xl flex items-center justify-center">
+              <div className="size-10 bg-tikflow-accent/10 text-tikflow-accent rounded-xl flex items-center justify-center">
                 <ShieldAlert size={20} />
               </div>
               <div>
-                <h3 className="font-black text-sm text-slate-900 uppercase tracking-wider">Payments Audit Log</h3>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Real-time listing of all incoming SMS payments</p>
+                <h3 className="font-black text-sm text-foreground uppercase tracking-wider">Payments Audit Log</h3>
+                <p className="text-[10px] font-bold text-tikflow-slate uppercase tracking-tighter">Real-time listing of all incoming SMS payments</p>
               </div>
             </div>
             
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <div className="relative flex-1 sm:w-64">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
-                <input className="w-full pl-9 pr-4 py-2 bg-slate-50 border-none rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-blue-600/5" placeholder="Search logs..." />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-tikflow-slate" size={14} />
+                <input className="w-full pl-9 pr-4 py-2 bg-foreground/5 border border-glass-border rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-tikflow-primary/5 text-foreground placeholder:text-tikflow-slate" placeholder="Search logs..." />
               </div>
-              <button className="p-2 bg-slate-50 text-slate-400 rounded-xl hover:bg-slate-100 border border-slate-100">
+              <button className="p-2 bg-foreground/5 text-tikflow-slate rounded-xl hover:bg-foreground/10 border border-glass-border">
                 <Filter size={18} />
               </button>
             </div>
@@ -658,7 +660,7 @@ export default function SettingsAuditPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 bg-slate-50/30">
+              <tr className="text-[10px] font-black text-tikflow-slate uppercase tracking-widest border-b border-glass-border bg-foreground/5">
                 <th className="px-8 py-4">Source</th>
                 <th className="px-4 py-4">Received At</th>
                 <th className="px-4 py-4">Sender Phone</th>
@@ -667,36 +669,36 @@ export default function SettingsAuditPage() {
                 <th className="px-8 py-4 text-right">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-glass-border">
               {logs.length === 0 ? (
-                 <tr><td colSpan={6} className="text-center py-8 text-xs text-slate-400">Aucun log récent.</td></tr>
+                 <tr><td colSpan={6} className="text-center py-8 text-xs text-tikflow-slate">Aucun log récent.</td></tr>
               ) : (
                 logs.map((log) => (
-                    <tr key={log.id} className="text-[11px] font-bold text-slate-600 hover:bg-slate-50/50 transition-all">
+                    <tr key={log.id} className="text-[11px] font-bold text-tikflow-slate hover:bg-foreground/5 transition-all">
                     <td className="px-8 py-4">
                         <div className="flex items-center gap-2">
-                        <div className={`p-1.5 rounded-lg bg-blue-50 text-blue-500`}>
+                        <div className={`p-1.5 rounded-lg bg-tikflow-primary/10 text-tikflow-primary`}>
                             <Activity size={14} />
                         </div>
-                        <span className={`font-black uppercase tracking-tighter text-blue-500`}>INCOMING PAY</span>
+                        <span className={`font-black uppercase tracking-tighter text-tikflow-primary`}>INCOMING PAY</span>
                         </div>
                     </td>
-                    <td className="px-4 py-4 text-slate-400 italic">
+                    <td className="px-4 py-4 text-tikflow-slate italic">
                         {/* Simple date formatting */}
                         {new Date(log.received_at?._seconds * 1000 || Date.now()).toLocaleString()}
                     </td>
-                    <td className="px-4 py-4 text-slate-900">{log.sender_phone}</td>
+                    <td className="px-4 py-4 text-foreground">{log.sender_phone}</td>
                     <td className="px-4 py-4 max-w-xs truncate" title={log.raw_sms}>{log.raw_sms}</td>
                     <td className="px-4 py-4">
                         <div className="flex justify-center">
-                        <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-100 rounded text-[9px] font-mono text-slate-400">
-                            {log.ref_id} <Copy size={10} className="cursor-pointer hover:text-slate-600" />
+                        <div className="flex items-center gap-1.5 px-2 py-1 bg-foreground/5 rounded text-[9px] font-mono text-tikflow-slate border border-glass-border">
+                            {log.ref_id} <Copy size={10} className="cursor-pointer hover:text-foreground" />
                         </div>
                         </div>
                     </td>
                     <td className="px-8 py-4 text-right">
                         <span className={`px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-tighter ${
-                            log.status === 'used' ? 'bg-slate-100 text-slate-400' : 'bg-green-100 text-green-600'
+                            log.status === 'used' ? 'bg-foreground/5 text-tikflow-slate border border-glass-border' : 'bg-tikflow-accent/10 text-tikflow-accent border border-tikflow-accent/20'
                         }`}>
                         {log.status === 'used' ? 'USED' : 'UNUSED'}
                         </span>
@@ -709,11 +711,11 @@ export default function SettingsAuditPage() {
         </div>
         
         {/* Pagination */}
-        <div className="p-6 border-t border-slate-50 flex justify-between items-center bg-slate-50/30">
-          <p className="text-[10px] font-bold text-slate-400">Showing recent 50 logs</p>
+        <div className="p-6 border-t border-glass-border flex justify-between items-center bg-foreground/5">
+          <p className="text-[10px] font-bold text-tikflow-slate">Showing recent 50 logs</p>
           <div className="flex gap-2">
-            <button className="p-2 rounded-lg border border-slate-200 hover:bg-white text-slate-400"><ChevronLeft size={14}/></button>
-            <button className="p-2 rounded-lg border border-slate-200 hover:bg-white text-slate-400"><ChevronRight size={14}/></button>
+            <button className="p-2 rounded-lg border border-glass-border hover:bg-card-bg text-tikflow-slate"><ChevronLeft size={14}/></button>
+            <button className="p-2 rounded-lg border border-glass-border hover:bg-card-bg text-tikflow-slate"><ChevronRight size={14}/></button>
           </div>
         </div>
       </div>

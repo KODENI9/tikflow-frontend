@@ -83,16 +83,16 @@ export default function SupportButton() {
       {/* Main Support Button */}
       <button 
         onClick={toggleOpen}
-        className={`w-14 h-14 rounded-2xl shadow-2xl flex items-center justify-center transition-all duration-500 ${isOpen ? 'bg-slate-900 rotate-90 scale-90' : 'bg-blue-600 hover:scale-110 active:scale-95'}`}
+        className={`w-14 h-14 rounded-2xl shadow-2xl flex items-center justify-center transition-all duration-500 ${isOpen ? 'bg-foreground rotate-90 scale-90' : 'bg-tikflow-primary hover:scale-110 active:scale-95'}`}
       >
         {isOpen ? (
-          <X className="text-white w-6 h-6" />
+          <X className="text-background w-6 h-6" />
         ) : (
           <Headset className="text-white w-6 h-6" />
         )}
         
         {!isOpen && (
-          <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
+          <span className="absolute -top-1 -right-1 w-4 h-4 bg-tikflow-accent rounded-full border-2 border-background animate-pulse"></span>
         )}
       </button>
     </div>

@@ -39,7 +39,7 @@ const getPackageStyles = (coins: number) => {
     return { icon: Diamond, color: "from-blue-400 to-blue-600" };
   if (coins <= 5000)
     return { icon: Rocket, color: "from-purple-500 to-indigo-600" };
-  return { icon: Crown, color: "from-slate-800 to-black" };
+  return { icon: Crown, color: "from-slate-800 to-slate-950" };
 };
 
 export default function BuyCoinsPage() {
@@ -77,10 +77,10 @@ export default function BuyCoinsPage() {
       {/* Header de la Marketplace */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="space-y-1">
-          <h1 className="text-2xl font-black text-gray-900">
+          <h1 className="text-2xl font-black text-foreground">
             Acheter des Coins
           </h1>
-          <p className="text-gray-500 text-sm">
+          <p className="text-tikflow-slate text-sm">
             Sélectionnez un pack TikTok pour recharger votre compte.
           </p>
         </div>
@@ -88,11 +88,11 @@ export default function BuyCoinsPage() {
         <div className="flex gap-3 w-full sm:w-auto">
           <div className="relative flex-1 sm:w-64">
             <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-tikflow-slate"
               size={18}
             />
             <input
-              className="pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm w-full focus:ring-2 focus:ring-[#1152d4]/50"
+              className="pl-10 pr-4 py-2.5 bg-card-bg border border-glass-border rounded-xl text-sm w-full focus:ring-2 focus:ring-tikflow-primary/50 text-foreground"
               placeholder="Chercher un montant..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -103,12 +103,12 @@ export default function BuyCoinsPage() {
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 space-y-4">
-          <Loader2 className="animate-spin text-[#1152d4]" size={48} />
-          <p className="text-gray-500 font-medium">Chargement des packs...</p>
+          <Loader2 className="animate-spin text-tikflow-primary" size={48} />
+          <p className="text-tikflow-slate font-medium">Chargement des packs...</p>
         </div>
       ) : filteredPackages.length === 0 ? (
-        <div className="bg-white rounded-3xl p-12 text-center border-2 border-dashed border-gray-100">
-          <p className="text-gray-400">Aucun pack disponible pour le moment.</p>
+        <div className="bg-card-bg rounded-3xl p-12 text-center border-2 border-dashed border-glass-border">
+          <p className="text-tikflow-slate">Aucun pack disponible pour le moment.</p>
         </div>
       ) : (
         /* Grille des Packs */
@@ -121,17 +121,17 @@ export default function BuyCoinsPage() {
             return (
               <div
                 key={pkg.id}
-                className={`group relative bg-white rounded-3xl p-6 border-2 transition-all duration-300 hover:-translate-y-2 ${
+                className={`group relative bg-card-bg rounded-3xl p-6 border-2 transition-all duration-300 hover:-translate-y-2 ${
                   styles.featured
-                    ? "border-[#1152d4] shadow-xl shadow-blue-100"
-                    : "border-gray-100 hover:border-[#1152d4]/30 shadow-sm"
+                    ? "border-tikflow-primary shadow-xl shadow-tikflow-primary/10"
+                    : "border-glass-border hover:border-tikflow-primary/30 shadow-sm"
                 }`}
               >
                 {/* Badges */}
                 {styles.badge && (
                   <span
                     className={`absolute top-0 right-0 px-3 py-1 rounded-bl-xl rounded-tr-xl text-[10px] font-black text-white ${
-                      styles.featured ? "bg-[#1152d4]" : "bg-red-500"
+                      styles.featured ? "bg-tikflow-primary" : "bg-tikflow-accent"
                     }`}
                   >
                     {styles.badge}
@@ -147,26 +147,26 @@ export default function BuyCoinsPage() {
                   </div>
 
                   <div>
-                    <h3 className="text-4xl font-black text-gray-900">
+                    <h3 className="text-4xl font-black text-foreground">
                       {pkg.coins.toLocaleString()}
                     </h3>
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                    <p className="text-xs font-bold text-tikflow-slate uppercase tracking-widest">
                       {pkg.name || "Coins TikTok"}
                     </p>
                   </div>
 
                   {/* Détails Prix */}
-                  <div className="w-full pt-4 border-t border-gray-50 space-y-3">
+                  <div className="w-full pt-4 border-t border-glass-border space-y-3">
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-400">Prix unitaire</span>
-                      <span className="font-bold text-gray-600">
+                      <span className="text-tikflow-slate">Prix unitaire</span>
+                      <span className="font-bold text-tikflow-slate">
                         {unitPrice} FCFA
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span
                         className={`text-2xl font-black ${
-                          styles.featured ? "text-[#1152d4]" : "text-gray-900"
+                          styles.featured ? "text-tikflow-primary" : "text-foreground"
                         }`}
                       >
                         {pkg.price_cfa.toLocaleString()} FCFA
@@ -177,8 +177,8 @@ export default function BuyCoinsPage() {
                       href={`/dashboard/buy/checkout?packId=${pkg.id}`}
                       className={`w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all ${
                         styles.featured
-                          ? "bg-[#1152d4] text-white shadow-lg shadow-blue-200 hover:bg-blue-700"
-                          : "bg-gray-900 text-white hover:bg-gray-800"
+                          ? "bg-tikflow-primary text-white shadow-lg shadow-tikflow-primary/20 hover:bg-tikflow-primary/90"
+                          : "bg-foreground text-background hover:bg-foreground/90"
                       }`}
                     >
                       <ShoppingCart size={18} />
@@ -196,15 +196,17 @@ export default function BuyCoinsPage() {
       )}
 
       {/* Info Banner */}
-      <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 flex gap-4 items-center">
-        <div className="p-3 bg-white rounded-xl text-[#1152d4] shadow-sm">
-          <Info size={24} />
+      <div className="bg-tikflow-primary/5 border border-tikflow-primary/10 rounded-2xl p-6 flex gap-4 items-center">
+        <div className="p-3 bg-card-bg rounded-xl text-tikflow-primary shadow-sm">
+          <div className="flex items-center justify-center bg-tikflow-primary text-white p-2 rounded-lg">
+            <Info size={24} />
+          </div>
         </div>
         <div>
-          <h4 className="font-bold text-gray-900 text-sm">
+          <h4 className="font-bold text-foreground text-sm">
             Livraison instantanée
           </h4>
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-tikflow-slate">
             Les coins sont crédités sur votre compte TikTok immédiatement après
             le paiement.
           </p>
@@ -224,18 +226,18 @@ function CustomPackageCard() {
   const isValid = coins >= MIN_COINS;
 
   return (
-    <div className="group relative bg-white rounded-3xl p-6 border-2 border-dashed border-gray-200 transition-all duration-300 hover:border-[#1152d4]/50 shadow-sm">
+    <div className="group relative bg-card-bg rounded-3xl p-6 border-2 border-dashed border-glass-border transition-all duration-300 hover:border-tikflow-primary/50 shadow-sm">
       <div className="flex flex-col items-center text-center space-y-4">
         {/* Icône Custom */}
-        <div className="size-20 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-gray-400 shadow-inner group-hover:scale-110 transition-transform">
+        <div className="size-20 rounded-full bg-foreground/5 flex items-center justify-center text-tikflow-slate shadow-inner group-hover:scale-110 transition-transform">
           <Diamond size={36} />
         </div>
 
         <div>
-          <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">
+          <h3 className="text-xl font-black text-foreground uppercase tracking-tight">
             Montant Personnalisé
           </h3>
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+          <p className="text-[10px] font-bold text-tikflow-slate uppercase tracking-widest">
             À partir de {MIN_COINS} coins
           </p>
         </div>
@@ -245,33 +247,33 @@ function CustomPackageCard() {
                 <input 
                     type="number"
                     placeholder="Ex: 50"
-                    className="w-full py-3 px-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-center font-black text-2xl focus:border-[#1152d4] focus:ring-0 transition-all"
+                    className="w-full py-3 px-4 bg-foreground/5 border-2 border-glass-border rounded-2xl text-center font-black text-2xl focus:border-tikflow-primary focus:ring-0 transition-all text-foreground"
                     value={customCoins}
                     onChange={(e) => {
                         const val = e.target.value === "" ? "" : parseInt(e.target.value);
                         setCustomCoins(val);
                     }}
                 />
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-400">COINS</span>
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-tikflow-slate">COINS</span>
             </div>
 
             {isValid && (
                 <div className="flex justify-between items-center px-2 animate-in fade-in slide-in-from-top-1">
-                    <span className="text-xs font-bold text-slate-400 italic">Total estimé</span>
-                    <span className="text-lg font-black text-[#1152d4]">{price.toLocaleString()} FCFA</span>
+                    <span className="text-xs font-bold text-tikflow-slate italic">Total estimé</span>
+                    <span className="text-lg font-black text-tikflow-primary">{price.toLocaleString()} FCFA</span>
                 </div>
             )}
         </div>
 
         {/* Bouton d'Achat */}
-        <div className="w-full pt-4 border-t border-gray-50">
+        <div className="w-full pt-4 border-t border-glass-border">
             <Link
                 href={isValid ? `/dashboard/buy/checkout?amount_coins=${coins}` : "#"}
                 onClick={(e) => !isValid && e.preventDefault()}
                 className={`w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all ${
                     isValid 
-                    ? "bg-gray-900 text-white hover:bg-gray-800 shadow-lg" 
-                    : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    ? "bg-foreground text-background hover:bg-foreground/90 shadow-lg" 
+                    : "bg-foreground/5 text-tikflow-slate cursor-not-allowed"
                 }`}
             >
                 <ShoppingCart size={18} />

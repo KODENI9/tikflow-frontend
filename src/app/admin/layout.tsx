@@ -18,7 +18,7 @@ export default async function AdminGlobalLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-background text-foreground">
       {/* Sidebar fixe à gauche */}
       <Sidebar user={result.user} /> 
 

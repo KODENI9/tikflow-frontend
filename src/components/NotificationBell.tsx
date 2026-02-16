@@ -114,20 +114,20 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+        className="relative p-2 text-foreground/60 hover:bg-foreground/5 rounded-full transition-colors"
       >
         <Bell size={20} />
         {unreadCount > 0 && (
-          <span className="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white border-2 border-white">
+          <span className="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-tikflow-accent text-[10px] font-bold text-white border-2 border-background">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-          <div className="p-4 border-b border-gray-50 flex items-center justify-between">
-            <h3 className="font-semibold text-gray-900">Notifications</h3>
+        <div className="absolute right-0 mt-2 w-80 bg-card-bg rounded-xl shadow-2xl border border-glass-border overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="p-4 border-b border-glass-border flex items-center justify-between">
+            <h3 className="font-semibold text-foreground">Notifications</h3>
             {unreadCount > 0 && (
               <button 
                 onClick={handleMarkAllRead}
@@ -147,31 +147,31 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
               </div>
             ) : notifications.length > 0 ? (
               notifications.map((notif) => (
-                <div 
-                  key={notif.id}
-                  className={`p-4 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors flex gap-3 cursor-pointer ${!notif.read ? 'bg-blue-50/30' : ''}`}
-                  onClick={() => {
-                    setSelectedNotification(notif);
-                    if (!notif.read) handleMarkAsRead(notif.id);
-                  }}
-                >
-                  <div className="flex-shrink-0 mt-1">
-                    {getIcon(notif.type)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-start">
-                      <p className={`text-sm ${!notif.read ? 'font-bold' : 'font-medium'} text-gray-900 truncate`}>
-                        {notif.title}
-                      </p>
-                      {!notif.read && <div className="w-2 h-2 bg-blue-500 rounded-full mt-1"></div>}
+                  <div 
+                    key={notif.id}
+                    className={`p-4 border-b border-glass-border last:border-0 hover:bg-foreground/5 transition-colors flex gap-3 cursor-pointer ${!notif.read ? 'bg-tikflow-primary/5' : ''}`}
+                    onClick={() => {
+                      setSelectedNotification(notif);
+                      if (!notif.read) handleMarkAsRead(notif.id);
+                    }}
+                  >
+                    <div className="flex-shrink-0 mt-1">
+                      {getIcon(notif.type)}
                     </div>
-                    <p className="text-xs text-gray-600 line-clamp-2 mt-0.5">
-                      {notif.message}
-                    </p>
-                    <div className="flex justify-between items-center mt-2">
-                       <span className="text-[10px] text-gray-400">
-                        {formatDistanceToNow(new Date(notif.created_at), { addSuffix: true, locale: fr })}
-                      </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-start">
+                        <p className={`text-sm ${!notif.read ? 'font-bold' : 'font-medium'} text-foreground truncate`}>
+                          {notif.title}
+                        </p>
+                        {!notif.read && <div className="w-2 h-2 bg-tikflow-primary rounded-full mt-1"></div>}
+                      </div>
+                      <p className="text-xs text-tikflow-slate line-clamp-2 mt-0.5">
+                        {notif.message}
+                      </p>
+                      <div className="flex justify-between items-center mt-2">
+                         <span className="text-[10px] text-tikflow-slate">
+                          {formatDistanceToNow(new Date(notif.created_at), { addSuffix: true, locale: fr })}
+                        </span>
                       {notif.link && (
                         <Link 
                           href={notif.link}
@@ -194,8 +194,8 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
           </div>
 
           {notifications.length > 0 && (
-            <div className="p-3 bg-gray-50 text-center border-t border-gray-100">
-               <button className="text-xs text-gray-600 font-medium hover:text-gray-900">
+            <div className="p-3 bg-foreground/5 text-center border-t border-glass-border">
+               <button className="text-xs text-tikflow-slate font-medium hover:text-foreground">
                  Voir toutes les notifications
                </button>
             </div>
@@ -206,23 +206,23 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
       {selectedNotification && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
           <div 
-            className="bg-white rounded-[2.5rem] w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300"
+            className="bg-card-bg rounded-[2.5rem] w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 border border-glass-border"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header du Modal */}
             <div className={`p-8 pb-6 flex justify-between items-start relative overflow-hidden`}>
               {/* Fond décoratif (subtile gradient) */}
-              <div className="absolute inset-0 opacity-5 bg-gradient-to-br from-blue-600 to-indigo-900" />
+              <div className="absolute inset-0 opacity-5 bg-gradient-to-br from-tikflow-primary to-indigo-900" />
               
               <div className="relative z-10 flex gap-5 items-center">
                 <div className="scale-125">
                   {getIcon(selectedNotification.type)}
                 </div>
                 <div>
-                  <h2 className="text-xl font-black text-slate-900 tracking-tight leading-tight">
+                  <h2 className="text-xl font-black text-foreground tracking-tight leading-tight">
                     {selectedNotification.title}
                   </h2>
-                  <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mt-1">
+                  <p className="text-[10px] font-black text-tikflow-primary uppercase tracking-widest mt-1">
                     {selectedNotification.type.replace('_', ' ')}
                   </p>
                 </div>
@@ -230,7 +230,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
 
               <button 
                 onClick={() => setSelectedNotification(null)}
-                className="relative z-10 p-2 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-full transition-all hover:rotate-90"
+                className="relative z-10 p-2 bg-foreground/5 hover:bg-foreground/10 text-tikflow-slate rounded-full transition-all hover:rotate-90"
               >
                 <X size={20} />
               </button>
@@ -238,13 +238,13 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
 
             {/* Corps du Modal */}
             <div className="p-8 pt-2 space-y-6">
-              <div className="bg-slate-50 rounded-3xl p-6 border border-slate-100 italic text-slate-700 leading-relaxed font-medium">
+              <div className="bg-foreground/5 rounded-3xl p-6 border border-glass-border italic text-foreground/80 leading-relaxed font-medium">
                 "{selectedNotification.message}"
               </div>
 
-              <div className="flex items-center justify-between text-xs font-bold text-slate-400">
+              <div className="flex items-center justify-between text-xs font-bold text-tikflow-slate">
                   <span className="flex items-center gap-1.5 capitalize">
-                    <Check size={14} className={selectedNotification.read ? "text-green-500" : "text-gray-300"} />
+                    <Check size={14} className={selectedNotification.read ? "text-tikflow-accent" : "text-tikflow-slate/20"} />
                     {selectedNotification.read ? "Lue" : "Non lue"}
                   </span>
                   <span>
@@ -252,12 +252,12 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
                   </span>
               </div>
 
-              <div className="pt-4 border-t border-slate-50 flex gap-3">
+              <div className="pt-4 border-t border-glass-border flex gap-3">
                 {selectedNotification.link && (
                   <Link 
                     href={selectedNotification.link}
                     onClick={() => setSelectedNotification(null)}
-                    className="flex-1 py-4 bg-[#1152d4] text-white rounded-2xl font-black text-sm flex items-center justify-center gap-2 shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all uppercase tracking-wider"
+                    className="flex-1 py-4 bg-tikflow-primary text-white rounded-2xl font-black text-sm flex items-center justify-center gap-2 shadow-xl shadow-tikflow-primary/20 hover:bg-tikflow-primary/90 transition-all uppercase tracking-wider"
                   >
                     <ExternalLink size={18} />
                     Voir les détails
@@ -265,7 +265,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
                 )}
                 <button 
                   onClick={() => setSelectedNotification(null)}
-                  className={`py-4 px-8 border-2 border-slate-100 text-slate-900 rounded-2xl font-black text-sm hover:bg-slate-50 transition-all uppercase tracking-wider ${!selectedNotification.link ? 'w-full' : ''}`}
+                  className={`py-4 px-8 border-2 border-glass-border text-foreground rounded-2xl font-black text-sm hover:bg-foreground/5 transition-all uppercase tracking-wider ${!selectedNotification.link ? 'w-full' : ''}`}
                 >
                   Fermer
                 </button>

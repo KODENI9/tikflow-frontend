@@ -38,13 +38,13 @@ export function TransactionTable({ onActionSuccess }: { onActionSuccess?: () => 
   }, [isLoaded]);
 
 
-  if (loading) return <div className="p-10 text-center animate-pulse font-bold text-slate-400">CHARGEMENT...</div>;
+  if (loading) return <div className="p-10 text-center animate-pulse font-bold text-tikflow-slate">CHARGEMENT...</div>;
 
   return (
     <div className="w-full overflow-x-auto">
       <table className="w-full text-left border-collapse">
         <thead>
-          <tr className="border-b border-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+          <tr className="border-b border-glass-border text-[10px] font-black text-tikflow-slate uppercase tracking-widest">
             <th className="px-6 py-5">User ID</th>
             <th className="px-6 py-5">Amount (CFA)</th>
             <th className="px-6 py-5">Ref ID / Method</th>
@@ -62,25 +62,25 @@ export function TransactionTable({ onActionSuccess }: { onActionSuccess?: () => 
             </tr>
           ) : (
             transactions.map((tx) => (
-              <tr key={tx.id || tx._id} className="group hover:bg-slate-50/50 transition-colors">
+              <tr key={tx.id || tx._id} className="group hover:bg-foreground/5 transition-colors">
                 <td className="px-6 py-4">
                   <div className="flex flex-col">
-                    <span className="text-xs font-bold text-slate-900 truncate max-w-[120px]">{tx.user_id}</span>
-                    <span className="text-[10px] text-blue-500 font-bold uppercase">{tx.type}</span>
+                    <span className="text-xs font-bold text-foreground truncate max-w-[120px]">{tx.user_id}</span>
+                    <span className="text-[10px] text-tikflow-primary font-bold uppercase">{tx.type}</span>
                   </div>
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex flex-col">
-                    <span className="text-sm font-black text-slate-900">{tx.amount_cfa?.toLocaleString()} XOF</span>
-                    <span className="text-[10px] text-slate-400 font-bold">{tx.amount_coins} Coins</span>
+                    <span className="text-sm font-black text-foreground">{tx.amount_cfa?.toLocaleString()} XOF</span>
+                    <span className="text-[10px] text-tikflow-slate font-bold">{tx.amount_coins} Coins</span>
                   </div>
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex flex-col">
-                    <span className="px-2 py-0.5 bg-slate-100 rounded text-[10px] font-bold text-slate-500 w-fit">
+                    <span className="px-2 py-0.5 bg-foreground/5 rounded text-[10px] font-bold text-tikflow-slate w-fit">
                       {tx.ref_id}
                     </span>
-                    <span className="text-[9px] font-black text-slate-400 uppercase mt-1">{tx.payment_method}</span>
+                    <span className="text-[9px] font-black text-tikflow-slate uppercase mt-1">{tx.payment_method}</span>
                   </div>
                 </td>
                 <td className="px-6 py-4">
@@ -108,8 +108,8 @@ export function TransactionTable({ onActionSuccess }: { onActionSuccess?: () => 
 function StatusBadge({ status }: { status: string }) {
   const isPending = status === 'pending';
   return (
-    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase flex items-center gap-1.5 w-fit ${isPending ? 'bg-orange-50 text-orange-500' : 'bg-green-50 text-green-500'}`}>
-      <span className={`size-1.5 rounded-full ${isPending ? 'bg-orange-500 animate-pulse' : 'bg-green-500'}`} />
+    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase flex items-center gap-1.5 w-fit ${isPending ? 'bg-tikflow-accent/10 text-tikflow-accent' : 'bg-green-500/10 text-green-500'}`}>
+      <span className={`size-1.5 rounded-full ${isPending ? 'bg-tikflow-accent animate-pulse' : 'bg-green-500'}`} />
       {status}
     </span>
   );

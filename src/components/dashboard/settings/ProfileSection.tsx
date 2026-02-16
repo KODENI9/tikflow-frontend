@@ -32,51 +32,51 @@ export default function ProfileSection() {
   };
 
   return (
-    <section className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-        <div className="h-24 bg-gradient-to-r from-[#1152d4] to-indigo-500"></div>
+    <section className="bg-card-bg rounded-3xl border border-glass-border shadow-sm overflow-hidden">
+        <div className="h-24 bg-gradient-to-r from-tikflow-primary to-indigo-500"></div>
         <div className="px-6 pb-6 -mt-12">
             <div className="relative flex justify-center mb-4">
             <div 
-                className="size-24 rounded-3xl border-4 border-white bg-slate-200 bg-cover bg-center shadow-xl"
+                className="size-24 rounded-3xl border-4 border-card-bg bg-foreground/5 bg-cover bg-center shadow-xl"
                 style={{ backgroundImage: `url(${user?.imageUrl})` }}
             >
-                <button className="absolute -bottom-2 -right-2 p-2 rounded-xl bg-[#1152d4] text-white border-4 border-white hover:scale-110 transition-transform shadow-lg">
+                <button className="absolute -bottom-2 -right-2 p-2 rounded-xl bg-tikflow-primary text-white border-4 border-card-bg hover:scale-110 transition-transform shadow-lg">
                 <Camera size={16} />
                 </button>
             </div>
             </div>
             
             <div className="text-center mb-8">
-            <h3 className="text-xl font-black text-slate-900">{user?.fullName}</h3>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Membre depuis {new Date(user?.createdAt!).toLocaleDateString('fr-FR', {month: 'short', year: 'numeric'})}</p>
-            <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 text-green-700 text-[10px] font-black uppercase">
+            <h3 className="text-xl font-black text-foreground">{user?.fullName}</h3>
+            <p className="text-xs font-bold text-tikflow-slate uppercase tracking-widest">Membre depuis {new Date(user?.createdAt!).toLocaleDateString('fr-FR', {month: 'short', year: 'numeric'})}</p>
+            <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/10 text-green-500 text-[10px] font-black uppercase">
                 <CheckCircle2 size={12} /> Compte Vérifié
             </div>
             </div>
 
             <div className="space-y-4">
             <div className="space-y-1">
-                <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Nom Complet</label>
+                <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Nom Complet</label>
                 <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-tikflow-slate/50" size={18} />
                 <input 
                     type="text" 
                     readOnly 
                     defaultValue={user?.fullName || ""} 
-                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-400 cursor-not-allowed" 
+                    className="w-full pl-10 pr-4 py-3 bg-foreground/5 border-none rounded-2xl text-sm font-bold text-tikflow-slate/70 cursor-not-allowed" 
                 />
                 </div>
             </div>
             <div className="space-y-1">
-                <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Numéro de Téléphone</label>
+                <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Numéro de Téléphone</label>
                 <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-tikflow-slate/50" size={18} />
                 <input 
                     type="text" 
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="+221..."
-                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500/20" 
+                    className="w-full pl-10 pr-4 py-3 bg-foreground/5 border-none rounded-2xl text-sm font-bold text-foreground focus:ring-2 focus:ring-tikflow-primary/20" 
                 />
                 </div>
             </div>
@@ -90,7 +90,7 @@ export default function ProfileSection() {
             <button 
                 onClick={handleUpdateProfile}
                 disabled={loading}
-                className="w-full py-4 bg-slate-900 hover:bg-black text-white text-sm font-black rounded-2xl transition-all shadow-lg shadow-slate-200 uppercase tracking-tight flex items-center justify-center gap-2"
+                className="w-full py-4 bg-foreground hover:bg-foreground/90 text-background text-sm font-black rounded-2xl transition-all shadow-lg shadow-tikflow-primary/5 uppercase tracking-tight flex items-center justify-center gap-2"
             >
                 {loading ? <Loader2 className="animate-spin" size={18} /> : "Mettre à jour le profil"}
             </button>
