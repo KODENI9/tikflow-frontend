@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { Bell, Check, Info, AlertCircle, ShoppingCart, CreditCard } from "lucide-react";
+import { Bell, Check, Info, AlertCircle, ShoppingCart, CreditCard, X, ExternalLink } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { notificationApi } from "@/lib/api";
 import { Notification } from "@/types/api";
@@ -21,6 +21,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -148,8 +149,11 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
               notifications.map((notif) => (
                 <div 
                   key={notif.id}
-                  className={`p-4 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors flex gap-3 ${!notif.read ? 'bg-blue-50/30' : ''}`}
-                  onClick={() => !notif.read && handleMarkAsRead(notif.id)}
+                  className={`p-4 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors flex gap-3 cursor-pointer ${!notif.read ? 'bg-blue-50/30' : ''}`}
+                  onClick={() => {
+                    setSelectedNotification(notif);
+                    if (!notif.read) handleMarkAsRead(notif.id);
+                  }}
                 >
                   <div className="flex-shrink-0 mt-1">
                     {getIcon(notif.type)}
@@ -196,6 +200,78 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
                </button>
             </div>
           )}
+        </div>
+      )}
+      {/* MODAL DE DÉTAILS */}
+      {selectedNotification && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div 
+            className="bg-white rounded-[2.5rem] w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header du Modal */}
+            <div className={`p-8 pb-6 flex justify-between items-start relative overflow-hidden`}>
+              {/* Fond décoratif (subtile gradient) */}
+              <div className="absolute inset-0 opacity-5 bg-gradient-to-br from-blue-600 to-indigo-900" />
+              
+              <div className="relative z-10 flex gap-5 items-center">
+                <div className="scale-125">
+                  {getIcon(selectedNotification.type)}
+                </div>
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight leading-tight">
+                    {selectedNotification.title}
+                  </h2>
+                  <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mt-1">
+                    {selectedNotification.type.replace('_', ' ')}
+                  </p>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => setSelectedNotification(null)}
+                className="relative z-10 p-2 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-full transition-all hover:rotate-90"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Corps du Modal */}
+            <div className="p-8 pt-2 space-y-6">
+              <div className="bg-slate-50 rounded-3xl p-6 border border-slate-100 italic text-slate-700 leading-relaxed font-medium">
+                "{selectedNotification.message}"
+              </div>
+
+              <div className="flex items-center justify-between text-xs font-bold text-slate-400">
+                  <span className="flex items-center gap-1.5 capitalize">
+                    <Check size={14} className={selectedNotification.read ? "text-green-500" : "text-gray-300"} />
+                    {selectedNotification.read ? "Lue" : "Non lue"}
+                  </span>
+                  <span>
+                    {formatDistanceToNow(new Date(selectedNotification.created_at), { addSuffix: true, locale: fr })}
+                  </span>
+              </div>
+
+              <div className="pt-4 border-t border-slate-50 flex gap-3">
+                {selectedNotification.link && (
+                  <Link 
+                    href={selectedNotification.link}
+                    onClick={() => setSelectedNotification(null)}
+                    className="flex-1 py-4 bg-[#1152d4] text-white rounded-2xl font-black text-sm flex items-center justify-center gap-2 shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all uppercase tracking-wider"
+                  >
+                    <ExternalLink size={18} />
+                    Voir les détails
+                  </Link>
+                )}
+                <button 
+                  onClick={() => setSelectedNotification(null)}
+                  className={`py-4 px-8 border-2 border-slate-100 text-slate-900 rounded-2xl font-black text-sm hover:bg-slate-50 transition-all uppercase tracking-wider ${!selectedNotification.link ? 'w-full' : ''}`}
+                >
+                  Fermer
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
