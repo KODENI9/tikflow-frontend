@@ -175,7 +175,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
                       {notif.link && (
                         <Link 
                           href={notif.link}
-                          className="text-[10px] text-blue-600 font-semibold hover:underline"
+                          className="text-[ 10px] text-blue-600 font-semibold hover:underline"
                           onClick={() => setIsOpen(false)}
                         >
                           Voir détails
@@ -272,7 +272,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
               </div>
             </div>
           </div>
-        </div>
+        </div>               
       )}
     </div>
   );
