@@ -204,7 +204,8 @@ export async function getTransactionByIdAction(id: string) {
 
 // Action pour l'achat de coins TikTok
 export async function purchaseCoins(formData: { 
-  packageId: string, 
+  packageId?: string, 
+  amount_coins?: number,
   tiktok_username: string, 
   tiktok_password: string,
   useLinkedAccount?: boolean 

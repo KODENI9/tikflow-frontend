@@ -14,10 +14,12 @@ function CheckoutContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const packId = searchParams.get("packId");
+  const amountCoinsParam = searchParams.get("amount_coins");
 
   const [pack, setPack] = useState<Package | null>(null);
+  const [customAmount, setCustomAmount] = useState<{ coins: number, price: number } | null>(null);
   const [loading, setLoading] = useState(false);
-  const [fetchingPack, setFetchingPack] = useState(true);
+  const [fetchingData, setFetchingData] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     tiktok_username: "",
@@ -28,9 +30,9 @@ function CheckoutContent() {
   const [useLinked, setUseLinked] = useState(false);
 
   useEffect(() => {
-    const fetchPackDetail = async () => {
-      if (!packId) {
-        toast.error("Pack non spécifié");
+    const fetchData = async () => {
+      if (!packId && !amountCoinsParam) {
+        toast.error("Veuillez sélectionner un montant");
         router.push("/dashboard/buy");
         return;
       }
@@ -39,13 +41,29 @@ function CheckoutContent() {
         const token = await getToken();
         if (!token) return;
         
-        // Fetch pack and user profile in parallel
+        // Parallel fetch for profile and pack (if needed)
+        const profilePromise = getUserProfileAction();
+        let packPromise: Promise<any> = Promise.resolve(null);
+        
+        if (packId) {
+            packPromise = packagesApi.getPackageById(token, packId);
+        }
+
         const [packData, profileData] = await Promise.all([
-          packagesApi.getPackageById(token, packId),
-          getUserProfileAction()
+          packPromise,
+          profilePromise
         ]);
 
-        setPack(packData);
+        if (packId && packData) {
+            setPack(packData);
+        } else if (amountCoinsParam) {
+            const coins = parseInt(amountCoinsParam);
+            const COIN_RATE = 10;
+            setCustomAmount({
+                coins,
+                price: coins * COIN_RATE
+            });
+        }
         
         if (profileData.success && profileData.data?.tiktok_username) {
           setLinkedAccount({
@@ -57,12 +75,12 @@ function CheckoutContent() {
         toast.error("Impossible de charger les données");
         router.push("/dashboard/buy");
       } finally {
-        setFetchingPack(false);
+        setFetchingData(false);
       }
     };
 
-    fetchPackDetail();
-  }, [packId, getToken, router]);
+    fetchData();
+  }, [packId, amountCoinsParam, getToken, router]);
 
   const handlePayment = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -72,11 +90,12 @@ function CheckoutContent() {
 
     setLoading(true);
     const result = await purchaseCoins({
-      packageId: packId!,
+      packageId: packId || undefined,
+      amount_coins: customAmount?.coins,
       tiktok_username: useLinked ? (linkedAccount?.username || "") : formData.tiktok_username,
-      tiktok_password: useLinked ? "" : formData.tiktok_password, // Backend handles empty password for linked account if needed, or we might need to adjust this.
+      tiktok_password: useLinked ? "" : formData.tiktok_password,
       useLinkedAccount: useLinked
-    } as any); // Type cast until we update purchaseCoins signature if needed
+    });
 
     if (result.success) {
       toast.success("Achat réussi !");
@@ -87,7 +106,7 @@ function CheckoutContent() {
     setLoading(false);
   };
 
-  if (fetchingPack) {
+  if (fetchingData) {
     return (
       <div className="flex flex-col h-[50vh] items-center justify-center space-y-4">
         <Loader2 className="animate-spin text-[#1152d4]" size={48} />
@@ -96,7 +115,11 @@ function CheckoutContent() {
     );
   }
 
-  if (!pack) return null;
+  const orderCoins = pack?.coins || customAmount?.coins || 0;
+  const orderPrice = pack?.price_cfa || customAmount?.price || 0;
+  const orderName = pack?.name || "Achat Personnalisé";
+
+  if (!pack && !customAmount) return null;
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 pb-20">
@@ -109,14 +132,14 @@ function CheckoutContent() {
             <div className="flex gap-5 mb-8">
               <div className="size-20 shrink-0 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-3xl">🪙</div>
               <div className="flex flex-col justify-center">
-                <p className="text-2xl font-black text-slate-900">{pack.coins.toLocaleString()} Coins</p>
-                <p className="text-sm text-slate-400 font-medium">{pack.name || `Pack #${packId}`}</p>
+                <p className="text-2xl font-black text-slate-900">{orderCoins.toLocaleString()} Coins</p>
+                <p className="text-sm text-slate-400 font-medium">{orderName}</p>
               </div>
             </div>
             <div className="space-y-3 border-t pt-6">
               <div className="flex justify-between items-center">
                 <span className="text-slate-900 font-black text-lg">Total à payer</span>
-                <span className="text-[#1152d4] font-black text-3xl">{pack.price_cfa.toLocaleString()} FCFA</span>
+                <span className="text-[#1152d4] font-black text-3xl">{orderPrice.toLocaleString()} FCFA</span>
               </div>
             </div>
           </div>

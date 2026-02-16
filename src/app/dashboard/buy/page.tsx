@@ -189,6 +189,9 @@ export default function BuyCoinsPage() {
               </div>
             );
           })}
+
+          {/* CARTE CUSTOM */}
+          <CustomPackageCard />
         </div>
       )}
 
@@ -205,6 +208,75 @@ export default function BuyCoinsPage() {
             Les coins sont crédités sur votre compte TikTok immédiatement après
             le paiement.
           </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CustomPackageCard() {
+  const [customCoins, setCustomCoins] = useState<number | "">("");
+  const COIN_RATE = 10;
+  const MIN_COINS = 30;
+
+  const coins = typeof customCoins === "number" ? customCoins : 0;
+  const price = coins * COIN_RATE;
+  const isValid = coins >= MIN_COINS;
+
+  return (
+    <div className="group relative bg-white rounded-3xl p-6 border-2 border-dashed border-gray-200 transition-all duration-300 hover:border-[#1152d4]/50 shadow-sm">
+      <div className="flex flex-col items-center text-center space-y-4">
+        {/* Icône Custom */}
+        <div className="size-20 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-gray-400 shadow-inner group-hover:scale-110 transition-transform">
+          <Diamond size={36} />
+        </div>
+
+        <div>
+          <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">
+            Montant Personnalisé
+          </h3>
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+            À partir de {MIN_COINS} coins
+          </p>
+        </div>
+
+        <div className="w-full space-y-3 pt-2">
+            <div className="relative">
+                <input 
+                    type="number"
+                    placeholder="Ex: 50"
+                    className="w-full py-3 px-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-center font-black text-2xl focus:border-[#1152d4] focus:ring-0 transition-all"
+                    value={customCoins}
+                    onChange={(e) => {
+                        const val = e.target.value === "" ? "" : parseInt(e.target.value);
+                        setCustomCoins(val);
+                    }}
+                />
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-400">COINS</span>
+            </div>
+
+            {isValid && (
+                <div className="flex justify-between items-center px-2 animate-in fade-in slide-in-from-top-1">
+                    <span className="text-xs font-bold text-slate-400 italic">Total estimé</span>
+                    <span className="text-lg font-black text-[#1152d4]">{price.toLocaleString()} FCFA</span>
+                </div>
+            )}
+        </div>
+
+        {/* Bouton d'Achat */}
+        <div className="w-full pt-4 border-t border-gray-50">
+            <Link
+                href={isValid ? `/dashboard/buy/checkout?amount_coins=${coins}` : "#"}
+                onClick={(e) => !isValid && e.preventDefault()}
+                className={`w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all ${
+                    isValid 
+                    ? "bg-gray-900 text-white hover:bg-gray-800 shadow-lg" 
+                    : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                }`}
+            >
+                <ShoppingCart size={18} />
+                Acheter
+            </Link>
         </div>
       </div>
     </div>
