@@ -32,7 +32,7 @@ const ProductShowcase = () => {
             <div className="container-v2">
                 <div className="flex flex-col lg:flex-row gap-20">
                     <div className="lg:w-1/3 space-y-6">
-                        <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-tikflow-dark">
+                        <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">
                             Built for scale. <br />
                             <span className="text-tikflow-slate">Trusted by thousands.</span>
                         </h2>
@@ -44,10 +44,10 @@ const ProductShowcase = () => {
                     <div className="lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-8">
                         {features.map((f, i) => (
                             <div key={i} className="card-v2 group">
-                                <div className="size-12 rounded-xl bg-slate-50 flex items-center justify-center text-tikflow-dark mb-6 group-hover:bg-tikflow-dark group-hover:text-white transition-colors">
+                                <div className="size-12 rounded-xl bg-foreground/5 flex items-center justify-center text-foreground mb-6 group-hover:bg-foreground group-hover:text-background transition-colors">
                                     {f.icon}
                                 </div>
-                                <h3 className="text-xl font-bold text-tikflow-dark mb-3">{f.title}</h3>
+                                <h3 className="text-xl font-bold text-foreground mb-3">{f.title}</h3>
                                 <p className="text-tikflow-slate font-medium leading-relaxed">
                                     {f.desc}
                                 </p>

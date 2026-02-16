@@ -35,6 +35,8 @@
   --color-tikflow-accent: var(--tikflow-accent);
   --color-tikflow-slate: var(--tikflow-slate);
   --color-card-bg: var(--card-bg);
+  --color-glass-bg: var(--glass-bg);
+  --color-glass-border: var(--glass-border);
 }
 
 @layer base {
