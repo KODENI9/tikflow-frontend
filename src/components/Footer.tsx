@@ -1,70 +1,55 @@
 'use client';
 
 import React from 'react';
-import { Currency, Globe, Instagram, Facebook } from 'lucide-react';
 import Link from 'next/link';
 
 const Footer = () => {
     return (
-        <footer className="pt-24 pb-12 bg-white border-t border-slate-100">
-            <div className="container-custom">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-24">
-                    <div className="space-y-6">
-                        <div className="flex items-center gap-2.5">
-                            <div className="size-8 flex items-center justify-center rounded-lg bg-gradient-to-br from-[#1152d4] to-[#702bff] text-white">
-                                <Currency size={18} />
-                            </div>
-                            <span className="text-xl font-black tracking-tight text-[#111318]">TikFlow.</span>
+        <footer className="py-24 bg-[#fcfcfd] border-t border-slate-100">
+            <div className="container-v2 text-center md:text-left">
+                <div className="flex flex-col md:flex-row justify-between items-start gap-16 mb-24">
+                    <div className="max-w-xs space-y-6">
+                        <div className="flex items-center gap-2">
+                             <div className="size-8 flex items-center justify-center rounded-lg bg-tikflow-dark text-white font-bold">T</div>
+                             <span className="text-xl font-bold tracking-tight text-tikflow-dark uppercase">TikFlow</span>
                         </div>
-                        <p className="text-slate-500 font-medium leading-relaxed max-w-[240px]">
-                            Le n°1 pour les TikTokers de Côte d'Ivoire, Sénégal et Togo.
+                        <p className="text-tikflow-slate font-medium leading-relaxed">
+                            The infrastructure for TikTok creators in Africa. Empowering live-streamers with instant liquidity.
                         </p>
-                        <div className="flex items-center gap-4">
-                            <a href="#" className="p-2 bg-slate-50 rounded-lg text-slate-400 hover:text-[#1152d4] transition-colors"><Globe size={18} /></a>
-                            <a href="#" className="p-2 bg-slate-50 rounded-lg text-slate-400 hover:text-[#1152d4] transition-colors"><Instagram size={18} /></a>
-                            <a href="#" className="p-2 bg-slate-50 rounded-lg text-slate-400 hover:text-[#1152d4] transition-colors"><Facebook size={18} /></a>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-16">
+                        <div className="space-y-6">
+                            <h4 className="text-[13px] font-bold uppercase tracking-widest text-tikflow-dark">Product</h4>
+                            <ul className="space-y-4">
+                                <li><Link href="#" className="text-tikflow-slate font-medium hover:text-tikflow-dark">Pricing</Link></li>
+                                <li><Link href="#" className="text-tikflow-slate font-medium hover:text-tikflow-dark">API</Link></li>
+                                <li><Link href="#" className="text-tikflow-slate font-medium hover:text-tikflow-dark">Support</Link></li>
+                            </ul>
                         </div>
-                    </div>
-
-                    <div className="space-y-6">
-                        <h4 className="text-[14px] font-black uppercase tracking-widest text-[#111318]">Navigation</h4>
-                        <ul className="space-y-4">
-                            <li><Link href="/" className="text-slate-500 font-medium hover:text-[#1152d4] transition-colors">Acheter des Coins</Link></li>
-                            <li><Link href="#" className="text-slate-500 font-medium hover:text-[#1152d4] transition-colors">Devenir Partenaire</Link></li>
-                            <li><Link href="#" className="text-slate-500 font-medium hover:text-[#1152d4] transition-colors">Tarifs Influenceurs</Link></li>
-                        </ul>
-                    </div>
-
-                    <div className="space-y-6">
-                        <h4 className="text-[14px] font-black uppercase tracking-widest text-[#111318]">Légal</h4>
-                        <ul className="space-y-4">
-                            <li><Link href="#" className="text-slate-500 font-medium hover:text-[#1152d4] transition-colors">Conditions Générales</Link></li>
-                            <li><Link href="#" className="text-slate-500 font-medium hover:text-[#1152d4] transition-colors">Confidentialité</Link></li>
-                            <li><Link href="#" className="text-slate-500 font-medium hover:text-[#1152d4] transition-colors">Mentions Légales</Link></li>
-                        </ul>
-                    </div>
-
-                    <div className="space-y-6">
-                        <h4 className="text-[14px] font-black uppercase tracking-widest text-[#111318]">Contact</h4>
-                        <ul className="space-y-4 text-slate-500 font-medium">
-                            <li className="flex items-start gap-3 italic">
-                                Lomé, Togo. Quartier Administratif.
-                            </li>
-                            <li>hello@tikflow.africa</li>
-                            <li>+228 90 00 00 00</li>
-                        </ul>
+                        <div className="space-y-6">
+                            <h4 className="text-[13px] font-bold uppercase tracking-widest text-tikflow-dark">Legal</h4>
+                            <ul className="space-y-4">
+                                <li><Link href="#" className="text-tikflow-slate font-medium hover:text-tikflow-dark">Terms</Link></li>
+                                <li><Link href="#" className="text-tikflow-slate font-medium hover:text-tikflow-dark">Privacy</Link></li>
+                                <li><Link href="#" className="text-tikflow-slate font-medium hover:text-tikflow-dark">License</Link></li>
+                            </ul>
+                        </div>
+                        <div className="space-y-6 col-span-2 md:col-span-1">
+                            <h4 className="text-[13px] font-bold uppercase tracking-widest text-tikflow-dark">Contact</h4>
+                            <p className="text-tikflow-slate font-medium">hello@tikflow.africa</p>
+                        </div>
                     </div>
                 </div>
 
-                <div className="pt-12 border-t border-slate-50 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <p className="text-[12px] font-bold text-slate-400 uppercase tracking-widest">
-                        © 2024 TIKFLOW TECHNOLOGIES. TOUS DROITS RÉSERVÉS.
+                <div className="pt-12 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">
+                        © 2024 TIKFLOW TECHNOLOGIES. BUILT FOR AFRICA.
                     </p>
-                    <div className="flex gap-4 grayscale opacity-40">
-                        {/* payment placeholder logos */}
-                        <div className="h-6 w-10 bg-slate-200 rounded"></div>
-                        <div className="h-6 w-10 bg-slate-200 rounded"></div>
-                        <div className="h-6 w-10 bg-slate-200 rounded"></div>
+                    <div className="flex gap-8 text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">
+                        <a href="#" className="hover:text-tikflow-dark">Twitter</a>
+                        <a href="#" className="hover:text-tikflow-dark">Instagram</a>
+                        <a href="#" className="hover:text-tikflow-dark">LinkedIn</a>
                     </div>
                 </div>
             </div>
