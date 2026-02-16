@@ -217,6 +217,77 @@ export default function AdminUsers() {
           </div>
         )}
       </div>
+
+      {/* MODAL DE NOTIFICATION */}
+      {showNotifyModal && selectedUser && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div 
+            className="bg-card-bg rounded-[2.5rem] w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 border border-glass-border"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-8 pb-4 flex justify-between items-center bg-foreground/5">
+              <div>
+                <h3 className="text-xl font-black text-foreground tracking-tight">Envoyer un Message</h3>
+                <p className="text-xs font-bold text-tikflow-slate mt-1">Destinataire: <span className="text-tikflow-primary">{selectedUser.fullname}</span></p>
+              </div>
+              <button 
+                onClick={() => setShowNotifyModal(false)}
+                className="p-2 hover:bg-foreground/10 text-tikflow-slate rounded-full transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSendNotification} className="p-8 space-y-5">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-tikflow-slate uppercase tracking-widest ml-1">Titre de la notification</label>
+                <input 
+                  required
+                  placeholder="Ex: Mise à jour de votre compte"
+                  value={notifForm.title}
+                  onChange={(e) => setNotifForm({...notifForm, title: e.target.value})}
+                  className="w-full bg-foreground/5 border border-glass-border rounded-2xl p-4 text-sm font-bold focus:ring-4 ring-tikflow-primary/10 transition-all outline-none text-foreground"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-tikflow-slate uppercase tracking-widest ml-1">Message principal</label>
+                <textarea 
+                  required
+                  rows={4}
+                  placeholder="Écrivez votre message ici..."
+                  value={notifForm.message}
+                  onChange={(e) => setNotifForm({...notifForm, message: e.target.value})}
+                  className="w-full bg-foreground/5 border border-glass-border rounded-2xl p-4 text-sm font-medium focus:ring-4 ring-tikflow-primary/10 transition-all outline-none text-foreground resize-none"
+                />
+              </div>
+
+              <div className="pt-4 flex gap-3">
+                <button 
+                  type="button"
+                  onClick={() => setShowNotifyModal(false)}
+                  className="flex-1 py-4 border-2 border-glass-border text-foreground rounded-2xl font-black text-sm hover:bg-foreground/5 transition-all uppercase tracking-wider"
+                >
+                  Annuler
+                </button>
+                <button 
+                  disabled={sending}
+                  className="flex-[2] py-4 bg-tikflow-primary text-white rounded-2xl font-black text-sm flex items-center justify-center gap-2 shadow-xl shadow-tikflow-primary/20 hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-wider disabled:opacity-50"
+                >
+                  {sending ? (
+                    <RefreshCcw className="animate-spin" size={18} />
+                  ) : (
+                    <>
+                      <Send size={18} />
+                      Envoyer le message
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
