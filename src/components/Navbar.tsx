@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Currency } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -39,6 +40,7 @@ const Navbar = () => {
                 </div>
 
                 <div className="flex items-center gap-4">
+                    <ThemeToggle />
                     <Link href="/sign-in" className="hidden sm:block text-[14px] font-semibold text-tikflow-dark hover:opacity-70 px-4">
                         Login
                     </Link>

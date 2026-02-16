@@ -4,7 +4,7 @@ import React from 'react';
 
 const TrustSection = () => {
     return (
-        <section className="py-32 bg-white">
+        <section className="py-32 bg-white dark:bg-tikflow-dark">
             <div className="container-v2">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-16 border-y border-slate-50 py-24">
                     <div className="space-y-4">

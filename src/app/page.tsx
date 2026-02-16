@@ -8,7 +8,7 @@ import Footer from '@/components/Footer';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-tikflow-dark">
       <Navbar />
       
       <main className="flex-1">

@@ -14,6 +14,20 @@
   --glass-border: rgba(0, 0, 0, 0.05);
 }
 
+.dark {
+  --background: #0a0b10;
+  --foreground: #f8fafc;
+
+  --tikflow-dark: #f8fafc;
+  --tikflow-slate: #94a3b8;
+
+  --glass-bg: rgba(10, 11, 16, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.05);
+
+  /* Subtle card backgrounds for dark mode */
+  --card-bg: #111218;
+}
+
 @theme {
   --color-tikflow-dark: var(--tikflow-dark);
   --color-tikflow-primary: var(--tikflow-primary);
@@ -28,6 +42,7 @@
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     letter-spacing: -0.01em;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   h1,
@@ -50,7 +65,7 @@
 
   .btn-v2-primary {
     background-color: var(--tikflow-dark);
-    color: #ffffff;
+    color: var(--background);
     font-weight: 600;
     font-size: 0.9375rem;
     border-radius: 0.5rem;
@@ -83,13 +98,13 @@
   }
 
   .btn-v2-outline:hover {
-    background-color: #f8fafc;
+    background-color: var(--card-bg);
     border-color: rgba(10, 11, 16, 0.2);
   }
 
   .card-v2 {
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    background: var(--background);
+    border: 1px solid var(--glass-border);
     border-radius: 1rem;
     padding: 2rem;
     transition: all 0.3s ease;

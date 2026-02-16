@@ -5,12 +5,12 @@ import Link from 'next/link';
 
 const Footer = () => {
     return (
-        <footer className="py-24 bg-[#fcfcfd] border-t border-slate-100">
+        <footer className="py-24 bg-[#fcfcfd] dark:bg-[#0e0f15] border-t border-slate-100 dark:border-slate-800">
             <div className="container-v2 text-center md:text-left">
                 <div className="flex flex-col md:flex-row justify-between items-start gap-16 mb-24">
                     <div className="max-w-xs space-y-6">
                         <div className="flex items-center gap-2">
-                             <div className="size-8 flex items-center justify-center rounded-lg bg-tikflow-dark text-white font-bold">T</div>
+                             <div className="size-8 flex items-center justify-center rounded-lg bg-tikflow-dark text-white dark:text-tikflow-dark dark:bg-white font-bold">T</div>
                              <span className="text-xl font-bold tracking-tight text-tikflow-dark uppercase">TikFlow</span>
                         </div>
                         <p className="text-tikflow-slate font-medium leading-relaxed">

@@ -28,7 +28,7 @@ const ProductShowcase = () => {
     ];
 
     return (
-        <section className="py-32 bg-[#fcfcfd]">
+        <section className="py-32 bg-[#fcfcfd] dark:bg-[#0e0f15]">
             <div className="container-v2">
                 <div className="flex flex-col lg:flex-row gap-20">
                     <div className="lg:w-1/3 space-y-6">

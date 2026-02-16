@@ -19,6 +19,7 @@ export const metadata = {
 }
 
 import { Toaster } from "sonner";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 export default function RootLayout({
   children,
@@ -27,12 +28,19 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider dynamic>
-    <html lang="fr">
+    <html lang="fr" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Toaster position="top-right" richColors />
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Toaster position="top-right" richColors />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
     </ClerkProvider>
