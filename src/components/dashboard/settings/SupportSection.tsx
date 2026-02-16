@@ -6,7 +6,7 @@ import { recipientsApi } from "@/lib/api";
 
 export default function SupportSection() {
   const { getToken, isLoaded } = useAuth();
-  const [supportPhone, setSupportPhone] = useState("+228 90 51 32 79");
+  const [supportPhone, setSupportPhone] = useState("");
 
   useEffect(() => {
     const fetchSettings = async () => {

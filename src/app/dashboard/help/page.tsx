@@ -25,7 +25,7 @@ import Link from "next/link";
 
 export default function HelpPage() {
     const { getToken, isLoaded } = useAuth();
-    const [supportPhone, setSupportPhone] = useState("+228 90 51 32 79");
+    const [supportPhone, setSupportPhone] = useState("");
 
     useEffect(() => {
         const fetchSettings = async () => {

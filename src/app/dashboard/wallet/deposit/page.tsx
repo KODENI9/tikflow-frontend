@@ -29,7 +29,7 @@ export default function DepositPage() {
   const [loading, setLoading] = useState(false);
   const [activeRecipients, setActiveRecipients] = useState<Recipient[]>([]);
   const [fetchingRecipients, setFetchingRecipients] = useState(true);
-  const [supportPhone, setSupportPhone] = useState("+228 90 51 32 79");
+  const [supportPhone, setSupportPhone] = useState("");
 
   useEffect(() => {
     const fetchSettings = async () => {

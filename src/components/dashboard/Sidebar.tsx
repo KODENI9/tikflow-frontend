@@ -34,7 +34,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const { user, isLoaded: userLoaded } = useUser();
   const { getToken, isLoaded: authLoaded } = useAuth();
   const { signOut } = useClerk();
-  const [supportPhone, setSupportPhone] = useState("+228 90 51 32 79");
+  const [supportPhone, setSupportPhone] = useState("");
 
   useEffect(() => {
     const fetchSettings = async () => {
