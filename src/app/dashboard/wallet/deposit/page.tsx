@@ -44,8 +44,8 @@ export default function DepositPage() {
         ]);
 
         setActiveRecipients(recips || []);
-        if (settings?.data?.support_phone) {
-          setSupportPhone(settings.data.support_phone);
+        if (settings?.support_phone) {
+          setSupportPhone(settings.support_phone);
         }
       } catch (error) {
         console.error("Error fetching deposit data:", error);

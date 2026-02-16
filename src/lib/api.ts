@@ -137,33 +137,24 @@ export const adminApi = {
     }),
 
   // 13. SETTINGS GLOBAUX
+  // 13. SETTINGS GLOBAUX
   getSettings: (token: string) =>
-    fetchApi<{ success: boolean; data: { support_phone: string } }>(`${ADMIN_BASE}/settings`, token),
+    fetchApi<{ support_phone: string }>(`${ADMIN_BASE}/settings`, token),
 
   updateSettings: (token: string, data: any) =>
     fetchApi<{ success: boolean }>(`${ADMIN_BASE}/settings`, token, {
-      method: 'PATCH',
+      method: "PATCH",
       body: JSON.stringify(data),
     }),
 };
 
-export const packagesApi = {
-  getPackages: (token: string) =>
-    fetchApi<Package[]>(`${ORDERS_BASE}/packages`, token),
-  getPackageById: (token: string, id: string) =>
-    fetchApi<Package>(`${ORDERS_BASE}/packages/${id}`, token),
-  updatePackage: (token: string, id: string, updates: Partial<Package>) =>
-    fetchApi<{ success: boolean }>(`${ADMIN_BASE}/packages/${id}`, token, {
-      method: "PATCH",
-      body: JSON.stringify(updates),
-    }),
-};
-
 export const recipientsApi = {
+  getRecipients: (token: string) =>
+    fetchApi<Recipient[]>(`${ADMIN_BASE}/recipients`, token),
   getActiveRecipients: (token: string) =>
     fetchApi<Recipient[]>(`${ORDERS_BASE}/recipients?active=true`, token),
   getGlobalSettings: (token: string) =>
-    fetchApi<{ success: boolean; data: { support_phone: string } }>(`${ORDERS_BASE}/app-settings`, token),
+    fetchApi<{ support_phone: string }>(`${ORDERS_BASE}/app-settings`, token),
 };
 
 export const notificationApi = {

@@ -69,7 +69,7 @@ export default function SettingsAuditPage() {
       setPackages(pkgs || []);
       setLogs(payments || []);
       setRecipients(recips || []);
-      setGlobalSettings(settings?.data || { support_phone: "" });
+      setGlobalSettings(settings || { support_phone: "" });
     } catch (error) {
       console.error("Error fetching settings data:", error);
     } finally {

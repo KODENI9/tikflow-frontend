@@ -43,8 +43,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         const token = await getToken();
         if (!token) return;
         const resp = await recipientsApi.getGlobalSettings(token);
-        if (resp?.data?.support_phone) {
-          setSupportPhone(resp.data.support_phone);
+        if (resp?.support_phone) {
+          setSupportPhone(resp.support_phone);
         }
       } catch (error) {
         console.error("Error fetching support phone in Sidebar:", error);
