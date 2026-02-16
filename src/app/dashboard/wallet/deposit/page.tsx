@@ -128,10 +128,9 @@ export default function DepositPage() {
     { id: "flooz", name: "Flooz", color: "bg-green-500", letter: "F" },
     { id: "tmoney", name: "TMoney", color: "bg-yellow-400", letter: "T" },
     { id: "wave", name: "Wave", color: "bg-blue-400", letter: "W" },
-    { id: "moov", name: "Moov", color: "bg-blue-600", letter: "M" },
+    { id: "moov", name: "Moov Money", color: "bg-blue-600", letter: "M" },
     { id: "orange", name: "Orange", color: "bg-orange-500", letter: "OM" },
     { id: "mtn", name: "MTN", color: "bg-yellow-300", letter: "M" },
-    { id: "yas", name: "Yas", color: "bg-red-500", letter: "Y" },
     { id: "skthib", name: "SkThib", color: "bg-slate-700", letter: "S" },
   ];
 

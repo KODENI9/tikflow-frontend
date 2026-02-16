@@ -527,10 +527,9 @@ export default function SettingsAuditPage() {
                   <option value="flooz">Flooz</option>
                   <option value="tmoney">TMoney</option>
                   <option value="wave">Wave</option>
-                  <option value="moov">Moov</option>
+                  <option value="moov">Moov Money</option>
                   <option value="mtn">MTN</option>
                   <option value="orange">Orange</option>
-                  <option value="yas">Yas</option>
                   <option value="skthib">SkThib</option>
                 </select>
               </div>
@@ -586,10 +585,9 @@ export default function SettingsAuditPage() {
                   <option value="flooz">Flooz</option>
                   <option value="tmoney">TMoney</option>
                   <option value="wave">Wave</option>
-                  <option value="moov">Moov</option>
+                  <option value="moov">Moov Money</option>
                   <option value="mtn">MTN</option>
                   <option value="orange">Orange</option>
-                  <option value="yas">Yas</option>
                   <option value="skthib">SkThib</option>
                 </select>
               </div>

@@ -149,7 +149,7 @@ export default function WalletManagementPage() {
             <div className="space-y-6">
               {[
                 { name: "TMoney (Togo)", sub: "AGGREGATED VOLUME", balance: methodVolumes['tmoney'] || 0, color: "text-yellow-600", bg: "bg-yellow-500", width: "w-[85%]" },
-                { name: "Flooz (Moov)", sub: "AGGREGATED VOLUME", balance: methodVolumes['flooz'] || 0, color: "text-blue-600", bg: "bg-blue-500", width: "w-[65%]" },
+                { name: "Flooz (Moov Money)", sub: "AGGREGATED VOLUME", balance: methodVolumes['flooz'] || 0, color: "text-blue-600", bg: "bg-blue-500", width: "w-[65%]" },
                 // { name: "MTN Mobile Money", sub: "CARRIER WALLET", balance: methodVolumes['mtn'] || 0, color: "text-green-600", bg: "bg-green-500", width: "w-[30%]" },
               ].map((wallet, i) => (
                 <div key={i} className="space-y-2">
