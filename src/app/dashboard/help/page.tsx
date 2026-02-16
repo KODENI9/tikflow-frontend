@@ -1,21 +1,50 @@
 "use client";
 
-import { 
-  BookOpen, 
-  Wallet, 
-  ShoppingBag, 
-  AtSign, 
-  History, 
-  Play, 
-  CheckCircle2, 
+import React, { useState, useEffect } from "react";
+import {
+  BookOpen,
+  Wallet,
+  ShoppingBag,
+  AtSign,
+  History,
+  Play,
+  CheckCircle2,
   ArrowRight,
   ShieldCheck,
-  Zap
+  Zap,
+  MessageCircle,
+  Phone,
+  ChevronRight,
+  Info,
+  HelpCircle,
+  Video
 } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
+import { recipientsApi } from "@/lib/api";
 import Link from "next/link";
 
 export default function HelpPage() {
-  const tutoriels = [
+    const { getToken, isLoaded } = useAuth();
+    const [supportPhone, setSupportPhone] = useState("+228 90 51 32 79");
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            if (!isLoaded) return;
+            try {
+                const token = await getToken();
+                if (!token) return;
+                const resp = await recipientsApi.getGlobalSettings(token);
+                if (resp?.data?.support_phone) {
+                    setSupportPhone(resp.data.support_phone);
+                }
+            } catch (error) {
+                console.error("Error fetching settings in HelpPage:", error);
+            }
+        };
+        fetchSettings();
+    }, [isLoaded, getToken]);
+
+  const tutorials = [
     {
       title: "Recharger votre portefeuille",
       description: "Apprenez comment ajouter des fonds à votre compte TikFlow via Mobile Money.",
@@ -70,7 +99,6 @@ export default function HelpPage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-12 pb-20">
-      {/* Header */}
       <div className="text-center space-y-4">
         <div className="inline-flex items-center justify-center size-16 rounded-3xl bg-blue-600 text-white shadow-xl shadow-blue-200 mb-2">
           <BookOpen size={32} />
@@ -81,7 +109,6 @@ export default function HelpPage() {
         </p>
       </div>
 
-      {/* Vidéos (Placeholders) */}
       <section className="space-y-6">
         <h3 className="text-xl font-black text-slate-900 flex items-center gap-3">
           <Zap className="text-yellow-500 fill-yellow-500" size={24} />
@@ -105,9 +132,8 @@ export default function HelpPage() {
         </div>
       </section>
 
-      {/* Tutoriels Détaillés */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {tutoriels.map((tut, idx) => (
+        {tutorials.map((tut, idx) => (
           <div key={idx} className="bg-white rounded-[2.5rem] p-8 shadow-xl shadow-slate-100/50 border border-slate-50 hover:border-blue-100 transition-all flex flex-col">
             <div className="flex items-start gap-4 mb-6">
               <div className={`p-4 rounded-2xl ${tut.color} shrink-0`}>
@@ -139,7 +165,6 @@ export default function HelpPage() {
         ))}
       </div>
 
-      {/* Garantie Sécurité */}
       <div className="bg-[#1152d4] rounded-[2.5rem] p-8 md:p-12 text-white relative overflow-hidden shadow-2xl shadow-blue-200">
         <div className="absolute right-0 bottom-0 size-64 bg-white/10 rounded-full blur-3xl -mb-32 -mr-32"></div>
         <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
@@ -150,12 +175,24 @@ export default function HelpPage() {
             <h3 className="text-2xl font-black">Besoin de plus d'assistance ?</h3>
             <p className="text-blue-100 font-medium">Notre équipe est disponible 24/7 pour vous accompagner par WhatsApp ou par téléphone.</p>
           </div>
-          <a 
-            href="tel:+22890513279" 
-            className="px-8 py-4 bg-white text-blue-600 rounded-2xl font-black shadow-lg hover:bg-blue-50 transition-colors shrink-0"
-          >
-            Contacter le support
-          </a>
+          <div className="flex flex-col sm:flex-row gap-4">
+              <a 
+                href={`https://wa.me/${supportPhone.replace(/\s+/g, '')}`} 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-8 py-4 bg-emerald-500 text-white rounded-2xl font-black shadow-lg hover:bg-emerald-600 transition-colors flex items-center gap-2"
+              >
+                <MessageCircle size={20} />
+                WhatsApp
+              </a>
+              <a 
+                href={`tel:${supportPhone.replace(/\s+/g, '')}`} 
+                className="px-8 py-4 bg-white text-blue-600 rounded-2xl font-black shadow-lg hover:bg-blue-50 transition-colors flex items-center gap-2"
+              >
+                <Phone size={20} />
+                Appeler
+              </a>
+          </div>
         </div>
       </div>
     </div>

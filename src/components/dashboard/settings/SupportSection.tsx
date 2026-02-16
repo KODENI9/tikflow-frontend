@@ -1,7 +1,30 @@
 "use client";
 import { Headset, MessageCircle, Phone } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useAuth } from "@clerk/nextjs";
+import { recipientsApi } from "@/lib/api";
 
 export default function SupportSection() {
+  const { getToken, isLoaded } = useAuth();
+  const [supportPhone, setSupportPhone] = useState("+228 90 51 32 79");
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      if (!isLoaded) return;
+      try {
+        const token = await getToken();
+        if (!token) return;
+        const resp = await recipientsApi.getGlobalSettings(token);
+        if (resp?.data?.support_phone) {
+          setSupportPhone(resp.data.support_phone);
+        }
+      } catch (error) {
+        console.error("Error fetching settings in SupportSection:", error);
+      }
+    };
+    fetchSettings();
+  }, [isLoaded, getToken]);
+
   return (
     <section className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 bg-gradient-to-br from-white to-blue-50/30">
         <div className="flex items-center gap-4 mb-8">
@@ -22,8 +45,9 @@ export default function SupportSection() {
             </div>
             <p className="text-xs text-slate-500 font-medium">Réponse instantanée pour vos problèmes de recharge ou de coins.</p>
             <a 
-                href="https://wa.me/22890513279" 
+                href={`https://wa.me/${supportPhone.replace(/\s+/g, '')}`}
                 target="_blank"
+                rel="noopener noreferrer"
                 className="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl text-center text-xs font-black uppercase transition-all shadow-md shadow-green-100"
             >
                 Ouvrir WhatsApp
@@ -37,10 +61,10 @@ export default function SupportSection() {
             </div>
             <p className="text-xs text-slate-500 font-medium">Appelez-nous directement pour une assistance vocale personnalisée.</p>
             <a 
-                href="tel:+22870544184" 
+                href={`tel:${supportPhone.replace(/\s+/g, '')}`}
                 className="w-full py-3 bg-slate-900 hover:bg-black text-white rounded-xl text-center text-xs font-black uppercase transition-all shadow-md shadow-slate-100"
             >
-                +228 90 51 32 79
+                {supportPhone}
             </a>
             </div>
         </div>

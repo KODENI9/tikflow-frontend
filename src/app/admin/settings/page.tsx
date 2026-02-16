@@ -48,6 +48,10 @@ export default function SettingsAuditPage() {
   const [editingRecipient, setEditingRecipient] = useState<Recipient | null>(null);
   const [updatingRecipient, setUpdatingRecipient] = useState(false);
 
+  // Global Settings State
+  const [globalSettings, setGlobalSettings] = useState({ support_phone: "" });
+  const [savingSettings, setSavingSettings] = useState(false);
+
   const fetchData = async () => {
     if (!isLoaded) return;
     try {
@@ -55,19 +59,35 @@ export default function SettingsAuditPage() {
       const token = await getToken();
       if (!token) return;
 
-      const [pkgs, payments, recips] = await Promise.all([
+      const [pkgs, payments, recips, settings] = await Promise.all([
         adminApi.getPackages(token),
         adminApi.getReceivedPayments(token),
-        adminApi.getRecipients(token)
+        adminApi.getRecipients(token),
+        adminApi.getSettings(token)
       ]);
       
       setPackages(pkgs || []);
       setLogs(payments || []);
       setRecipients(recips || []);
+      setGlobalSettings(settings?.data || { support_phone: "" });
     } catch (error) {
       console.error("Error fetching settings data:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleUpdateGlobalSettings = async () => {
+    try {
+        setSavingSettings(true);
+        const token = await getToken();
+        if (!token) return;
+        await adminApi.updateSettings(token, globalSettings);
+        toast.success("Paramètres mis à jour !");
+    } catch (error: any) {
+        toast.error(error.message);
+    } finally {
+        setSavingSettings(false);
     }
   };
 
@@ -384,6 +404,36 @@ export default function SettingsAuditPage() {
           </div>
         </div>
       )}
+
+      {/* --- PLATFORM SETTINGS (Support Number, etc.) --- */}
+      <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-8 space-y-6">
+          <div>
+            <h3 className="font-black text-sm text-slate-900 uppercase tracking-wider">Configuration de la Plateforme</h3>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Paramètres globaux visibles par tous les utilisateurs.</p>
+          </div>
+          
+          <div className="max-w-md space-y-4">
+              <div>
+                <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Numéro de Support (WhatsApp / Appel)</label>
+                <div className="flex gap-2">
+                    <input 
+                        placeholder="Ex: +228 90 51 32 79"
+                        value={globalSettings.support_phone}
+                        onChange={e => setGlobalSettings({...globalSettings, support_phone: e.target.value})}
+                        className="flex-1 bg-slate-50 border-none rounded-xl p-3 text-sm font-bold focus:ring-2 ring-blue-500/20"
+                    />
+                    <button 
+                        onClick={handleUpdateGlobalSettings}
+                        disabled={savingSettings}
+                        className="px-6 bg-blue-600 text-white rounded-xl font-black text-[10px] hover:bg-blue-700 transition-all disabled:opacity-50"
+                    >
+                        {savingSettings ? "Enregistrement..." : "Mettre à jour"}
+                    </button>
+                </div>
+                <p className="text-[9px] font-bold text-slate-400 mt-2 italic px-1">Ce numéro sera mis à jour partout sur le site (Sidebar, Aide, Paiement, etc.)</p>
+              </div>
+          </div>
+      </div>
 
       {/* --- PAYMENT RECIPIENTS MANAGEMENT --- */}
       <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">

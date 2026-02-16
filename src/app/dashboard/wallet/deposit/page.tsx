@@ -27,28 +27,36 @@ export default function DepositPage() {
   const [referenceId, setReferenceId] = useState("");
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
-  const [recipients, setRecipients] = useState<Recipient[]>([]);
-  const [recipientsLoading, setRecipientsLoading] = useState(true);
+  const [activeRecipients, setActiveRecipients] = useState<Recipient[]>([]);
+  const [fetchingRecipients, setFetchingRecipients] = useState(true);
+  const [supportPhone, setSupportPhone] = useState("+228 90 51 32 79");
 
   useEffect(() => {
-    const fetchRecipients = async () => {
-      if (!isLoaded) return;
+    const fetchInitialData = async () => {
       try {
-        setRecipientsLoading(true);
+        setFetchingRecipients(true);
         const token = await getToken();
         if (!token) return;
-        const data = await recipientsApi.getActiveRecipients(token);
-        setRecipients(data || []);
+        
+        const [recips, settings] = await Promise.all([
+            recipientsApi.getActiveRecipients(token),
+            recipientsApi.getGlobalSettings(token)
+        ]);
+
+        setActiveRecipients(recips || []);
+        if (settings?.data?.support_phone) {
+          setSupportPhone(settings.data.support_phone);
+        }
       } catch (error) {
-        console.error("Error fetching recipients:", error);
+        console.error("Error fetching deposit data:", error);
       } finally {
-        setRecipientsLoading(false);
+        setFetchingRecipients(false);
       }
     };
-    fetchRecipients();
-  }, [isLoaded, getToken]);
+    fetchInitialData();
+  }, [getToken]);
 
-  const activeRecipient = recipients.find(r => r.operator === selectedProvider);
+  const activeRecipient = activeRecipients.find(r => r.operator === selectedProvider);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -174,7 +182,7 @@ export default function DepositPage() {
 
             <div className="bg-white rounded-2xl p-5 text-slate-900 shadow-lg relative z-10">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                {recipientsLoading ? (
+                {fetchingRecipients ? (
                   <div className="flex items-center gap-4 py-4">
                     <Loader2 className="animate-spin text-blue-600" size={24} />
                     <p className="text-sm font-bold text-slate-400">Chargement des détails de paiement...</p>

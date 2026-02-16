@@ -135,6 +135,16 @@ export const adminApi = {
     fetchApi<{ success: boolean }>(`${ADMIN_BASE}/recipients/${id}`, token, {
       method: 'DELETE',
     }),
+
+  // 13. SETTINGS GLOBAUX
+  getSettings: (token: string) =>
+    fetchApi<{ success: boolean; data: { support_phone: string } }>(`${ADMIN_BASE}/settings`, token),
+
+  updateSettings: (token: string, data: any) =>
+    fetchApi<{ success: boolean }>(`${ADMIN_BASE}/settings`, token, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
 };
 
 export const packagesApi = {
@@ -152,6 +162,8 @@ export const packagesApi = {
 export const recipientsApi = {
   getActiveRecipients: (token: string) =>
     fetchApi<Recipient[]>(`${ORDERS_BASE}/recipients?active=true`, token),
+  getGlobalSettings: (token: string) =>
+    fetchApi<{ success: boolean; data: { support_phone: string } }>(`${ORDERS_BASE}/app-settings`, token),
 };
 
 export const notificationApi = {
