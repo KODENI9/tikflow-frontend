@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Wallet, History, Settings, ShoppingBag, Landmark, X, Headset } from "lucide-react";
+import { LayoutDashboard, Wallet, History, Settings, ShoppingBag, Landmark, X, Headset, BookOpen } from "lucide-react";
 import { UserButton, useUser } from "@clerk/nextjs";
 
 const menuItems = [
@@ -9,6 +9,7 @@ const menuItems = [
   { name: "Acheter des coins", icon: ShoppingBag, href: "/dashboard/buy" },
   { name: "Mon Portefeuille", icon: Wallet, href: "/dashboard/wallet" },
   { name: "Historique", icon: History, href: "/dashboard/history" },
+  { name: "Aide & Tutoriels", icon: BookOpen, href: "/dashboard/help" },
   { name: "Paramètres", icon: Settings, href: "/dashboard/settings" },
 ];
 
