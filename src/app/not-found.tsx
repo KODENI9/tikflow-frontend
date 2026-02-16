@@ -6,9 +6,9 @@ import { ArrowLeft, Home, HelpCircle } from 'lucide-react';
 
 export default function NotFound() {
     return (
-        <div className="min-h-screen bg-white dark:bg-tikflow-dark flex flex-col items-center justify-center p-6 text-center">
+        <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center">
             {/* Background Decorative element */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-slate-50 dark:bg-slate-900/20 rounded-full blur-[120px] -z-10"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-slate-50 dark:bg-slate-900/10 rounded-full blur-[120px] -z-10"></div>
             
             <div className="max-w-xl w-full space-y-12">
                 <div className="space-y-4">

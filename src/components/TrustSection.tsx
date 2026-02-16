@@ -4,7 +4,7 @@ import React from 'react';
 
 const TrustSection = () => {
     return (
-        <section className="py-32 bg-white dark:bg-tikflow-dark">
+        <section className="py-32 bg-background">
             <div className="container-v2">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-16 border-y border-slate-50 py-24">
                     <div className="space-y-4">
@@ -21,7 +21,7 @@ const TrustSection = () => {
                     </div>
                 </div>
 
-                <div className="mt-24 max-w-4xl mx-auto bg-tikflow-dark rounded-[2.5rem] p-12 md:p-20 text-white flex flex-col md:flex-row items-center gap-12">
+                <div className="mt-24 max-w-4xl mx-auto bg-[#0a0b10] dark:bg-[#111218] rounded-[2.5rem] p-12 md:p-20 text-white flex flex-col md:flex-row items-center gap-12 border border-white/5 dark:border-white/10">
                     <div className="flex-1 space-y-6">
                         <h2 className="text-4xl font-bold tracking-tight">Security without compromise.</h2>
                         <p className="text-slate-400 font-medium text-lg leading-relaxed">

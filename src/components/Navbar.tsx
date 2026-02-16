@@ -19,33 +19,33 @@ const Navbar = () => {
     return (
         <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
             isScrolled 
-            ? 'bg-white/90 backdrop-blur-xl border-b border-slate-100 py-3 shadow-sm' 
-            : 'bg-transparent py-6'
+            ? 'bg-background/80 backdrop-blur-xl border-b border-glass-border py-3 shadow-sm' 
+            : 'bg-transparent py-5'
         }`}>
             <div className="container-v2 flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-2 group">
-                    <div className="size-9 flex items-center justify-center rounded-lg bg-tikflow-dark text-white font-bold transition-transform group-hover:scale-105">
+                    <div className="size-9 flex items-center justify-center rounded-lg bg-foreground text-background font-bold transition-transform group-hover:scale-105">
                         T
                     </div>
-                    <span className="text-xl font-bold tracking-tight text-tikflow-dark uppercase">
+                    <span className="text-xl font-bold tracking-tight text-foreground uppercase">
                         TikFlow
                     </span>
                 </Link>
 
                 <div className="hidden md:flex items-center gap-12">
-                    <Link href="/pricing" className="text-[14px] font-semibold text-tikflow-slate hover:text-tikflow-dark transition-colors">Pricing</Link>
-                    <Link href="/developers" className="text-[14px] font-semibold text-tikflow-slate hover:text-tikflow-dark transition-colors">Developers</Link>
-                    <Link href="/company" className="text-[14px] font-semibold text-tikflow-slate hover:text-tikflow-dark transition-colors">Company</Link>
-                    <Link href="/support" className="text-[14px] font-semibold text-tikflow-slate hover:text-tikflow-dark transition-colors">Support</Link>
+                    <Link href="/marche" className="text-[14px] font-semibold text-tikflow-slate hover:text-foreground transition-colors">Marché</Link>
+                    <Link href="/communaute" className="text-[14px] font-semibold text-tikflow-slate hover:text-foreground transition-colors">Communauté</Link>
+                    <Link href="/faq" className="text-[14px] font-semibold text-tikflow-slate hover:text-foreground transition-colors">FAQ</Link>
+                    <Link href="/support" className="text-[14px] font-semibold text-tikflow-slate hover:text-foreground transition-colors">Support</Link>
                 </div>
 
                 <div className="flex items-center gap-4">
                     <ThemeToggle />
-                    <Link href="/sign-in" className="hidden sm:block text-[14px] font-semibold text-tikflow-dark hover:opacity-70 px-4">
-                        Login
+                    <Link href="/sign-in" className="hidden sm:block text-[14px] font-semibold text-foreground hover:opacity-70 px-4">
+                        Connexion
                     </Link>
                     <Link href="/sign-up" className="btn-v2-primary py-2.5 px-6">
-                        Get Started
+                        S'inscrire
                     </Link>
                 </div>
             </div>

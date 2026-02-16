@@ -22,16 +22,16 @@ const FAQ = () => {
     const [openIndex, setOpenIndex] = useState<number | null>(null);
 
     return (
-        <section className="py-24 bg-[#fdfdff] dark:bg-[#0e0f15]">
+        <section className="py-24 bg-background/50 border-t border-glass-border">
             <div className="container-v2">
                 <div className="text-center mb-16 space-y-4">
-                    <h2 className="text-4xl md:text-5xl font-black tracking-tight text-tikflow-dark">Des questions ?</h2>
+                    <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">Des questions ?</h2>
                     <p className="text-tikflow-slate font-medium">Tout ce que vous devez savoir pour commencer.</p>
                 </div>
 
                 <div className="max-w-3xl mx-auto space-y-4">
                     {faqs.map((faq, index) => (
-                        <div key={index} className="bg-white dark:bg-[#111218] border border-slate-100 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm transition-all hover:border-blue-100">
+                        <div key={index} className="bg-card-bg border border-glass-border rounded-2xl overflow-hidden shadow-sm transition-all hover:border-tikflow-primary/20">
                             <button 
                                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
                                 className="w-full flex items-center justify-between p-6 text-left"

@@ -4,40 +4,42 @@
   --background: #ffffff;
   --foreground: #0a0b10;
 
-  --tikflow-dark: #0a0b10;
+  --tikflow-black: #0a0b10;
   --tikflow-primary: #1152d4;
   --tikflow-accent: #10b981;
-  /* Emerald */
   --tikflow-slate: #64748b;
 
   --glass-bg: rgba(255, 255, 255, 0.8);
   --glass-border: rgba(0, 0, 0, 0.05);
+
+  --card-bg: #ffffff;
 }
 
 .dark {
   --background: #0a0b10;
   --foreground: #f8fafc;
 
-  --tikflow-dark: #f8fafc;
   --tikflow-slate: #94a3b8;
 
   --glass-bg: rgba(10, 11, 16, 0.8);
   --glass-border: rgba(255, 255, 255, 0.05);
 
-  /* Subtle card backgrounds for dark mode */
   --card-bg: #111218;
 }
 
 @theme {
-  --color-tikflow-dark: var(--tikflow-dark);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-tikflow-black: var(--tikflow-black);
   --color-tikflow-primary: var(--tikflow-primary);
   --color-tikflow-accent: var(--tikflow-accent);
   --color-tikflow-slate: var(--tikflow-slate);
+  --color-card-bg: var(--card-bg);
 }
 
 @layer base {
   body {
-    background: var(--background);
+    background-color: var(--background);
     color: var(--foreground);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -51,6 +53,7 @@
   h4 {
     font-family: 'Outfit', sans-serif;
     letter-spacing: -0.02em;
+    color: var(--foreground);
   }
 }
 
@@ -64,7 +67,7 @@
   }
 
   .btn-v2-primary {
-    background-color: var(--tikflow-dark);
+    background-color: var(--foreground);
     color: var(--background);
     font-weight: 600;
     font-size: 0.9375rem;
@@ -79,15 +82,15 @@
 
   .btn-v2-primary:hover {
     transform: translateY(-1px);
-    box-shadow: 0 10px 20px -5px rgba(10, 11, 16, 0.2);
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2);
   }
 
   .btn-v2-outline {
     background-color: transparent;
-    color: var(--tikflow-dark);
+    color: var(--foreground);
     font-weight: 600;
     font-size: 0.9375rem;
-    border: 1px solid rgba(10, 11, 16, 0.1);
+    border: 1px solid var(--glass-border);
     border-radius: 0.5rem;
     padding: 0.75rem 1.5rem;
     display: flex;
@@ -99,11 +102,10 @@
 
   .btn-v2-outline:hover {
     background-color: var(--card-bg);
-    border-color: rgba(10, 11, 16, 0.2);
   }
 
   .card-v2 {
-    background: var(--background);
+    background-color: var(--card-bg);
     border: 1px solid var(--glass-border);
     border-radius: 1rem;
     padding: 2rem;
@@ -111,8 +113,8 @@
   }
 
   .card-v2:hover {
-    border-color: rgba(10, 11, 16, 0.1);
-    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05);
+    border-color: var(--tikflow-primary);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
   }
 }
 

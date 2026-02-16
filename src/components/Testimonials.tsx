@@ -26,17 +26,17 @@ const Testimonials = () => {
     ];
 
     return (
-        <section className="py-24 bg-white dark:bg-tikflow-dark">
+        <section className="py-24 bg-background">
             <div className="container-v2">
                 <div className="text-center mb-16 space-y-4">
-                    <h2 className="text-4xl md:text-5xl font-black tracking-tight text-tikflow-dark">
+                    <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">
                         Paroles de <span className="gradient-text">Créateurs</span>
                     </h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {reviews.map((review, index) => (
-                        <div key={index} className="card-v2 p-10 rounded-[2.5rem] space-y-6 flex flex-col items-center text-center dark:bg-[#111218]">
+                        <div key={index} className="card-v2 p-10 rounded-[2.5rem] space-y-6 flex flex-col items-center text-center">
                             <div className="flex items-center gap-4 w-full">
                                 <div className="size-14 rounded-full bg-slate-100 flex items-center justify-center font-black text-slate-400">
                                     {review.avatar}

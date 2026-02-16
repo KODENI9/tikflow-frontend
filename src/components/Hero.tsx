@@ -6,7 +6,7 @@ import { ArrowRight, ShoppingCart } from 'lucide-react';
 
 export const Hero = () => {
     return (
-        <section className="relative pt-40 pb-24 md:pt-56 md:pb-40 overflow-hidden bg-white dark:bg-tikflow-dark">
+        <section className="relative pt-40 pb-24 md:pt-56 md:pb-40 overflow-hidden bg-background">
             <div className="container-v2">
                 <div className="max-w-4xl mx-auto text-center space-y-10">
                     <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-100 text-[12px] font-semibold text-tikflow-slate tracking-wide">
