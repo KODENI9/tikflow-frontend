@@ -29,11 +29,8 @@ export default function HelpPage() {
 
     useEffect(() => {
         const fetchSettings = async () => {
-            if (!isLoaded) return;
             try {
-                const token = await getToken();
-                if (!token) return;
-                const resp = await recipientsApi.getGlobalSettings(token);
+                const resp = await recipientsApi.getGlobalSettings();
                 if (resp?.support_phone) {
                     setSupportPhone(resp.support_phone);
                 }
@@ -42,7 +39,7 @@ export default function HelpPage() {
             }
         };
         fetchSettings();
-    }, [isLoaded, getToken]);
+    }, []);
 
   const tutorials = [
     {

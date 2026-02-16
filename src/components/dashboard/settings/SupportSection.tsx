@@ -10,11 +10,8 @@ export default function SupportSection() {
 
   useEffect(() => {
     const fetchSettings = async () => {
-      if (!isLoaded) return;
       try {
-        const token = await getToken();
-        if (!token) return;
-        const resp = await recipientsApi.getGlobalSettings(token);
+        const resp = await recipientsApi.getGlobalSettings();
         if (resp?.support_phone) {
           setSupportPhone(resp.support_phone);
         }
@@ -23,7 +20,7 @@ export default function SupportSection() {
       }
     };
     fetchSettings();
-  }, [isLoaded, getToken]);
+  }, []);
 
   return (
     <section className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 bg-gradient-to-br from-white to-blue-50/30">

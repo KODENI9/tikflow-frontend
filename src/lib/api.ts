@@ -6,14 +6,19 @@ const ADMIN_BASE = process.env.NEXT_PUBLIC_BACKEND_URL_ADMIN || `${API_URL}/api/
 const ORDERS_BASE = `${API_URL}/api/orders`;
 
 // Helper générique pour les appels API
-async function fetchApi<T>(endpoint: string, token: string, options: RequestInit = {}): Promise<T> {
+async function fetchApi<T>(endpoint: string, token?: string, options: RequestInit = {}): Promise<T> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    ...((options.headers as Record<string, string>) || {}),
+  };
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
   const res = await fetch(endpoint, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-      ...options.headers,
-    },
+    headers,
   });
 
   const data = await res.json().catch(() => ({}));
@@ -153,7 +158,7 @@ export const recipientsApi = {
     fetchApi<Recipient[]>(`${ADMIN_BASE}/recipients`, token),
   getActiveRecipients: (token: string) =>
     fetchApi<Recipient[]>(`${ORDERS_BASE}/recipients?active=true`, token),
-  getGlobalSettings: (token: string) =>
+  getGlobalSettings: (token?: string) =>
     fetchApi<{ support_phone: string }>(`${ORDERS_BASE}/app-settings`, token),
 };
 

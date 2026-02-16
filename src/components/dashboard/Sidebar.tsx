@@ -38,11 +38,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   useEffect(() => {
     const fetchSettings = async () => {
-      if (!authLoaded) return;
       try {
-        const token = await getToken();
-        if (!token) return;
-        const resp = await recipientsApi.getGlobalSettings(token);
+        const resp = await recipientsApi.getGlobalSettings();
         if (resp?.support_phone) {
           setSupportPhone(resp.support_phone);
         }
@@ -51,7 +48,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       }
     };
     fetchSettings();
-  }, [authLoaded, getToken]);
+  }, []);
 
   const menuItems = [
     { name: "Mon Portefeuille", icon: Wallet, href: "/dashboard", active: pathname === "/dashboard" },

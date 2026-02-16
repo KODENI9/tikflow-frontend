@@ -32,29 +32,36 @@ export default function DepositPage() {
   const [supportPhone, setSupportPhone] = useState("+228 90 51 32 79");
 
   useEffect(() => {
-    const fetchInitialData = async () => {
+    const fetchSettings = async () => {
       try {
-        setFetchingRecipients(true);
-        const token = await getToken();
-        if (!token) return;
-        
-        const [recips, settings] = await Promise.all([
-            recipientsApi.getActiveRecipients(token),
-            recipientsApi.getGlobalSettings(token)
-        ]);
-
-        setActiveRecipients(recips || []);
+        const settings = await recipientsApi.getGlobalSettings();
         if (settings?.support_phone) {
           setSupportPhone(settings.support_phone);
         }
       } catch (error) {
-        console.error("Error fetching deposit data:", error);
+        console.error("Error fetching settings in DepositPage:", error);
+      }
+    };
+
+    const fetchRecipients = async () => {
+      if (!isLoaded) return;
+      try {
+        setFetchingRecipients(true);
+        const token = await getToken();
+        if (token) {
+          const recips = await recipientsApi.getActiveRecipients(token);
+          setActiveRecipients(recips || []);
+        }
+      } catch (error) {
+        console.error("Error fetching recipients:", error);
       } finally {
         setFetchingRecipients(false);
       }
     };
-    fetchInitialData();
-  }, [getToken]);
+
+    fetchSettings();
+    if (isLoaded) fetchRecipients();
+  }, [isLoaded, getToken]);
 
   const activeRecipient = activeRecipients.find(r => r.operator === selectedProvider);
 
