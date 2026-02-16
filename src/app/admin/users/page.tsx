@@ -12,7 +12,10 @@ import {
   User as UserIcon,
   RefreshCcw,
   Phone,
-  Mail
+  Mail,
+  Send,
+  BellRing,
+  X
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -21,6 +24,10 @@ export default function AdminUsers() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showNotifyModal, setShowNotifyModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [notifForm, setNotifForm] = useState({ title: "", message: "" });
+  const [sending, setSending] = useState(false);
 
   const loadUsers = async () => {
     try {
@@ -62,6 +69,24 @@ export default function AdminUsers() {
       loadUsers(); // Rafraîchir la liste
     } catch (e: any) {
       toast.error("Échec de l'ajustement");
+    }
+  };
+
+  const handleSendNotification = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedUser || !notifForm.title || !notifForm.message) return;
+
+    try {
+      setSending(true);
+      const token = await getToken();
+      await adminApi.sendNotification(token!, selectedUser.id, notifForm.title, notifForm.message);
+      toast.success(`Notification envoyée à ${selectedUser.fullname}`);
+      setShowNotifyModal(false);
+      setNotifForm({ title: "", message: "" });
+    } catch (error) {
+      toast.error("Échec de l'envoi");
+    } finally {
+      setSending(false);
     }
   };
 
@@ -160,13 +185,25 @@ export default function AdminUsers() {
                     </div>
                   </td>
                   <td className="p-5 text-right">
-                    <button 
-                      onClick={() => handleAdjustBalance(user.id, user.fullname)}
-                      className="p-3 bg-foreground/5 text-tikflow-slate hover:bg-tikflow-primary hover:text-white rounded-xl transition-all active:scale-90"
-                      title="Ajuster le solde"
-                    >
-                      <PlusCircle size={20} />
-                    </button>
+                    <div className="flex items-center justify-end gap-2">
+                      <button 
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setShowNotifyModal(true);
+                        }}
+                        className="p-3 bg-blue-500/10 text-blue-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all active:scale-90"
+                        title="Envoyer une notification"
+                      >
+                        <BellRing size={20} />
+                      </button>
+                      <button 
+                        onClick={() => handleAdjustBalance(user.id, user.fullname)}
+                        className="p-3 bg-foreground/5 text-tikflow-slate hover:bg-tikflow-primary hover:text-white rounded-xl transition-all active:scale-90"
+                        title="Ajuster le solde"
+                      >
+                        <PlusCircle size={20} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

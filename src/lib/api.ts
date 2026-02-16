@@ -150,6 +150,13 @@ export const adminApi = {
       method: "PATCH",
       body: JSON.stringify(data),
     }),
+
+  // 14. ENVOYER UNE NOTIFICATION À UN UTILISATEUR
+  sendNotification: (token: string, uid: string, title: string, message: string) =>
+    fetchApi<{ success: boolean; id: string }>(`${ADMIN_BASE}/users/${uid}/notify`, token, {
+      method: 'POST',
+      body: JSON.stringify({ title, message }),
+    }),
 };
 
 export const recipientsApi = {
