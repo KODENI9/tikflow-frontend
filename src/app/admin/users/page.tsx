@@ -15,7 +15,10 @@ import {
   Mail,
   Send,
   BellRing,
-  X
+  X,
+  ChevronLeft,
+  ChevronRight,
+  MoreVertical
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -28,6 +31,10 @@ export default function AdminUsers() {
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [notifForm, setNotifForm] = useState({ title: "", message: "" });
   const [sending, setSending] = useState(false);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
 
   const loadUsers = async () => {
     try {
@@ -47,6 +54,11 @@ export default function AdminUsers() {
     loadUsers();
   }, []);
 
+  // Reset to first page when searching
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
   // Filtrage dynamique
   const filteredUsers = useMemo(() => {
     return users.filter(u => 
@@ -55,6 +67,11 @@ export default function AdminUsers() {
       u.phone_number?.includes(searchTerm)
     );
   }, [searchTerm, users]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedUsers = filteredUsers.slice(startIndex, startIndex + itemsPerPage);
 
   const handleAdjustBalance = async (uid: string, name: string) => {
     const amountStr = prompt(`Ajouter ou retirer un montant pour ${name} (ex: 500 ou -500) :`);
@@ -135,70 +152,70 @@ export default function AdminUsers() {
               </tr>
             </thead>
             <tbody className="divide-y divide-glass-border">
-              {filteredUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-foreground/5 transition-colors group">
+              {paginatedUsers.map((user) => (
+                <tr key={user.id} className="hover:bg-foreground/[0.02] transition-colors group">
                   <td className="p-5">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-foreground/5 flex items-center justify-center text-tikflow-slate font-bold group-hover:bg-tikflow-primary/10 group-hover:text-tikflow-primary transition-colors">
-                        {user.fullname?.charAt(0) || "U"}
+                    <div className="flex items-center gap-4">
+                      <div className="relative">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-tikflow-primary/20 to-tikflow-accent/20 flex items-center justify-center text-tikflow-primary font-black text-lg shadow-inner border border-tikflow-primary/10 group-hover:scale-105 transition-transform duration-300">
+                          {user.fullname?.charAt(0) || "U"}
+                        </div>
+                        <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-card-bg ${
+                          user.status === 'active' ? 'bg-green-500' : 'bg-tikflow-accent'
+                        }`} />
                       </div>
                       <div>
-                        <div className="font-black text-foreground text-sm">{user.fullname}</div>
-                        <div className="text-[10px] font-mono text-tikflow-slate uppercase tracking-tighter">ID: {user.id.slice(0, 8)}...</div>
+                        <div className="font-black text-foreground text-sm tracking-tight">{user.fullname}</div>
+                        <div className="text-[10px] font-mono text-tikflow-slate uppercase tracking-widest opacity-60">ID: {user.id.slice(0, 8)}</div>
                       </div>
                     </div>
                   </td>
                   <td className="p-5">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2 text-xs text-foreground font-medium">
-                        <Mail size={12} className="text-tikflow-slate" /> {user.email}
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2.5 text-xs text-foreground font-bold bg-foreground/[0.03] px-3 py-1.5 rounded-xl w-fit border border-glass-border">
+                        <Mail size={13} className="text-tikflow-primary" /> {user.email}
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-foreground font-medium">
-                        <Phone size={12} className="text-tikflow-slate" /> {user.phone_number || "N/A"}
-                      </div>
+                      {user.phone_number && (
+                        <div className="flex items-center gap-2.5 text-[11px] text-tikflow-slate font-bold px-3">
+                          <Phone size={11} /> {user.phone_number}
+                        </div>
+                      )}
                     </div>
                   </td>
                   <td className="p-5">
                     <div className="flex flex-col gap-2">
                       {user.role === 'admin' ? (
-                        <span className="flex items-center gap-1 text-[9px] font-black uppercase bg-tikflow-primary/10 text-tikflow-primary px-2 py-1 rounded-md w-fit border border-tikflow-primary/20">
-                          <ShieldCheck size={10} /> Administrateur
+                        <span className="flex items-center gap-1.5 text-[9px] font-black uppercase bg-tikflow-primary/10 text-tikflow-primary px-3 py-1.5 rounded-full w-fit border border-tikflow-primary/20">
+                          <ShieldCheck size={11} /> Administrateur
                         </span>
                       ) : (
-                        <span className="flex items-center gap-1 text-[9px] font-black uppercase bg-foreground/10 text-tikflow-slate px-2 py-1 rounded-md w-fit border border-glass-border">
-                          <UserIcon size={10} /> Client
+                        <span className="flex items-center gap-1.5 text-[9px] font-black uppercase bg-foreground/5 text-tikflow-slate px-3 py-1.5 rounded-full w-fit border border-glass-border">
+                          <UserIcon size={11} /> Client
                         </span>
                       )}
-                      <span className={`text-[9px] font-black uppercase px-2 py-1 rounded-md w-fit border ${
-                        user.status === 'active' 
-                        ? 'bg-green-500/10 text-green-500 border-green-500/20' 
-                        : 'bg-tikflow-accent/10 text-tikflow-accent border-tikflow-accent/20'
-                      }`}>
-                        {user.status}
-                      </span>
                     </div>
                   </td>
                   <td className="p-5">
-                    <div className="flex items-center gap-2 bg-foreground text-background px-4 py-2 rounded-2xl w-fit shadow-lg shadow-black/10">
-                      <Wallet size={14} className="text-tikflow-primary" />
-                      <span className="font-black text-sm">{(user.balance || 0).toLocaleString()} F</span>
+                    <div className="flex items-center gap-2.5 bg-foreground text-background px-5 py-2.5 rounded-2xl w-fit shadow-lg shadow-black/10 border border-white/10">
+                      <Wallet size={16} className="text-tikflow-primary" />
+                      <span className="font-black text-base tabular-nums">{(user.balance || 0).toLocaleString()} F</span>
                     </div>
                   </td>
                   <td className="p-5 text-right">
-                    <div className="flex items-center justify-end gap-2">
+                    <div className="flex items-center justify-end gap-2.5">
                       <button 
                         onClick={() => {
                           setSelectedUser(user);
                           setShowNotifyModal(true);
                         }}
-                        className="p-3 bg-blue-500/10 text-blue-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all active:scale-90"
+                        className="p-3 bg-blue-500/10 text-blue-600 hover:bg-blue-600 hover:text-white rounded-2xl transition-all active:scale-90 shadow-sm border border-blue-500/10"
                         title="Envoyer une notification"
                       >
                         <BellRing size={20} />
                       </button>
                       <button 
                         onClick={() => handleAdjustBalance(user.id, user.fullname)}
-                        className="p-3 bg-foreground/5 text-tikflow-slate hover:bg-tikflow-primary hover:text-white rounded-xl transition-all active:scale-90"
+                        className="p-3 bg-foreground/5 text-tikflow-slate hover:bg-tikflow-primary hover:text-white rounded-2xl transition-all active:scale-90 shadow-sm border border-glass-border"
                         title="Ajuster le solde"
                       >
                         <PlusCircle size={20} />
@@ -214,6 +231,65 @@ export default function AdminUsers() {
         {filteredUsers.length === 0 && !loading && (
           <div className="p-20 text-center">
             <p className="text-slate-400 font-bold">Aucun utilisateur trouvé.</p>
+          </div>
+        )}
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="p-6 bg-foreground/[0.02] border-t border-glass-border flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-xs font-bold text-tikflow-slate">
+              Affichage de <span className="text-foreground">{startIndex + 1}</span> à <span className="text-foreground">{Math.min(startIndex + itemsPerPage, filteredUsers.length)}</span> sur <span className="text-foreground">{filteredUsers.length}</span> utilisateurs
+            </p>
+
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="p-2.5 rounded-xl border border-glass-border bg-card-bg text-tikflow-slate hover:bg-foreground/5 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-90"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              
+              <div className="flex items-center gap-1 mx-2">
+                {[...Array(totalPages)].map((_, i) => {
+                  const pageNumber = i + 1;
+                  // Affichage intelligent des pages (max 5)
+                  if (
+                    pageNumber === 1 || 
+                    pageNumber === totalPages || 
+                    (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+                  ) {
+                    return (
+                      <button
+                        key={pageNumber}
+                        onClick={() => setCurrentPage(pageNumber)}
+                        className={`w-10 h-10 rounded-xl font-black text-xs transition-all ${
+                          currentPage === pageNumber 
+                          ? 'bg-tikflow-primary text-white shadow-lg shadow-tikflow-primary/20 scale-110' 
+                          : 'bg-card-bg border border-glass-border text-tikflow-slate hover:bg-foreground/5'
+                        }`}
+                      >
+                        {pageNumber}
+                      </button>
+                    );
+                  } else if (
+                    pageNumber === currentPage - 2 || 
+                    pageNumber === currentPage + 2
+                  ) {
+                    return <span key={pageNumber} className="text-tikflow-slate px-1">...</span>;
+                  }
+                  return null;
+                })}
+              </div>
+
+              <button 
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="p-2.5 rounded-xl border border-glass-border bg-card-bg text-tikflow-slate hover:bg-foreground/5 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-90"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
           </div>
         )}
       </div>
