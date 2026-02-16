@@ -1,5 +1,5 @@
 // src/lib/api.ts
-import { AdminStats, ReceivedPayment, Transaction, TransactionDetail, User, ApiResponse, Package, Notification } from "@/types/api";
+import { AdminStats, ReceivedPayment, Transaction, TransactionDetail, User, ApiResponse, Package, Notification, Recipient } from "@/types/api";
 
 const API_URL = (process.env.NEXT_PUBLIC_BACKEND_URL || "").replace(/\/$/, ""); 
 const ADMIN_BASE = process.env.NEXT_PUBLIC_BACKEND_URL_ADMIN || `${API_URL}/api/admin`;
@@ -114,6 +114,27 @@ export const adminApi = {
   // 11. DEMANDER LE CODE (GMAIL)
   requestCode: (token: string, id: string) =>
     fetchApi<{ message: string }>(`${ADMIN_BASE}/transactions/${id}/request-code`, token, { method: 'POST' }),
+
+  // 12. GESTION DES DESTINATAIRES
+  getRecipients: (token: string) =>
+    fetchApi<Recipient[]>(`${ADMIN_BASE}/recipients`, token),
+
+  createRecipient: (token: string, data: Partial<Recipient>) =>
+    fetchApi<{ id: string }>(`${ADMIN_BASE}/recipients`, token, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  updateRecipient: (token: string, id: string, updates: Partial<Recipient>) =>
+    fetchApi<{ success: boolean }>(`${ADMIN_BASE}/recipients/${id}`, token, {
+      method: 'PATCH',
+      body: JSON.stringify(updates),
+    }),
+
+  deleteRecipient: (token: string, id: string) =>
+    fetchApi<{ success: boolean }>(`${ADMIN_BASE}/recipients/${id}`, token, {
+      method: 'DELETE',
+    }),
 };
 
 export const packagesApi = {
@@ -123,9 +144,14 @@ export const packagesApi = {
     fetchApi<Package>(`${ORDERS_BASE}/packages/${id}`, token),
   updatePackage: (token: string, id: string, updates: Partial<Package>) =>
     fetchApi<{ success: boolean }>(`${ADMIN_BASE}/packages/${id}`, token, {
-      method: 'PATCH',
+      method: "PATCH",
       body: JSON.stringify(updates),
     }),
+};
+
+export const recipientsApi = {
+  getActiveRecipients: (token: string) =>
+    fetchApi<Recipient[]>(`${ORDERS_BASE}/recipients?active=true`, token),
 };
 
 export const notificationApi = {

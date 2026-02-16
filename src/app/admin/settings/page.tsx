@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { adminApi } from "@/lib/api";
 import { useAuth } from "@clerk/nextjs";
-import { Package, ReceivedPayment } from "@/types/api";
+import { Package, ReceivedPayment, Recipient } from "@/types/api";
 import { toast } from "react-hot-toast";
 
 export default function SettingsAuditPage() {
@@ -37,6 +37,16 @@ export default function SettingsAuditPage() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingPackage, setEditingPackage] = useState<Package | null>(null);
   const [updating, setUpdating] = useState(false);
+  
+  // Recipients Management State
+  const [recipients, setRecipients] = useState<Recipient[]>([]);
+  const [showAddRecipientModal, setShowAddRecipientModal] = useState(false);
+  const [newRecipient, setNewRecipient] = useState({ operator: "flooz", phone: "", beneficiary_name: "", active: true });
+  const [creatingRecipient, setCreatingRecipient] = useState(false);
+
+  const [showEditRecipientModal, setShowEditRecipientModal] = useState(false);
+  const [editingRecipient, setEditingRecipient] = useState<Recipient | null>(null);
+  const [updatingRecipient, setUpdatingRecipient] = useState(false);
 
   const fetchData = async () => {
     if (!isLoaded) return;
@@ -45,13 +55,15 @@ export default function SettingsAuditPage() {
       const token = await getToken();
       if (!token) return;
 
-      const [pkgs, payments] = await Promise.all([
+      const [pkgs, payments, recips] = await Promise.all([
         adminApi.getPackages(token),
-        adminApi.getReceivedPayments(token)
+        adminApi.getReceivedPayments(token),
+        adminApi.getRecipients(token)
       ]);
-
+      
       setPackages(pkgs || []);
       setLogs(payments || []);
+      setRecipients(recips || []);
     } catch (error) {
       console.error("Error fetching settings data:", error);
     } finally {
@@ -114,6 +126,62 @@ export default function SettingsAuditPage() {
       toast.error(error.message || "Erreur lors de la mise à jour");
     } finally {
       setUpdating(false);
+    }
+  };
+
+  const handleCreateRecipient = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newRecipient.operator || !newRecipient.phone || !newRecipient.beneficiary_name) return toast.error("Tous les champs sont requis");
+
+    try {
+        setCreatingRecipient(true);
+        const token = await getToken();
+        if (!token) return;
+
+        await adminApi.createRecipient(token, newRecipient as any);
+        toast.success("Destinataire ajouté !");
+        setShowAddRecipientModal(false);
+        setNewRecipient({ operator: "flooz", phone: "", beneficiary_name: "", active: true });
+        fetchData();
+    } catch (error: any) {
+        toast.error(error.message || "Erreur de création");
+    } finally {
+        setCreatingRecipient(false);
+    }
+  };
+
+  const handleUpdateRecipient = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingRecipient) return;
+
+    try {
+        setUpdatingRecipient(true);
+        const token = await getToken();
+        if (!token) return;
+
+        const { id, created_at, ...updates } = editingRecipient as any;
+        await adminApi.updateRecipient(token, id, updates);
+        toast.success("Destinataire mis à jour !");
+        setShowEditRecipientModal(false);
+        fetchData();
+    } catch (error: any) {
+        toast.error(error.message || "Erreur de mise à jour");
+    } finally {
+        setUpdatingRecipient(false);
+    }
+  };
+
+  const handleDeleteRecipient = async (id: string) => {
+    if (!confirm("Voulez-vous vraiment supprimer ce numéro ?")) return;
+
+    try {
+        const token = await getToken();
+        if (!token) return;
+        await adminApi.deleteRecipient(token, id);
+        toast.success("Numéro supprimé");
+        fetchData();
+    } catch (error: any) {
+        toast.error(error.message);
     }
   };
 
@@ -311,6 +379,202 @@ export default function SettingsAuditPage() {
                 className="w-full py-3 bg-blue-600 text-white rounded-xl font-black text-sm hover:bg-blue-700 transition-all mt-4 disabled:opacity-50"
               >
                 {updating ? "Mise à jour..." : "Enregistrer les modifications"}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* --- PAYMENT RECIPIENTS MANAGEMENT --- */}
+      <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+        <div className="p-8 border-b border-slate-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h3 className="font-black text-sm text-slate-900 uppercase tracking-wider">Payment Recipients (Numbers)</h3>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Manage numbers for Flooz, TMoney, Wave, etc.</p>
+          </div>
+          <button 
+            onClick={() => setShowAddRecipientModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-[10px] font-black hover:bg-blue-100 transition-all"
+          >
+            <Plus size={14} /> Add New Number
+          </button>
+        </div>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 bg-slate-50/30">
+                <th className="px-8 py-4">Operator</th>
+                <th className="px-4 py-4">Phone Number</th>
+                <th className="px-4 py-4">Beneficiary</th>
+                <th className="px-4 py-4 text-center">Status</th>
+                <th className="px-8 py-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {recipients.length === 0 ? (
+                <tr><td colSpan={5} className="text-center py-8 text-xs text-slate-400">Aucun destinataire configuré.</td></tr>
+              ) : (
+                recipients.map((rec) => (
+                  <tr key={rec.id} className="group hover:bg-slate-50/50 transition-all">
+                    <td className="px-8 py-5">
+                      <span className="text-xs font-black uppercase px-3 py-1 bg-slate-100 rounded-lg text-slate-600">
+                        {rec.operator}
+                      </span>
+                    </td>
+                    <td className="px-4 py-5 text-sm font-black text-slate-900">{rec.phone}</td>
+                    <td className="px-4 py-5 text-sm font-bold text-slate-600">{rec.beneficiary_name}</td>
+                    <td className="px-4 py-5">
+                      <div className="flex justify-center">
+                         <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter ${rec.active ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-500'}`}>
+                          {rec.active ? 'Actif' : 'Inactif'}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-8 py-5 text-right space-x-4">
+                      <button 
+                        onClick={() => {
+                          setEditingRecipient(rec);
+                          setShowEditRecipientModal(true);
+                        }}
+                        className="text-[10px] font-black text-blue-600 hover:underline"
+                      >
+                        Edit
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteRecipient(rec.id)}
+                        className="text-[10px] font-black text-red-500 hover:underline"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* --- ADD RECIPIENT MODAL --- */}
+      {showAddRecipientModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-[2rem] w-full max-w-md p-8 shadow-2xl animate-in fade-in zoom-in duration-200">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-black text-slate-900">Nouveau Numéro</h3>
+              <button onClick={() => setShowAddRecipientModal(false)} className="p-2 hover:bg-slate-100 rounded-full text-slate-400">
+                <X size={20} />
+              </button>
+            </div>
+            <form onSubmit={handleCreateRecipient} className="space-y-4">
+              <div>
+                <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Opérateur</label>
+                <select 
+                  className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold focus:ring-2 ring-blue-500/20"
+                  value={newRecipient.operator}
+                  onChange={e => setNewRecipient({...newRecipient, operator: e.target.value})}
+                >
+                  <option value="flooz">Flooz</option>
+                  <option value="tmoney">TMoney</option>
+                  <option value="wave">Wave</option>
+                  <option value="moov">Moov</option>
+                  <option value="mtn">MTN</option>
+                  <option value="orange">Orange</option>
+                  <option value="yas">Yas</option>
+                  <option value="skthib">SkThib</option>
+                </select>
+              </div>
+              <div className="space-y-4">
+                <div>
+                   <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Numéro de Téléphone</label>
+                   <input 
+                    placeholder="Ex: +228 90..." 
+                    value={newRecipient.phone}
+                    onChange={e => setNewRecipient({...newRecipient, phone: e.target.value})}
+                    className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold focus:ring-2 ring-blue-500/20"
+                   />
+                </div>
+                <div>
+                   <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Nom du bénéficiaire</label>
+                   <input 
+                    placeholder="Ex: TikFlow Official" 
+                    value={newRecipient.beneficiary_name}
+                    onChange={e => setNewRecipient({...newRecipient, beneficiary_name: e.target.value})}
+                    className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold focus:ring-2 ring-blue-500/20"
+                   />
+                </div>
+              </div>
+              <button 
+                disabled={creatingRecipient}
+                className="w-full py-3 bg-blue-600 text-white rounded-xl font-black text-sm hover:bg-blue-700 transition-all mt-4 disabled:opacity-50"
+              >
+                {creatingRecipient ? "Ajout..." : "Ajouter le Numéro"}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* --- EDIT RECIPIENT MODAL --- */}
+      {showEditRecipientModal && editingRecipient && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-[2rem] w-full max-w-md p-8 shadow-2xl animate-in fade-in zoom-in duration-200">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-black text-slate-900">Modifier le Numéro</h3>
+              <button onClick={() => setShowEditRecipientModal(false)} className="p-2 hover:bg-slate-100 rounded-full text-slate-400">
+                <X size={20} />
+              </button>
+            </div>
+            <form onSubmit={handleUpdateRecipient} className="space-y-4">
+              <div>
+                <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Opérateur</label>
+                <select 
+                  className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold focus:ring-2 ring-blue-500/20"
+                  value={editingRecipient.operator}
+                  onChange={e => setEditingRecipient({...editingRecipient, operator: e.target.value as any})}
+                >
+                  <option value="flooz">Flooz</option>
+                  <option value="tmoney">TMoney</option>
+                  <option value="wave">Wave</option>
+                  <option value="moov">Moov</option>
+                  <option value="mtn">MTN</option>
+                  <option value="orange">Orange</option>
+                  <option value="yas">Yas</option>
+                  <option value="skthib">SkThib</option>
+                </select>
+              </div>
+              <div className="space-y-4">
+                <div>
+                   <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Numéro de Téléphone</label>
+                   <input 
+                    value={editingRecipient.phone}
+                    onChange={e => setEditingRecipient({...editingRecipient, phone: e.target.value})}
+                    className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold focus:ring-2 ring-blue-500/20"
+                   />
+                </div>
+                <div>
+                   <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Nom du bénéficiaire</label>
+                   <input 
+                    value={editingRecipient.beneficiary_name}
+                    onChange={e => setEditingRecipient({...editingRecipient, beneficiary_name: e.target.value})}
+                    className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold focus:ring-2 ring-blue-500/20"
+                   />
+                </div>
+              </div>
+              <div className="flex items-center gap-2 pt-2">
+                <input 
+                  type="checkbox" 
+                  id="rec-active"
+                  checked={editingRecipient.active}
+                  onChange={e => setEditingRecipient({...editingRecipient, active: e.target.checked})}
+                />
+                <label htmlFor="rec-active" className="text-xs font-bold text-slate-600 uppercase">Numéro Actif</label>
+              </div>
+              <button 
+                disabled={updatingRecipient}
+                className="w-full py-3 bg-blue-600 text-white rounded-xl font-black text-sm hover:bg-blue-700 transition-all mt-4 disabled:opacity-50"
+              >
+                {updatingRecipient ? "Mise à jour..." : "Enregistrer"}
               </button>
             </form>
           </div>

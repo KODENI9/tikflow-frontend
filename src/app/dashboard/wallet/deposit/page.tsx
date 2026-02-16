@@ -1,6 +1,6 @@
 "use client"; // Obligatoire car on utilise du state (useState)
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   Wallet, 
   Copy, 
@@ -15,14 +15,36 @@ import {
   Loader2
 } from "lucide-react";
 import { createDepositAction } from "@/lib/actions/user.actions";
+import { recipientsApi } from "@/lib/api";
+import { Recipient } from "@/types/api";
+import { useAuth } from "@clerk/nextjs";
 import { toast } from "sonner"; // Optionnel pour les notifications
 
 export default function DepositPage() {
-  const [selectedProvider, setSelectedProvider] = useState("skthib");
+  const { getToken, isLoaded } = useAuth();
+  const [selectedProvider, setSelectedProvider] = useState("flooz");
 
   const [referenceId, setReferenceId] = useState("");
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
+  const [recipients, setRecipients] = useState<Recipient[]>([]);
+
+  useEffect(() => {
+    const fetchRecipients = async () => {
+      if (!isLoaded) return;
+      try {
+        const token = await getToken();
+        if (!token) return;
+        const data = await recipientsApi.getActiveRecipients(token);
+        setRecipients(data || []);
+      } catch (error) {
+        console.error("Error fetching recipients:", error);
+      }
+    };
+    fetchRecipients();
+  }, [isLoaded, getToken]);
+
+  const activeRecipient = recipients.find(r => r.operator === selectedProvider);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +72,8 @@ export default function DepositPage() {
   };
 
   const copyToClipboard = async () => {
-    const textToCopy = "+22890513279";
+    const textToCopy = activeRecipient?.phone || "";
+    if (!textToCopy) return;
 
     // Vérification si l'API clipboard est disponible
     if (navigator.clipboard && window.isSecureContext) {
@@ -85,8 +108,12 @@ export default function DepositPage() {
   const providers = [
     { id: "flooz", name: "Flooz", color: "bg-green-500", letter: "F" },
     { id: "tmoney", name: "TMoney", color: "bg-yellow-400", letter: "T" },
-    { id: "mtn", name: "MTN", color: "bg-yellow-300", letter: "M" },
+    { id: "wave", name: "Wave", color: "bg-blue-400", letter: "W" },
+    { id: "moov", name: "Moov", color: "bg-blue-600", letter: "M" },
     { id: "orange", name: "Orange", color: "bg-orange-500", letter: "OM" },
+    { id: "mtn", name: "MTN", color: "bg-yellow-300", letter: "M" },
+    { id: "yas", name: "Yas", color: "bg-red-500", letter: "Y" },
+    { id: "skthib", name: "SkThib", color: "bg-slate-700", letter: "S" },
   ];
 
   return (
@@ -143,22 +170,30 @@ export default function DepositPage() {
 
             <div className="bg-white rounded-2xl p-5 text-slate-900 shadow-lg relative z-10">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Envoyez le montant à ce numéro</p>
-                  <div className="flex items-center gap-3">
-                    <p className="text-2xl font-black tracking-tight">+228 90 51 32 79</p>
-                    <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold">
-                      <ShieldCheck size={12} /> VÉRIFIÉ
-                    </span>
+                {activeRecipient ? (
+                  <>
+                    <div>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Envoyez le montant à ce numéro ({activeRecipient.operator.toUpperCase()})</p>
+                      <div className="flex items-center gap-3">
+                        <p className="text-2xl font-black tracking-tight">{activeRecipient.phone}</p>
+                        <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold">
+                          <ShieldCheck size={12} /> VÉRIFIÉ
+                        </span>
+                      </div>
+                      <p className="text-sm text-slate-500 mt-1">Bénéficiaire: <span className="font-bold text-slate-700">{activeRecipient.beneficiary_name}</span></p>
+                    </div>
+                    <button 
+                      onClick={copyToClipboard}
+                      className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors text-sm font-bold text-slate-700 group"
+                    >
+                      <Copy size={16} className="text-slate-400 group-hover:text-blue-600" /> Copier le numéro
+                    </button>
+                  </>
+                ) : (
+                  <div className="py-4">
+                    <p className="text-sm font-bold text-slate-400 italic">Aucun numéro configuré pour cet opérateur pour le moment.</p>
                   </div>
-                  <p className="text-sm text-slate-500 mt-1">Bénéficiaire: <span className="font-bold text-slate-700">TikFlow Official</span></p>
-                </div>
-                <button 
-                onClick={copyToClipboard}
-                className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors text-sm font-bold text-slate-700 group"
-             >
-               <Copy size={16} className="text-slate-400 group-hover:text-blue-600" /> Copier le numéro
-             </button>
+                )}
               </div>
             </div>
 
