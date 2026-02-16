@@ -142,7 +142,6 @@ export const adminApi = {
     }),
 
   // 13. SETTINGS GLOBAUX
-  // 13. SETTINGS GLOBAUX
   getSettings: (token: string) =>
     fetchApi<{ support_phone: string }>(`${ADMIN_BASE}/settings`, token),
 
@@ -160,6 +159,13 @@ export const recipientsApi = {
     fetchApi<Recipient[]>(`${ORDERS_BASE}/recipients?active=true`, token),
   getGlobalSettings: (token?: string) =>
     fetchApi<{ support_phone: string }>(`${ORDERS_BASE}/app-settings`, token),
+};
+
+export const packagesApi = {
+  getPackages: (token: string) =>
+    fetchApi<Package[]>(`${ORDERS_BASE}/packages`, token),
+  getPackageById: (token: string, id: string) =>
+    fetchApi<Package>(`${ORDERS_BASE}/packages/${id}`, token),
 };
 
 export const notificationApi = {
