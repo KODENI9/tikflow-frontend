@@ -52,7 +52,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   const menuItems = [
     { name: "Mon Portefeuille", icon: Wallet, href: "/dashboard", active: pathname === "/dashboard" },
-    { name: "Vendre mes Coins", icon: TrendingUp, href: "/dashboard/sell", active: pathname === "/dashboard/sell" },
     { name: "Acheter des Coins", icon: ShoppingCart, href: "/dashboard/buy", active: pathname.startsWith("/dashboard/buy") },
     { name: "Convertir mon Bonus", icon: Gift, href: "/dashboard/convert", active: pathname === "/dashboard/convert" },
     { name: "Historique", icon: History, href: "/dashboard/history", active: pathname === "/dashboard/history" },
