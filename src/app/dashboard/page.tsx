@@ -64,13 +64,13 @@ export default function DashboardPage() {
       <PhoneAlert />
 
       {/* Banner */}
-      <div className="bg-foreground text-background rounded-3xl p-6 md:p-10 relative overflow-hidden shadow-xl">
+      <div className="bg-[#0a0b10] dark:bg-card-bg text-white rounded-3xl p-6 md:p-10 relative overflow-hidden shadow-xl border border-white/5">
         <div className="relative z-10 space-y-3">
-          <p className="opacity-70 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em]">Tableau de Bord</p>
-          <h1 className="text-2xl md:text-4xl font-black">
+          <p className="text-white/70 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em]">Tableau de Bord</p>
+          <h1 className="text-2xl md:text-4xl font-black text-white">
             Bonjour, <span className="text-tikflow-primary">{user?.firstName || "Utilisateur"}</span> 👋
           </h1>
-          <p className="opacity-60 max-w-md text-sm leading-relaxed">
+          <p className="text-white/60 max-w-md text-sm leading-relaxed">
             Gérez vos transactions TikTok coins et suivez vos dépenses en temps réel.
           </p>
         </div>
