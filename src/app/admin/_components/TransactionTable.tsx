@@ -107,9 +107,26 @@ export function TransactionTable({ onActionSuccess }: { onActionSuccess?: () => 
 
 function StatusBadge({ status }: { status: string }) {
   const isPending = status === 'pending';
+  const isCompleted = status === 'completed';
+  const isRejected = status === 'rejected' || status === 'failed';
+
+  let colorClasses = "bg-slate-500/10 text-slate-500";
+  let dotClasses = "bg-slate-500";
+
+  if (isPending) {
+    colorClasses = "bg-orange-500/10 text-orange-500";
+    dotClasses = "bg-orange-500 animate-pulse";
+  } else if (isCompleted) {
+    colorClasses = "bg-green-500/10 text-green-500";
+    dotClasses = "bg-green-500";
+  } else if (isRejected) {
+    colorClasses = "bg-tikflow-danger/10 text-tikflow-danger";
+    dotClasses = "bg-tikflow-danger";
+  }
+
   return (
-    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase flex items-center gap-1.5 w-fit ${isPending ? 'bg-tikflow-accent/10 text-tikflow-accent' : 'bg-green-500/10 text-green-500'}`}>
-      <span className={`size-1.5 rounded-full ${isPending ? 'bg-tikflow-accent animate-pulse' : 'bg-green-500'}`} />
+    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase flex items-center gap-1.5 w-fit ${colorClasses}`}>
+      <span className={`size-1.5 rounded-full ${dotClasses}`} />
       {status}
     </span>
   );

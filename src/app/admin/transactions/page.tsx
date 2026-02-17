@@ -129,7 +129,9 @@ export default function TransactionsListPage() {
                 </td>
                 <td className="px-6 py-5 text-center">
                   <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${
-                    trx.status === "completed" ? "bg-green-500/10 text-green-500" : "bg-orange-500/10 text-orange-500"
+                    trx.status === "completed" ? "bg-green-500/10 text-green-500" : 
+                    trx.status === "pending" ? "bg-orange-500/10 text-orange-500" : 
+                    "bg-tikflow-danger/10 text-tikflow-danger"
                   }`}>
                     {trx.status}
                   </span>
