@@ -174,7 +174,7 @@ useEffect(() => {
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase ${
                         txn.status === 'completed' ? 'bg-green-500/10 text-green-500' : 
-                        txn.status === 'pending' ? 'bg-orange-500/10 text-orange-500' : 'bg-tikflow-accent/10 text-tikflow-accent'
+                        txn.status === 'pending' ? 'bg-orange-500/10 text-orange-500' : 'bg-tikflow-danger/10 text-tikflow-danger'
                       }`}>
                         {txn.status === 'pending' && <span className="size-1.5 rounded-full bg-orange-500 animate-pulse"></span>}
                         {txn.status === 'completed' ? 'Succès' : txn.status === 'pending' ? 'En cours' : 'Échoué'}
