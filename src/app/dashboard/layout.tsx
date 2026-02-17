@@ -1,16 +1,68 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu } from "lucide-react";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, useUser, useAuth } from "@clerk/nextjs";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { SyncUser } from "@/components/auth/SyncUser";
 import dynamic from "next/dynamic";
 import SupportButton from "@/components/dashboard/SupportButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import FeedbackCard from "@/components/FeedbackCard";
+import { getUserProfileAction } from "@/lib/actions/user.actions";
+
 const NotificationBell = dynamic(() => import("@/components/NotificationBell"), { ssr: false });
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [dbUser, setDbUser] = useState<any>(null);
+  const { isLoaded, user } = useUser();
+
+  useEffect(() => {
+    const checkFeedback = async () => {
+      if (!isLoaded || !user) return;
+
+      try {
+        const res = await getUserProfileAction();
+        if (res.success && res.data) {
+          setDbUser(res.data);
+          
+          const lastFeedback = res.data.last_feedback_at;
+          const sessionDismissed = localStorage.getItem(`feedback_dismissed_${user.id}`);
+          
+          let shouldShow = false;
+          
+          if (!lastFeedback) {
+            shouldShow = true;
+          } else {
+            const lastDate = new Date(lastFeedback._seconds ? lastFeedback._seconds * 1000 : lastFeedback);
+            const diff = new Date().getTime() - lastDate.getTime();
+            const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+            if (diff > thirtyDays) {
+                shouldShow = true;
+            }
+          }
+
+          if (shouldShow && !sessionDismissed) {
+             // Delay showing to not be intrusive immediately on load
+             setTimeout(() => setShowFeedback(true), 5000);
+          }
+        }
+      } catch (error) {
+        console.error("Error checking feedback eligibility:", error);
+      }
+    };
+
+    checkFeedback();
+  }, [isLoaded, user]);
+
+  const handleDismissFeedback = () => {
+    setShowFeedback(false);
+    if (user) {
+        localStorage.setItem(`feedback_dismissed_${user.id}`, 'true');
+    }
+  };
+
   return (
     <div className="flex h-screen bg-background text-foreground overflow-hidden">
       <SyncUser /> {/* Il tourne en arrière-plan */}
@@ -44,6 +96,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </main>
         <SupportButton />
       </div>
+
+      {showFeedback && user && (
+          <FeedbackCard 
+            userId={user.id} 
+            onClose={handleDismissFeedback} 
+          />
+      )}
     </div>
   );
 }

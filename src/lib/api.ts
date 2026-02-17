@@ -1,5 +1,5 @@
 // src/lib/api.ts
-import { AdminStats, ReceivedPayment, Transaction, TransactionDetail, User, ApiResponse, Package, Notification, Recipient } from "@/types/api";
+import { AdminStats, ReceivedPayment, Transaction, TransactionDetail, User, ApiResponse, Package, Notification, Recipient, Feedback } from "@/types/api";
 
 const API_URL = (process.env.NEXT_PUBLIC_BACKEND_URL || "").replace(/\/$/, ""); 
 const ADMIN_BASE = process.env.NEXT_PUBLIC_BACKEND_URL_ADMIN || `${API_URL}/api/admin`;
@@ -141,6 +141,9 @@ export const adminApi = {
       method: 'DELETE',
     }),
 
+  getAllFeedbacks: (token: string) =>
+    fetchApi<Feedback[]>(`${ADMIN_BASE}/feedbacks`, token),
+
   // 13. SETTINGS GLOBAUX
   getSettings: (token: string) =>
     fetchApi<{ support_phone: string }>(`${ADMIN_BASE}/settings`, token),
@@ -166,6 +169,16 @@ export const recipientsApi = {
     fetchApi<Recipient[]>(`${ORDERS_BASE}/recipients?active=true`, token),
   getGlobalSettings: (token?: string) =>
     fetchApi<{ support_phone: string }>(`${ORDERS_BASE}/app-settings`, token),
+};
+
+export const feedbackApi = {
+  createFeedback: (token: string, data: { rating: number; comment?: string; context: string }) =>
+    fetchApi<{ success: boolean }>(`${API_URL}/api/feedback`, token, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  getMyFeedbacks: (token: string) =>
+    fetchApi<Feedback[]>(`${API_URL}/api/feedback/me`, token),
 };
 
 export const packagesApi = {

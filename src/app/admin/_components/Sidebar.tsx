@@ -10,7 +10,8 @@ import {
   Settings, 
   LogOut,
   Coins,
-  MessageSquarePlus
+  MessageSquarePlus,
+  Star
 } from "lucide-react";
 
 // Correction des URLs pour correspondre à ton arborescence (admin)/...
@@ -21,6 +22,7 @@ const menuItems = [
   { name: "Top-Ups", href: "/admin/sms-input", icon: MessageSquarePlus },
   { name: "sms-paiement", href: "/admin/payments", icon: Coins },
   { name: "Wallet Management", href: "/admin/wallets", icon: Wallet },
+  { name: "Feedbacks", href: "/admin/feedbacks", icon: Star },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 

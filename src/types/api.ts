@@ -9,6 +9,7 @@ export interface User {
   role: 'client' | 'admin';
   status: string;
   balance: number;
+  last_feedback_at?: any;
   last_login: any; // Firestore Timestamp or Date string
   created_at: any;
 }
@@ -87,4 +88,19 @@ export interface Recipient {
   beneficiary_name: string;
   active: boolean;
   created_at: any;
+}
+
+export interface Feedback {
+  id: string;
+  user_id: string;
+  rating: number;
+  comment: string;
+  context: string;
+  nps_score: 'promoter' | 'neutral' | 'detractor';
+  created_at: any;
+  user?: {
+    fullname: string;
+    phone_number: string;
+    email: string;
+  };
 }
