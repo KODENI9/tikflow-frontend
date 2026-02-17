@@ -109,9 +109,9 @@ export default function TransactionDetail() {
             <h1 className="text-2xl font-black text-foreground uppercase">Réf: {transaction.ref_id}</h1>
             <span className={`px-3 py-1 text-[10px] font-black rounded-lg uppercase flex items-center gap-1.5 ${
               transaction.status === 'pending' ? 'bg-orange-500/10 text-orange-500' : 
-              transaction.status === 'completed' ? 'bg-green-500/10 text-green-500' : 'bg-tikflow-accent/10 text-tikflow-accent'
+              transaction.status === 'completed' ? 'bg-green-500/10 text-green-500' : 'bg-tikflow-danger/10 text-tikflow-danger'
             }`}>
-              <span className={`size-1.5 rounded-full ${transaction.status === 'pending' ? 'bg-orange-500 animate-pulse' : transaction.status === 'completed' ? 'bg-green-500' : 'bg-tikflow-accent'}`} />
+              <span className={`size-1.5 rounded-full ${transaction.status === 'pending' ? 'bg-orange-500 animate-pulse' : transaction.status === 'completed' ? 'bg-green-500' : 'bg-tikflow-danger'}`} />
               {transaction.status}
             </span>
           </div>
@@ -136,8 +136,8 @@ export default function TransactionDetail() {
                 <ShieldCheck size={20} />
                 <h2 className="font-black text-sm uppercase tracking-wider">Réconciliation SMS</h2>
               </div>
-              <span className={`text-[10px] font-black px-3 py-1 rounded-md ${matchFound ? 'bg-green-500/10 text-green-500' : 'bg-tikflow-accent/10 text-tikflow-accent'}`}>
-                {matchFound ? "MATCH SCORE: 100%" : "MATCH SCORE: 0%"}
+              <span className={`text-[10px] font-black px-3 py-1 rounded-md ${matchFound ? 'bg-green-500/10 text-green-500' : 'bg-tikflow-danger/10 text-tikflow-danger border border-tikflow-danger/20'}`}>
+                {matchFound ? "MATCH SCORE: 100%" : "ALERTE: MATCH SCORE 0%"}
               </span>
             </div>
 
@@ -164,7 +164,7 @@ export default function TransactionDetail() {
               </div>
 
               {/* System Evidence (Backend SMS) */}
-              <div className={`p-8 space-y-6 ${matchFound ? 'bg-green-500/5' : 'bg-tikflow-accent/5'}`}>
+              <div className={`p-8 space-y-6 ${matchFound ? 'bg-green-500/5' : 'bg-tikflow-danger/5'}`}>
                 <div className="flex items-center gap-2 text-tikflow-slate font-bold text-[10px] uppercase tracking-widest">
                   <MessageSquare size={14} /> Preuve Système
                 </div>
@@ -188,9 +188,11 @@ export default function TransactionDetail() {
                     </div>
                   </>
                 ) : (
-                  <div className="flex flex-col items-center justify-center h-full py-10 text-center">
-                    <AlertTriangle size={40} className="text-tikflow-accent mb-2 opacity-50" />
-                    <p className="text-xs font-black text-tikflow-accent uppercase">Aucun SMS trouvé avec cet ID de transaction</p>
+                  <div className="flex flex-col items-center justify-center h-full py-10 text-center animate-in fade-in zoom-in duration-300">
+                    <AlertTriangle size={48} className="text-tikflow-danger mb-4" />
+                    <p className="text-xs font-black text-tikflow-danger uppercase max-w-[200px] leading-tight">
+                      Aucun SMS trouvé avec cet ID de transaction
+                    </p>
                   </div>
                 )}
               </div>
@@ -223,13 +225,13 @@ export default function TransactionDetail() {
                 <button 
                   disabled={actionLoading}
                   onClick={() => handleAction('rejected')}
-                  className="flex-1 flex items-center justify-center gap-3 py-5 bg-tikflow-accent text-white rounded-2xl font-black text-sm hover:bg-tikflow-accent/90 transition-all shadow-lg shadow-tikflow-accent/10 disabled:opacity-50"
+                  className="flex-1 flex items-center justify-center gap-3 py-5 bg-tikflow-danger text-white rounded-2xl font-black text-sm hover:bg-tikflow-danger/90 transition-all shadow-lg shadow-tikflow-danger/10 disabled:opacity-50"
                 >
                   <XCircle size={20} /> Rejeter la commande
                 </button>
               </div>
               {!matchFound && (
-                <p className="text-center text-[10px] font-black text-tikflow-accent uppercase italic">
+                <p className="text-center text-[10px] font-black text-tikflow-danger uppercase italic bg-tikflow-danger/5 py-3 rounded-xl border border-tikflow-danger/10">
                   La validation est bloquée car aucune preuve SMS n'a été trouvée.
                 </p>
               )}
