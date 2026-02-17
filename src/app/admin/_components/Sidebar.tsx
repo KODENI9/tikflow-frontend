@@ -11,7 +11,7 @@ import {
   LogOut,
   Coins,
   MessageSquarePlus,
-  MessageSquarePlus,
+
   Star,
   TrendingUp
 } from "lucide-react";
