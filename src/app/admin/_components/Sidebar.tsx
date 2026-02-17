@@ -11,12 +11,15 @@ import {
   LogOut,
   Coins,
   MessageSquarePlus,
-  Star
+  MessageSquarePlus,
+  Star,
+  TrendingUp
 } from "lucide-react";
 
 // Correction des URLs pour correspondre à ton arborescence (admin)/...
 const menuItems = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+  { name: "Analytics", href: "/admin/analytics", icon: TrendingUp },
   { name: "Users", href: "/admin/users", icon: Users },
   { name: "Transactions", href: "/admin/transactions", icon: ArrowLeftRight },
   { name: "Top-Ups", href: "/admin/sms-input", icon: MessageSquarePlus },

@@ -46,6 +46,14 @@ export interface Package {
   active: boolean;
 }
 
+export interface MonthlyStat {
+  deposits: number;
+  sales: number;
+  cost: number;
+  profit: number;
+  transactions: number;
+}
+
 export interface AdminStats {
   todayCount: number;
   todayVolume: number;
@@ -56,6 +64,17 @@ export interface AdminStats {
   successRate: number;
   trendCount: number;
   trendSuccess: number;
+  
+  // New Analytics Fields
+  financials: {
+    totalDeposits: number;
+    totalSalesVolume: number;
+    totalCost: number;
+    totalProfit: number;
+    totalUsersBalance: number;
+    totalCoinsSold: number;
+  };
+  monthlyStats: Record<string, MonthlyStat>;
 }
 
 export interface TransactionDetail {
