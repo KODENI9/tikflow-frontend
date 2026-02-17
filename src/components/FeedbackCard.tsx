@@ -46,7 +46,7 @@ export default function FeedbackCard({ userId, lastFeedbackAt, onClose }: Feedba
             }, 3000);
         } catch (error: any) {
             console.error("Error submitting feedback:", error);
-            toast.error(error.response?.data?.message || "Erreur lors de l'envoi du feedback.");
+            toast.error(error.message || "Erreur lors de l'envoi du feedback.");
         } finally {
             setIsSending(false);
         }
