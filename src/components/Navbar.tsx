@@ -24,7 +24,7 @@ const Navbar = () => {
         }`}>
             <div className="container-v2 flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-2 group">
-                    <div className="size-9 flex items-center justify-center rounded-lg bg-foreground text-background font-bold transition-transform group-hover:scale-105">
+                    <div className="size-9 flex items-center justify-center rounded-lg bg-tikflow-primary text-white font-black transition-transform group-hover:scale-110">
                         T
                     </div>
                     <span className="text-xl font-bold tracking-tight text-foreground uppercase">
@@ -33,10 +33,10 @@ const Navbar = () => {
                 </Link>
 
                 <div className="hidden md:flex items-center gap-12">
-                    <Link href="/marche" className="text-[14px] font-semibold text-tikflow-slate hover:text-foreground transition-colors">Marché</Link>
-                    <Link href="/communaute" className="text-[14px] font-semibold text-tikflow-slate hover:text-foreground transition-colors">Communauté</Link>
-                    <Link href="/faq" className="text-[14px] font-semibold text-tikflow-slate hover:text-foreground transition-colors">FAQ</Link>
-                    <Link href="/support" className="text-[14px] font-semibold text-tikflow-slate hover:text-foreground transition-colors">Support</Link>
+                    <Link href="/marche" className="text-[14px] font-bold text-tikflow-slate hover:text-tikflow-primary uppercase tracking-wider transition-colors">Marché</Link>
+                    <Link href="/communaute" className="text-[14px] font-bold text-tikflow-slate hover:text-tikflow-primary uppercase tracking-wider transition-colors">Communauté</Link>
+                    <Link href="/faq" className="text-[14px] font-bold text-tikflow-slate hover:text-tikflow-primary uppercase tracking-wider transition-colors">FAQ</Link>
+                    <Link href="/support" className="text-[14px] font-bold text-tikflow-slate hover:text-tikflow-primary uppercase tracking-wider transition-colors">Support</Link>
                 </div>
 
                 <div className="flex items-center gap-4">

@@ -5,7 +5,9 @@
   --foreground: #0a0b10;
 
   --tikflow-black: #0a0b10;
-  --tikflow-primary: #1152d4;
+  --tikflow-primary: #1d4ed8;
+  --tikflow-primary-dark: #1e40af;
+  --tikflow-secondary: #f97316;
   --tikflow-accent: #10b981;
   --tikflow-danger: #ef4444;
   --tikflow-slate: #64748b;
@@ -20,6 +22,9 @@
   --background: #0a0b10;
   --foreground: #f8fafc;
 
+  --tikflow-primary: #3b82f6;
+  --tikflow-primary-dark: #1d4ed8;
+  --tikflow-secondary: #fb923c;
   --tikflow-danger: #f87171;
   --tikflow-slate: #94a3b8;
 
@@ -34,6 +39,8 @@
   --color-foreground: var(--foreground);
   --color-tikflow-black: var(--tikflow-black);
   --color-tikflow-primary: var(--tikflow-primary);
+  --color-tikflow-primary-dark: var(--tikflow-primary-dark);
+  --color-tikflow-secondary: var(--tikflow-secondary);
   --color-tikflow-accent: var(--tikflow-accent);
   --color-tikflow-danger: var(--tikflow-danger);
   --color-tikflow-slate: var(--tikflow-slate);
@@ -72,22 +79,45 @@
   }
 
   .btn-v2-primary {
-    background-color: var(--foreground);
-    color: var(--background);
-    font-weight: 600;
+    background-color: var(--tikflow-primary);
+    color: white;
+    font-weight: 700;
     font-size: 0.9375rem;
-    border-radius: 0.5rem;
+    border-radius: 1rem;
     padding: 0.75rem 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    gap: 0.6rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 15px -3px rgba(29, 78, 216, 0.2);
   }
 
   .btn-v2-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2);
+    background-color: var(--tikflow-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 20px 25px -5px rgba(29, 78, 216, 0.3);
+  }
+
+  .btn-v2-secondary {
+    background-color: var(--tikflow-secondary);
+    color: white;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    border-radius: 1rem;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.2);
+  }
+
+  .btn-v2-secondary:hover {
+    background-color: #ea580c;
+    transform: translateY(-2px);
+    box-shadow: 0 20px 25px -5px rgba(249, 115, 22, 0.3);
   }
 
   .btn-v2-outline {

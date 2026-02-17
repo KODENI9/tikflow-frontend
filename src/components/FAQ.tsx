@@ -31,7 +31,7 @@ const FAQ = () => {
 
                 <div className="max-w-3xl mx-auto space-y-4">
                     {faqs.map((faq, index) => (
-                        <div key={index} className="bg-card-bg border border-glass-border rounded-2xl overflow-hidden shadow-sm transition-all hover:border-tikflow-primary/20">
+                        <div key={index} className="bg-card-bg border border-glass-border rounded-2xl overflow-hidden shadow-sm transition-all hover:border-tikflow-primary/50 group/item">
                             <button 
                                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
                                 className="w-full flex items-center justify-between p-6 text-left"
