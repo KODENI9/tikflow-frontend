@@ -26,7 +26,7 @@ const FAQ = () => {
             <div className="container-v2">
                 <div className="text-center mb-16 space-y-4">
                     <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">Des questions ?</h2>
-                    <p className="text-tikflow-slate font-medium">Tout ce que vous devez savoir pour commencer.</p>
+                    <p className="text-tikflow-slate font-bold italic">Tout ce que vous devez savoir pour commencer.</p>
                 </div>
 
                 <div className="max-w-3xl mx-auto space-y-4">
@@ -36,13 +36,13 @@ const FAQ = () => {
                                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
                                 className="w-full flex items-center justify-between p-6 text-left"
                             >
-                                <span className="font-bold text-[#111318]">{faq.question}</span>
-                                <div className={`text-slate-400 transition-transform ${openIndex === index ? 'rotate-180' : ''}`}>
+                                <span className="font-bold text-foreground">{faq.question}</span>
+                                <div className={`text-tikflow-slate transition-transform ${openIndex === index ? 'rotate-180 text-tikflow-primary' : ''}`}>
                                     <ChevronDown size={20} />
                                 </div>
                             </button>
                             {openIndex === index && (
-                                <div className="px-6 pb-6 text-slate-500 font-medium leading-relaxed">
+                                <div className="px-6 pb-6 text-tikflow-slate font-medium leading-relaxed">
                                     {faq.answer}
                                 </div>
                             )}

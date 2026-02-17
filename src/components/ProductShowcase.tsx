@@ -48,7 +48,7 @@ const ProductShowcase = () => {
                                     {f.icon}
                                 </div>
                                 <h3 className="text-xl font-black text-foreground mb-3 uppercase tracking-tight">{f.title}</h3>
-                                <p className="text-tikflow-slate font-bold leading-relaxed text-sm">
+                                <p className="text-tikflow-slate font-bold leading-relaxed text-sm opacity-80">
                                     {f.desc}
                                 </p>
                             </div>

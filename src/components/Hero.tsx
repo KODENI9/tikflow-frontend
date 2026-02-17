@@ -38,7 +38,7 @@ export const Hero = () => {
                         </Link>
                     </div>
 
-                    <div className="pt-20 flex flex-wrap items-center justify-center gap-10 md:gap-16 text-tikflow-slate/30">
+                    <div className="pt-20 flex flex-wrap items-center justify-center gap-10 md:gap-16 text-tikflow-slate opacity-30">
                         <div className="flex flex-col items-center gap-2 group cursor-default">
                              <span className="font-black text-3xl tracking-tighter group-hover:text-tikflow-primary transition-colors">WAVE</span>
                              <div className="h-1 w-0 bg-tikflow-primary group-hover:w-full transition-all duration-300"></div>

@@ -23,12 +23,12 @@ const TrustSection = () => {
 
                 <div className="mt-24 max-w-4xl mx-auto bg-[#0a0b10] dark:bg-[#111218] rounded-[2.5rem] p-12 md:p-20 text-white flex flex-col md:flex-row items-center gap-12 border border-white/5 dark:border-white/10">
                     <div className="flex-1 space-y-6">
-                        <h2 className="text-4xl font-black tracking-tight uppercase leading-tight">La sécurité sans <span className="text-tikflow-secondary">compromis.</span></h2>
-                        <p className="text-slate-400 font-bold text-lg leading-relaxed italic">
+                        <h2 className="text-4xl font-black tracking-tight uppercase leading-tight text-foreground">La sécurité sans <span className="text-tikflow-secondary">compromis.</span></h2>
+                        <p className="text-tikflow-slate font-bold text-lg leading-relaxed italic text-opacity-80">
                             Nous utilisons un chiffrement de niveau industriel pour protéger votre compte. Chaque transaction est surveillée 24h/24 et 7j/7.
                         </p>
                     </div>
-                    <div className="size-48 rounded-full border border-tikflow-primary/20 flex items-center justify-center p-8 text-center italic font-bold text-slate-400 text-sm">
+                    <div className="size-48 rounded-full border border-tikflow-primary/20 flex items-center justify-center p-8 text-center italic font-bold text-tikflow-slate text-sm">
                         "Votre sécurité est notre valeur fondamentale."
                     </div>
                 </div>

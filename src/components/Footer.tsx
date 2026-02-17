@@ -42,14 +42,14 @@ const Footer = () => {
                     </div>
                 </div>
 
-                <div className="pt-12 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                <div className="pt-12 border-t border-slate-100 dark:border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <p className="text-[10px] font-black text-tikflow-slate uppercase tracking-[0.2em] opacity-60">
                         © 2026 TIKFLOW TECHNOLOGIES. CONÇU POUR L'AFRIQUE.
                     </p>
-                    <div className="flex gap-8 text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">
-                        <a href="#" className="hover:text-tikflow-dark">Twitter</a>
-                        <a href="#" className="hover:text-tikflow-dark">Instagram</a>
-                        <a href="#" className="hover:text-tikflow-dark">LinkedIn</a>
+                    <div className="flex gap-8 text-[10px] font-black text-tikflow-slate uppercase tracking-[0.2em] opacity-60">
+                        <a href="#" className="hover:text-tikflow-primary transition-colors">Twitter</a>
+                        <a href="#" className="hover:text-tikflow-primary transition-colors">Instagram</a>
+                        <a href="#" className="hover:text-tikflow-primary transition-colors">LinkedIn</a>
                     </div>
                 </div>
             </div>
