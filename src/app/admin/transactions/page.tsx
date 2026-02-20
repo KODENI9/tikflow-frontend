@@ -23,16 +23,25 @@ export default function TransactionsListPage() {
       const token = await getToken();
       if (!token) return;
 
-      // 1. On récupère les stats et les transactions en parallèle
-      const [statsRes, transRes] = await Promise.all([
-        adminApi.getStats(token),
-        adminApi.getAllTransactions(token) // Assure-toi d'avoir cette méthode dans adminApi
-      ]);
+      // 1. Fetch Stats (Can fail if index is missing)
+      try {
+        const statsRes = await adminApi.getStats(token);
+        setStats(statsRes);
+      } catch (error) {
+        console.error("⚠️ Failed to load stats:", error);
+        // We don't stop execution here, we just log and continue to transactions
+      }
 
-      setStats(statsRes);
-      setTransactions(transRes);
+      // 2. Fetch Transactions (Critical)
+      try {
+        const transRes = await adminApi.getAllTransactions(token);
+        setTransactions(transRes || []);
+      } catch (error) {
+        console.error("❌ Failed to load transactions:", error);
+      }
+
     } catch (error) {
-      console.error("Erreur de chargement:", error);
+      console.error("Erreur générale de chargement:", error);
     } finally {
       setLoading(false);
     }
