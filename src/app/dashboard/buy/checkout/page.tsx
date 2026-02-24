@@ -14,10 +14,10 @@ function CheckoutContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const packId = searchParams.get("packId");
-  const amountCoinsParam = searchParams.get("amount_coins");
+  const amountCfaParam = searchParams.get("amount_cfa");
 
   const [pack, setPack] = useState<Package | null>(null);
-  const [customAmount, setCustomAmount] = useState<{ coins: number, price: number } | null>(null);
+  const [customAmount, setCustomAmount] = useState<{ cfa: number, coins: number } | null>(null);
   const [loading, setLoading] = useState(false);
   const [fetchingData, setFetchingData] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -31,7 +31,7 @@ function CheckoutContent() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!packId && !amountCoinsParam) {
+      if (!packId && !amountCfaParam) {
         toast.error("Veuillez sélectionner un montant");
         router.push("/dashboard/buy");
         return;
@@ -56,12 +56,12 @@ function CheckoutContent() {
 
         if (packId && packData) {
             setPack(packData);
-        } else if (amountCoinsParam) {
-            const coins = parseInt(amountCoinsParam);
-            const COIN_RATE = 10;
+        } else if (amountCfaParam) {
+            const cfa = parseInt(amountCfaParam);
+            const COIN_RATE = 12.5;
             setCustomAmount({
-                coins,
-                price: coins * COIN_RATE
+                cfa,
+                coins: cfa / COIN_RATE
             });
         }
         
@@ -80,7 +80,7 @@ function CheckoutContent() {
     };
 
     fetchData();
-  }, [packId, amountCoinsParam, getToken, router]);
+  }, [packId, amountCfaParam, getToken, router]);
 
   const handlePayment = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -91,7 +91,7 @@ function CheckoutContent() {
     setLoading(true);
     const result = await purchaseCoins({
       packageId: packId || undefined,
-      amount_coins: customAmount?.coins,
+      amount_cfa: customAmount?.cfa,
       tiktok_username: useLinked ? (linkedAccount?.username || "") : formData.tiktok_username,
       tiktok_password: useLinked ? "" : formData.tiktok_password,
       useLinkedAccount: useLinked
@@ -116,7 +116,7 @@ function CheckoutContent() {
   }
 
   const orderCoins = pack?.coins || customAmount?.coins || 0;
-  const orderPrice = pack?.price_cfa || customAmount?.price || 0;
+  const orderPrice = pack?.price_cfa || customAmount?.cfa || 0;
   const orderName = pack?.name || "Achat Personnalisé";
 
   if (!pack && !customAmount) return null;
