@@ -21,10 +21,20 @@ export default function AnalyticsPage() {
 
   useEffect(() => {
     const fetchData = async () => {
+      // If auth is loaded but no user, we should stop loading to avoid infinite spinner
+      if (isLoaded && !userId) {
+        setLoading(false);
+        return;
+      }
+      
       if (!isLoaded || !userId) return;
+
       try {
         const token = await getToken();
-        if (!token) return;
+        if (!token) {
+          setLoading(false);
+          return;
+        }
         const data = await adminApi.getStats(token);
         setStats(data);
       } catch (error) {
@@ -45,7 +55,8 @@ export default function AnalyticsPage() {
   }
 
   // Prepare Chart Data
-  const monthlyData = Object.entries(stats?.monthlyStats || {})
+  const monthlyStats = stats?.monthlyStats || {};
+  const monthlyData = Object.entries(monthlyStats)
     .map(([key, value]) => ({
       name: key, // "YYYY-MM"
       ...value,
