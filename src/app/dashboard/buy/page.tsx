@@ -217,14 +217,13 @@ export default function BuyCoinsPage() {
 }
 
 function CustomPackageCard() {
-  const [customCfa, setCustomCfa] = useState<number | "">("");
+  const [customCoins, setCustomCoins] = useState<number | "">("");
   const COIN_RATE = 12.5;
-  const MIN_CFA = 2000;
+  const MIN_COINS = 160;
 
-  const cfa = typeof customCfa === "number" ? customCfa : 0;
-  const coins = cfa / COIN_RATE;
-  const isIntegerCoins = Number.isInteger(coins);
-  const isValid = cfa >= MIN_CFA && isIntegerCoins;
+  const coins = typeof customCoins === "number" ? customCoins : 0;
+  const price = coins * COIN_RATE;
+  const isValid = coins >= MIN_COINS;
 
   return (
     <div className="group relative bg-card-bg rounded-3xl p-6 border-2 border-dashed border-glass-border transition-all duration-300 hover:border-tikflow-primary/50 shadow-sm">
@@ -239,7 +238,7 @@ function CustomPackageCard() {
             Montant Personnalisé
           </h3>
           <p className="text-[10px] font-bold text-tikflow-slate uppercase tracking-widest">
-            À partir de {MIN_CFA} CFA
+            À partir de {MIN_COINS} coins
           </p>
         </div>
 
@@ -247,34 +246,29 @@ function CustomPackageCard() {
             <div className="relative">
                 <input 
                     type="number"
-                    placeholder="Ex: 5000"
+                    placeholder="Ex: 200"
                     className="w-full py-3 px-4 bg-foreground/5 border-2 border-glass-border rounded-2xl text-center font-black text-2xl focus:border-tikflow-primary focus:ring-0 transition-all text-foreground"
-                    value={customCfa}
+                    value={customCoins}
                     onChange={(e) => {
                         const val = e.target.value === "" ? "" : parseInt(e.target.value);
-                        setCustomCfa(val);
+                        setCustomCoins(val);
                     }}
                 />
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-tikflow-slate">FCFA</span>
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-tikflow-slate">COINS</span>
             </div>
 
-            {cfa > 0 && (
+            {coins > 0 && (
                 <div className="flex justify-between items-center px-2 animate-in fade-in slide-in-from-top-1">
-                    <span className="text-xs font-bold text-tikflow-slate italic">Coins obtenus</span>
-                    <span className={`text-lg font-black ${isIntegerCoins ? "text-tikflow-primary" : "text-red-500"}`}>
-                        {isIntegerCoins ? `${coins.toLocaleString()} Coins` : "Montant invalide"}
-                    </span>
+                    <span className="text-xs font-bold text-tikflow-slate italic">Total à payer</span>
+                    <span className="text-lg font-black text-tikflow-primary">{price.toLocaleString()} FCFA</span>
                 </div>
-            )}
-            {!isIntegerCoins && cfa > 0 && (
-                <p className="text-[10px] text-red-500 font-bold">Le montant doit être un multiple de {COIN_RATE}</p>
             )}
         </div>
 
         {/* Bouton d'Achat */}
         <div className="w-full pt-4 border-t border-glass-border">
             <Link
-                href={isValid ? `/dashboard/buy/checkout?amount_cfa=${cfa}` : "#"}
+                href={isValid ? `/dashboard/buy/checkout?amount_coins=${coins}` : "#"}
                 onClick={(e) => !isValid && e.preventDefault()}
                 className={`w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all ${
                     isValid 
