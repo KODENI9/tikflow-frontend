@@ -50,9 +50,10 @@ export default function HelpPage() {
       videoId: "71RhzQ0XtFI",
       steps: [
         "Choisissez votre opérateur mobile (Flooz, TMoney, etc.).",
-        "Suivez les instructions pour effectuer le transfert.",
-        "Copiez l'ID de référence du SMS reçu.",
-        "Déclarez le paiement dans l'application pour validation."
+        "Entrez le montant et lancez le code USSD pré-rempli.",
+        "Validez le paiement sur votre téléphone.",
+        "Copiez l'intégralité du SMS de confirmation reçu.",
+        "Collez-le pour une validation automatique instantanée."
       ],
       link: "/dashboard/wallet"
     },
