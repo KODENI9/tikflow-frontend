@@ -41,7 +41,7 @@ export default function SettingsAuditPage() {
   // Recipients Management State
   const [recipients, setRecipients] = useState<Recipient[]>([]);
   const [showAddRecipientModal, setShowAddRecipientModal] = useState(false);
-  const [newRecipient, setNewRecipient] = useState({ operator: "flooz", phone: "", beneficiary_name: "", active: true });
+  const [newRecipient, setNewRecipient] = useState({ operator: "flooz", phone: "", beneficiary_name: "", ussd_template: "", active: true });
   const [creatingRecipient, setCreatingRecipient] = useState(false);
 
   const [showEditRecipientModal, setShowEditRecipientModal] = useState(false);
@@ -161,7 +161,7 @@ export default function SettingsAuditPage() {
         await adminApi.createRecipient(token, newRecipient as any);
         toast.success("Destinataire ajouté !");
         setShowAddRecipientModal(false);
-        setNewRecipient({ operator: "flooz", phone: "", beneficiary_name: "", active: true });
+        setNewRecipient({ operator: "flooz", phone: "", beneficiary_name: "", ussd_template: "", active: true });
         fetchData();
     } catch (error: any) {
         toast.error(error.message || "Erreur de création");

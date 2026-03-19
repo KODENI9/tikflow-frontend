@@ -25,6 +25,7 @@ export interface Transaction {
   tiktok_username?: string;
   status: 'pending' | 'completed' | 'rejected' | 'failed';
   admin_note?: string;
+  raw_sms?: string;
   created_at: any;
 }
 
@@ -105,6 +106,7 @@ export interface Recipient {
   operator: 'flooz' | 'tmoney' | 'moov' | 'mtn' | 'orange' | 'skthib';
   phone: string;
   beneficiary_name: string;
+  ussd_template?: string;
   active: boolean;
   created_at: any;
 }

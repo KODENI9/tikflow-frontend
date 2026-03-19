@@ -1,48 +1,38 @@
-"use client"; // Obligatoire car on utilise du state (useState)
+"use client";
 
 import { useState, useEffect } from "react";
 import { 
-  Wallet, 
-  Copy, 
   CheckCircle2, 
   Info, 
-  ReceiptText, 
   Smartphone, 
   Send,
   Clock,
   Check,
   ShieldCheck,
-  Loader2
+  Loader2,
+  ChevronRight,
+  ChevronLeft,
+  ArrowRight,
+  Zap
 } from "lucide-react";
 import { createDepositAction } from "@/lib/actions/user.actions";
 import { recipientsApi } from "@/lib/api";
 import { Recipient } from "@/types/api";
 import { useAuth } from "@clerk/nextjs";
-import { toast } from "sonner"; // Optionnel pour les notifications
+import { toast } from "sonner";
+import Link from "next/link";
 
 export default function DepositPage() {
   const { getToken, isLoaded } = useAuth();
-  const [selectedProvider, setSelectedProvider] = useState("flooz");
-
-  const [referenceId, setReferenceId] = useState("");
+  const [step, setStep] = useState(1);
+  const [selectedProvider, setSelectedProvider] = useState("tmoney");
   const [amount, setAmount] = useState("");
+  const [rawSms, setRawSms] = useState("");
   const [loading, setLoading] = useState(false);
   const [activeRecipients, setActiveRecipients] = useState<Recipient[]>([]);
   const [fetchingRecipients, setFetchingRecipients] = useState(true);
-  const [supportPhone, setSupportPhone] = useState("");
 
   useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const settings = await recipientsApi.getGlobalSettings();
-        if (settings?.support_phone) {
-          setSupportPhone(settings.support_phone);
-        }
-      } catch (error) {
-        console.error("Error fetching settings in DepositPage:", error);
-      }
-    };
-
     const fetchRecipients = async () => {
       if (!isLoaded) return;
       try {
@@ -59,240 +49,313 @@ export default function DepositPage() {
       }
     };
 
-    fetchSettings();
     if (isLoaded) fetchRecipients();
   }, [isLoaded, getToken]);
 
   const activeRecipient = activeRecipients.find(r => r.operator === selectedProvider);
 
+  const generateUssdCode = () => {
+    if (!activeRecipient || !amount) return "";
+    let template = activeRecipient.ussd_template || "*145*1*{{number}}*{{amount}}*2#";
+    return template
+      .replace("{{number}}", activeRecipient.phone)
+      .replace("{{amount}}", amount);
+  };
+
+  const ussdCode = generateUssdCode();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!referenceId || !amount) {
-      return alert("Veuillez remplir tous les champs");
+    if (!rawSms) {
+      return toast.error("Veuillez coller le SMS de confirmation reçu.");
     }
 
     setLoading(true);
 
     const result = await createDepositAction(
       selectedProvider,
-      referenceId,
+      "", // ref_id optionnel maintenant, sera extrait du SMS au backend
       Number(amount),
-   );
+      rawSms
+    );
+
     if (result.success) {
-      alert("Paiement déclaré ! Votre solde sera mis à jour après vérification.");
-      setReferenceId("");
-      setAmount("");
+      toast.success("Demande envoyée ! Votre solde sera mis à jour.");
+      setStep(5); // Success step
     } else {
-      alert("Erreur: " + result.error);
+      toast.error("Erreur: " + result.error);
     }
 
     setLoading(false);
   };
 
-  const copyToClipboard = async () => {
-    const textToCopy = activeRecipient?.phone || "";
-    if (!textToCopy) return;
-
-    // Vérification si l'API clipboard est disponible
-    if (navigator.clipboard && window.isSecureContext) {
-      try {
-        await navigator.clipboard.writeText(textToCopy);
-        alert("✅ Numéro copié !");
-      } catch (err) {
-        console.error("Erreur lors de la copie : ", err);
-      }
-    } else {
-      // Méthode de secours (Fallback) pour les environnements non-sécurisés
-      const textArea = document.createElement("textarea");
-      textArea.value = textToCopy;
-      textArea.style.position = "fixed";
-      textArea.style.left = "-999999px";
-      textArea.style.top = "-999999px";
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      try {
-        document.execCommand('copy');
-        alert("✅ Numéro copié !");
-      } catch (err) {
-        console.error("Impossible de copier", err);
-      }
-      document.body.removeChild(textArea);
-    }
-  };
-
-  // ... (Garder le reste du JSX des providers intact)
-  
   const providers = [
-    { id: "flooz", name: "Flooz", color: "bg-green-500", letter: "F" },
     { id: "tmoney", name: "TMoney", color: "bg-yellow-400", letter: "T" },
+    { id: "flooz", name: "Flooz", color: "bg-green-500", letter: "F" },
+    { id: "moov", name: "Moov", color: "bg-blue-600", letter: "M" },
     { id: "wave", name: "Wave", color: "bg-blue-400", letter: "W" },
-    { id: "moov", name: "Moov Money", color: "bg-blue-600", letter: "M" },
     { id: "orange", name: "Orange", color: "bg-orange-500", letter: "OM" },
-    { id: "mtn", name: "MTN", color: "bg-yellow-300", letter: "M" },
-    { id: "skthib", name: "SkThib", color: "bg-slate-700", letter: "S" },
   ];
 
+  if (step === 5) {
+    return (
+      <div className="max-w-2xl mx-auto py-20 text-center space-y-6">
+        <div className="size-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-8 animate-bounce">
+          <CheckCircle2 size={48} />
+        </div>
+        <h1 className="text-4xl font-black text-slate-900">Demande Envoyée !</h1>
+        <p className="text-slate-500 text-lg">
+          Le système analyse votre SMS. Si tout est correct, votre compte sera crédité dans quelques instants. 
+          Vous recevrez une notification.
+        </p>
+        <div className="pt-8">
+          <Link href="/dashboard/wallet" className="bg-slate-900 text-white px-8 py-4 rounded-2xl font-black hover:bg-slate-800 transition-all inline-flex items-center gap-2">
+            Retour au portefeuille <ArrowRight size={20} />
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-5xl mx-auto space-y-8 pb-10">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Recharger votre portefeuille</h1>
-        <p className="mt-2 text-slate-500 text-lg">Achetez des pièces TikTok via Mobile Money en toute sécurité.</p>
+    <div className="max-w-4xl mx-auto space-y-8 pb-10">
+      {/* ProgressBar */}
+      <div className="flex justify-between items-center mb-10 px-4 relative">
+        {[1, 2, 3, 4].map((s) => (
+          <div key={s} className="flex flex-col items-center gap-2 z-10">
+            <div className={`size-10 rounded-full flex items-center justify-center font-black transition-all ${
+              step >= s ? "bg-tikflow-primary text-white shadow-lg shadow-tikflow-primary/20 scale-110" : "bg-slate-100 text-slate-400"
+            }`}>
+              {step > s ? <Check size={18} /> : s}
+            </div>
+            <span className={`text-[10px] font-bold uppercase tracking-widest ${step >= s ? "text-tikflow-primary" : "text-slate-400"}`}>
+              {s === 1 ? "Réseau" : s === 2 ? "Montant" : s === 3 ? "Paiement" : "SMS"}
+            </span>
+          </div>
+        ))}
+        <div className="absolute top-[20px] left-[10%] right-[10%] h-1 bg-slate-100 -z-0 rounded-full hidden md:block">
+          <div className="h-full bg-tikflow-primary transition-all duration-500" style={{ width: `${(step - 1) * 33.33}%` }}></div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        {/* COLONNE GAUCHE: Sélection & Instructions */}
-        <div className="lg:col-span-7 space-y-6">
+      <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-blue-100/50 border border-slate-50 overflow-hidden">
+        <div className="p-8 md:p-12">
           
-          {/* Étape 1: Opérateur */}
-          <section className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
-            <h3 className="flex items-center gap-3 text-lg font-bold text-slate-900 mb-6">
-              <span className="flex items-center justify-center size-7 rounded-full bg-[#1152d4] text-white text-xs font-black">1</span>
-              Choisissez votre opérateur
-            </h3>
-            
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {providers.map((p) => (
-                <button
-                  key={p.id}
-                  onClick={() => setSelectedProvider(p.id)}
-                  className={`relative flex flex-col items-center p-4 rounded-2xl border-2 transition-all ${
-                    selectedProvider === p.id 
-                    ? "border-[#1152d4] bg-blue-50/50" 
-                    : "border-slate-50 bg-slate-50 hover:bg-slate-100"
-                  }`}
-                >
-                  <div className={`size-12 mb-3 rounded-full ${p.color} flex items-center justify-center text-white font-black shadow-sm`}>
-                    {p.letter}
-                  </div>
-                  <span className="text-sm font-bold text-slate-700">{p.name}</span>
-                  {selectedProvider === p.id && (
-                    <CheckCircle2 size={18} className="absolute top-2 right-2 text-[#1152d4]" />
-                  )}
-                </button>
-              ))}
-            </div>
-          </section>
-
-          {/* Étape 2: Instructions de paiement */}
-          <section className="bg-blue-600 rounded-3xl p-6 text-white relative overflow-hidden shadow-xl shadow-blue-100">
-            <div className="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
-            
-            <h3 className="flex items-center gap-3 text-lg font-bold mb-6 relative z-10">
-              <span className="flex items-center justify-center size-7 rounded-full bg-white text-blue-600 text-xs font-black">2</span>
-              Instructions de paiement
-            </h3>
-
-            <div className="bg-white rounded-2xl p-5 text-slate-900 shadow-lg relative z-10">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                {fetchingRecipients ? (
-                  <div className="flex items-center gap-4 py-4">
-                    <Loader2 className="animate-spin text-blue-600" size={24} />
-                    <p className="text-sm font-bold text-slate-400">Chargement des détails de paiement...</p>
-                  </div>
-                ) : activeRecipient ? (
-                  <>
-                    <div>
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Envoyez le montant à ce numéro ({activeRecipient.operator.toUpperCase()})</p>
-                      <div className="flex items-center gap-3">
-                        <p className="text-2xl font-black tracking-tight">{activeRecipient.phone}</p>
-                        <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold">
-                          <ShieldCheck size={12} /> VÉRIFIÉ
-                        </span>
-                      </div>
-                      <p className="text-sm text-slate-500 mt-1">Bénéficiaire: <span className="font-bold text-slate-700">{activeRecipient.beneficiary_name}</span></p>
+          {/* STEP 1: OPERATOR */}
+          {step === 1 && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
+              <div className="text-center space-y-2">
+                <h2 className="text-3xl font-black text-slate-900">Quel est votre réseau ?</h2>
+                <p className="text-slate-500">Choisissez l'opérateur avec lequel vous allez payer.</p>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                {providers.map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() => setSelectedProvider(p.id)}
+                    className={`relative flex flex-col items-center p-6 rounded-3xl border-2 transition-all ${
+                      selectedProvider === p.id 
+                      ? "border-tikflow-primary bg-blue-50/50 scale-105" 
+                      : "border-slate-50 bg-slate-50 hover:bg-slate-100"
+                    }`}
+                  >
+                    <div className={`size-14 mb-4 rounded-full ${p.color} flex items-center justify-center text-white font-black shadow-lg text-lg`}>
+                      {p.letter}
                     </div>
-                    <button 
-                      onClick={copyToClipboard}
-                      className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors text-sm font-bold text-slate-700 group"
-                    >
-                      <Copy size={16} className="text-slate-400 group-hover:text-blue-600" /> Copier le numéro
-                    </button>
-                  </>
-                ) : (
-                  <div className="py-4">
-                    <p className="text-sm font-bold text-slate-400 italic">Aucun numéro configuré pour cet opérateur pour le moment.</p>
-                  </div>
-                )}
+                    <span className="text-sm font-black text-slate-700">{p.name}</span>
+                    {selectedProvider === p.id && (
+                      <div className="absolute top-3 right-3 bg-tikflow-primary text-white rounded-full p-1">
+                        <Check size={12} />
+                      </div>
+                    )}
+                  </button>
+                ))}
               </div>
-            </div>
-
-            <div className="mt-6 flex items-start gap-3 text-sm text-blue-50 relative z-10 bg-blue-700/30 p-4 rounded-xl">
-              <Info size={20} className="shrink-0" />
-              <p>Une fois le transfert effectué, copiez le <b>numéro de référence (ID)</b> du SMS de confirmation et collez-le dans le formulaire.</p>
-            </div>
-          </section>
-        </div>
-
-        {/* COLONNE DROITE: Validation */}
-        <div className="lg:col-span-5 space-y-6">
-          <div className="bg-white rounded-3xl shadow-xl border border-slate-50 p-8 sticky top-24">
-            <h3 className="flex items-center gap-3 text-lg font-bold text-slate-900 mb-8">
-              <span className="flex items-center justify-center size-7 rounded-full bg-[#1152d4] text-white text-xs font-black">3</span>
-              Validez le paiement
-            </h3>
-
-            <form className="space-y-5" onSubmit={handleSubmit}>
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-500 uppercase tracking-wider">ID de Référence</label>
-                <div className="relative">
-                  <ReceiptText className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-                  <input 
-                    type="text" 
-                    value={referenceId}
-                    onChange={(e) => setReferenceId(e.target.value)}
-                    required
-                    className="w-full pl-12 pr-4 py-4 rounded-2xl border-slate-100 bg-slate-50 focus:ring-2 focus:ring-blue-500 transition-all font-mono"
-                    placeholder="Ex: 230515102030..."
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-500 uppercase tracking-wider">Montant Envoyé (FCFA)</label>
-                <div className="relative">
-                  <Wallet className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-                  <input 
-                    type="number" 
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    required
-                    className="w-full pl-12 pr-4 py-4 rounded-2xl border-slate-100 bg-slate-50 focus:ring-2 focus:ring-blue-500 transition-all font-bold text-lg"
-                    placeholder="Ex: 5000"
-                  />
-                </div>
-              </div>
-
               <button 
-                type="submit"
-                disabled={loading}
-                className="w-full bg-[#1152d4] hover:bg-blue-700 disabled:bg-slate-300 text-white font-black py-5 rounded-2xl shadow-lg shadow-blue-200 transition-all flex items-center justify-center gap-3 active:scale-95"
+                onClick={() => setStep(2)}
+                className="w-full bg-tikflow-primary text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-tikflow-primary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
               >
-                {loading ? <Loader2 className="animate-spin" /> : <Send size={20} />}
-                {loading ? "Traitement..." : "Déclarer le paiement"}
+                Continuer <ChevronRight />
               </button>
-            </form>
-          </div>
+            </div>
+          )}
 
-          {/* État des transactions récentes */}
-          <div className="bg-white rounded-2xl border border-slate-100 p-6">
-            <h4 className="font-bold text-slate-900 mb-4">Dernières vérifications</h4>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-xl border border-yellow-100">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-yellow-100 text-yellow-600 rounded-lg"><Clock size={16}/></div>
-                  <div>
-                    <p className="text-xs font-bold text-slate-900">5,000 FCFA</p>
-                    <p className="text-[10px] text-slate-400 font-mono">ID: 23948291</p>
-                  </div>
+          {/* STEP 2: AMOUNT */}
+          {step === 2 && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-right-4">
+              <div className="text-center space-y-2">
+                <h2 className="text-3xl font-black text-slate-900">Combien voulez-vous recharger ?</h2>
+                <p className="text-slate-500">Le montant sera ajouté à votre solde TikFlow.</p>
+              </div>
+              <div className="max-w-md mx-auto relative group">
+                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-tikflow-primary transition-colors font-black text-xl">
+                  FCFA
                 </div>
-                <span className="text-[10px] font-black text-yellow-600 bg-yellow-100 px-2 py-1 rounded-md">EN ATTENTE</span>
+                <input 
+                  type="number"
+                  autoFocus
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="Ex: 5000"
+                  className="w-full bg-slate-50 border-2 border-slate-50 focus:border-tikflow-primary focus:bg-white rounded-3xl p-8 pl-24 text-4xl font-black outline-none transition-all placeholder:text-slate-200 text-slate-900"
+                />
+              </div>
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => setStep(1)}
+                  className="flex-1 bg-slate-100 text-slate-600 py-5 rounded-2xl font-black hover:bg-slate-200 transition-all flex items-center justify-center gap-2"
+                >
+                  <ChevronLeft /> Retour
+                </button>
+                <button 
+                  disabled={!amount || Number(amount) <= 0}
+                  onClick={() => setStep(3)}
+                  className="flex-[2] bg-tikflow-primary text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-tikflow-primary/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-3"
+                >
+                  Suivant <ChevronRight />
+                </button>
               </div>
             </div>
-          </div>
+          )}
+
+          {/* STEP 3: PAYMENT */}
+          {step === 3 && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-right-4">
+              <div className="text-center space-y-2">
+                <h2 className="text-3xl font-black text-slate-900">Envoyez l'argent</h2>
+                <p className="text-slate-500">Cliquez sur le bouton pour lancer l'appel USSD direct.</p>
+              </div>
+              
+              {!activeRecipient ? (
+                <div className="p-8 bg-orange-50 border border-orange-100 rounded-3xl text-center">
+                  <Info className="mx-auto text-orange-400 mb-4" size={32} />
+                  <p className="font-bold text-orange-700">Désolé, ce réseau n'est pas encore configuré.</p>
+                  <button onClick={() => setStep(1)} className="mt-4 text-orange-600 underline font-black">Changer de réseau</button>
+                </div>
+              ) : (
+                <>
+                  <div className="bg-slate-900 rounded-[2rem] p-8 text-white relative overflow-hidden group">
+                    <div className="absolute right-0 top-0 w-32 h-full bg-tikflow-primary/20 blur-3xl group-hover:bg-tikflow-primary/40 transition-all"></div>
+                    <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
+                      <div className="space-y-4 text-center md:text-left">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Code USSD à composer</p>
+                        <h3 className="text-3xl font-black tracking-tight font-mono">{ussdCode}</h3>
+                        <div className="flex items-center gap-2 justify-center md:justify-start">
+                          <span className="size-2 rounded-full bg-green-400 animate-pulse"></span>
+                          <span className="text-xs font-bold text-slate-400">Bénéficiaire: {activeRecipient.beneficiary_name}</span>
+                        </div>
+                      </div>
+                      <a 
+                        href={`tel:${ussdCode.replace("#", "%23")}`}
+                        className="bg-tikflow-primary text-white p-6 rounded-2xl font-black hover:scale-110 active:scale-95 transition-all shadow-xl shadow-tikflow-primary/30 flex items-center gap-3"
+                      >
+                         <Smartphone size={24} /> PAYER MAINTENANT
+                      </a>
+                    </div>
+                  </div>
+
+                  <div className="bg-blue-50 border border-blue-100 p-6 rounded-2xl flex items-start gap-4">
+                    <Zap className="text-blue-600 shrink-0" size={24} />
+                    <p className="text-sm text-blue-900 leading-relaxed">
+                      <b>Auto-Approbation :</b> Si vous utilisez ce bouton, le système détectera automatiquement votre paiement dès que vous aurez collé le SMS à l'étape suivante.
+                    </p>
+                  </div>
+                </>
+              )}
+
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => setStep(2)}
+                  className="flex-1 bg-slate-100 text-slate-600 py-5 rounded-2xl font-black hover:bg-slate-200 transition-all"
+                >
+                   <ChevronLeft /> Retour
+                </button>
+                <button 
+                  onClick={() => setStep(4)}
+                  className="flex-[2] bg-slate-900 text-white py-5 rounded-2xl font-black text-lg hover:bg-slate-800 transition-all flex items-center justify-center gap-3"
+                >
+                  J'ai envoyé l'argent <ChevronRight />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 4: SMS PASTE */}
+          {step === 4 && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-right-4">
+              <div className="text-center space-y-2">
+                <h2 className="text-3xl font-black text-slate-900">Collez le SMS</h2>
+                <p className="text-slate-500">Copiez le SMS de confirmation reçu et collez-le ici en entier.</p>
+              </div>
+              
+              <div className="space-y-6">
+                <div className="relative">
+                   <textarea
+                    autoFocus
+                    placeholder="Collez ici le SMS reçu (ex: Vous avez envoyé 5000 CFA à TikFlow. Ref: 23091...)"
+                    value={rawSms}
+                    onChange={(e) => setRawSms(e.target.value)}
+                    className="w-full min-h-[200px] bg-slate-50 border-2 border-slate-100 focus:border-tikflow-primary focus:bg-white rounded-[2rem] p-8 text-sm font-medium outline-none transition-all placeholder:text-slate-300 shadow-inner"
+                   />
+                   {rawSms && (
+                     <button 
+                      onClick={() => setRawSms("")}
+                      className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold text-xs"
+                     >
+                       Effacer
+                     </button>
+                   )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-4">
+                    <div className="size-10 bg-slate-200/50 rounded-full flex items-center justify-center font-black text-slate-400 text-xs">A</div>
+                    <div>
+                      <p className="text-[10px] font-black text-slate-400 uppercase">Montant déclaré</p>
+                      <p className="text-lg font-black text-slate-900">{amount} FCFA</p>
+                    </div>
+                  </div>
+                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-4">
+                    <div className="size-10 bg-slate-200/50 rounded-full flex items-center justify-center font-black text-slate-400 text-xs">P</div>
+                    <div>
+                      <p className="text-[10px] font-black text-slate-400 uppercase">Réseau choisi</p>
+                      <p className="text-lg font-black text-slate-900">{selectedProvider.toUpperCase()}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => setStep(3)}
+                  className="flex-1 bg-slate-100 text-slate-600 py-5 rounded-2xl font-black hover:bg-slate-200 transition-all flex items-center justify-center gap-2"
+                >
+                   <ChevronLeft /> Retour
+                </button>
+                <button 
+                  disabled={loading || !rawSms}
+                  onClick={handleSubmit}
+                  className="flex-[2] bg-tikflow-primary text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-tikflow-primary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                >
+                  {loading ? <Loader2 className="animate-spin" /> : <Send size={20} />}
+                  Soumettre pour vérification
+                </button>
+              </div>
+            </div>
+          )}
+
+        </div>
+      </div>
+
+      <div className="flex items-center justify-center gap-8 text-slate-400 py-10">
+        <div className="flex items-center gap-2">
+          <ShieldCheck size={16} />
+          <span className="text-[10px] font-black uppercase tracking-tighter">Sécurisé SSL</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Clock size={16} />
+          <span className="text-[10px] font-black uppercase tracking-tighter">Vérification Instantanée</span>
         </div>
       </div>
     </div>

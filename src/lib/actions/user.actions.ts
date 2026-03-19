@@ -117,6 +117,7 @@ export async function createDepositAction(
   payment_method: string,
   ref_id: string,
   amount_cfa: number,
+  raw_sms?: string,
 ) {
   try {
     const session = await auth();
@@ -130,7 +131,7 @@ export async function createDepositAction(
         "Authorization": `Bearer ${token}`,
       },
       body: JSON.stringify(
-        { payment_method, ref_id, amount_cfa }
+        { payment_method, ref_id, amount_cfa, raw_sms }
       ),
     });
 
