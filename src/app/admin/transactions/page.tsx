@@ -129,8 +129,8 @@ export default function TransactionsListPage() {
             {filteredTransactions.map((trx) => (
               <tr key={trx.id} className="hover:bg-foreground/5 transition-colors text-xs">
                 <td className="px-6 py-5">
-                  <p className="font-black text-foreground">{trx.user_id}</p>
-                  <p className="text-tikflow-slate font-bold">{trx.payment_method}</p>
+                  <p className="font-black text-foreground">{trx.user_name || trx.user_id}</p>
+                  <p className="text-[10px] text-tikflow-slate font-bold truncate max-w-[150px]">{trx.user_email || trx.payment_method}</p>
                 </td>
                 <td className="px-6 py-5 text-center font-black text-foreground">{trx.amount_cfa?.toLocaleString()} XOF</td>
                 <td className="px-6 py-5 text-center">

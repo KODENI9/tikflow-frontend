@@ -248,8 +248,9 @@ export default function TransactionDetail() {
               </div>
               <div>
                 <p className="text-[10px] font-black text-tikflow-primary uppercase tracking-widest">Client</p>
-                <h3 className="font-black text-foreground text-lg">ID: {transaction.user_id.substring(0, 8)}...</h3>
-                <p className="text-xs font-bold text-tikflow-slate">@{transaction.tiktok_username || 'no_username'}</p>
+                <h3 className="font-black text-foreground text-lg">{transaction.user_name || 'Inconnu'}</h3>
+                <p className="text-xs font-bold text-tikflow-slate truncate max-w-[120px]">{transaction.user_email || 'Pas d\'email'}</p>
+                <p className="text-[9px] text-tikflow-slate/50">ID: {transaction.user_id.substring(0, 8)}...</p>
               </div>
             </div>
             
