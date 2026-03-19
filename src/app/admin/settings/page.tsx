@@ -15,7 +15,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Loader2,
-  X
+  X,
+  Smartphone
 } from "lucide-react";
 import { adminApi } from "@/lib/api";
 import { useAuth } from "@clerk/nextjs";
@@ -455,11 +456,12 @@ export default function SettingsAuditPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="text-[10px] font-black text-tikflow-slate uppercase tracking-widest border-b border-glass-border bg-foreground/5">
-                <th className="px-8 py-4">Operator</th>
-                <th className="px-4 py-4">Phone Number</th>
-                <th className="px-4 py-4">Beneficiary</th>
-                <th className="px-4 py-4 text-center">Status</th>
-                <th className="px-8 py-4 text-right">Actions</th>
+                 <th className="px-8 py-4">Operator</th>
+                 <th className="px-4 py-4">Phone Number</th>
+                 <th className="px-4 py-4">Beneficiary</th>
+                 <th className="px-4 py-4">USSD Template</th>
+                 <th className="px-4 py-4 text-center">Status</th>
+                 <th className="px-8 py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-glass-border">
@@ -474,8 +476,11 @@ export default function SettingsAuditPage() {
                       </span>
                     </td>
                     <td className="px-4 py-5 text-sm font-black text-foreground">{rec.phone}</td>
-                    <td className="px-4 py-5 text-sm font-bold text-tikflow-slate">{rec.beneficiary_name}</td>
-                    <td className="px-4 py-5">
+                     <td className="px-4 py-5 text-sm font-bold text-tikflow-slate">{rec.beneficiary_name}</td>
+                     <td className="px-4 py-5 text-[10px] font-mono text-tikflow-primary bg-tikflow-primary/5 rounded-lg border border-tikflow-primary/10">
+                       {rec.ussd_template || "Non défini"}
+                     </td>
+                     <td className="px-4 py-5">
                       <div className="flex justify-center">
                          <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter ${rec.active ? 'bg-tikflow-primary/10 text-tikflow-primary' : 'bg-tikflow-accent/10 text-tikflow-accent'}`}>
                           {rec.active ? 'Actif' : 'Inactif'}
@@ -545,6 +550,20 @@ export default function SettingsAuditPage() {
                    />
                 </div>
                 <div>
+                 <div>
+                    <label className="text-[10px] font-black text-tikflow-primary uppercase ml-1 flex items-center gap-1">
+                      <Smartphone size={10} /> Modèle USSD (Template)
+                    </label>
+                    <input 
+                     placeholder="Ex: *145*1*{{number}}*{{amount}}*2#" 
+                     value={newRecipient.ussd_template}
+                     onChange={e => setNewRecipient({...newRecipient, ussd_template: e.target.value})}
+                     className="w-full bg-tikflow-primary/5 border border-tikflow-primary/20 rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground placeholder:text-slate-400"
+                    />
+                    <p className="text-[9px] text-tikflow-primary/60 mt-1 italic font-bold">Utilisez {"{{number}}"} et {"{{amount}}"} comme variables.</p>
+                 </div>
+                 </div>
+                <div>
                    <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Nom du bénéficiaire</label>
                    <input 
                     placeholder="Ex: TikFlow Official" 
@@ -601,6 +620,19 @@ export default function SettingsAuditPage() {
                     className="w-full bg-foreground/5 border border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
                    />
                 </div>
+                <div>
+                 <div>
+                    <label className="text-[10px] font-black text-tikflow-primary uppercase ml-1 flex items-center gap-1">
+                      <Smartphone size={10} /> Modèle USSD (Template)
+                    </label>
+                    <input 
+                     value={editingRecipient.ussd_template || ""}
+                     onChange={e => setEditingRecipient({...editingRecipient, ussd_template: e.target.value})}
+                     className="w-full bg-tikflow-primary/5 border border-tikflow-primary/20 rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
+                    />
+                    <p className="text-[9px] text-tikflow-primary/60 mt-1 italic font-bold">Ex: *145*1*{"{{number}}"}*{"{{amount}}"}*2#</p>
+                 </div>
+                 </div>
                 <div>
                    <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Nom du bénéficiaire</label>
                    <input 
