@@ -2,36 +2,43 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #0a0b10;
+  --foreground: #09090b;
 
-  --tikflow-black: #0a0b10;
-  --tikflow-primary: #1d4ed8;
+  --tikflow-black: #09090b;
+  --tikflow-primary: #2563eb; /* Modern Blue */
   --tikflow-primary-dark: #1e40af;
-  --tikflow-secondary: #f97316;
+  --tikflow-secondary: #f97316; /* Vibrant Orange */
+  --tikflow-secondary-light: #ffedd5;
   --tikflow-accent: #10b981;
   --tikflow-danger: #ef4444;
-  --tikflow-slate: #475569;
+  --tikflow-slate: #71717a;
 
-  --glass-bg: rgba(255, 255, 255, 0.8);
-  --glass-border: rgba(0, 0, 0, 0.05);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(0, 0, 0, 0.08);
 
   --card-bg: #ffffff;
+  --sidebar-bg: #09090b;
+  --sidebar-foreground: #fafafa;
 }
 
 .dark {
-  --background: #0a0b10;
-  --foreground: #f8fafc;
+  --background: #09090b;
+  --foreground: #fafafa;
 
+  --tikflow-black: #000000;
   --tikflow-primary: #3b82f6;
-  --tikflow-primary-dark: #1d4ed8;
+  --tikflow-primary-dark: #2563eb;
   --tikflow-secondary: #fb923c;
+  --tikflow-secondary-light: #431407;
   --tikflow-danger: #f87171;
-  --tikflow-slate: #94a3b8;
+  --tikflow-slate: #a1a1aa;
 
-  --glass-bg: rgba(10, 11, 16, 0.8);
-  --glass-border: rgba(255, 255, 255, 0.05);
+  --glass-bg: rgba(9, 9, 11, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.08);
 
-  --card-bg: #111218;
+  --card-bg: #111113;
+  --sidebar-bg: #000000;
+  --sidebar-foreground: #fafafa;
 }
 
 @theme {
@@ -41,10 +48,13 @@
   --color-tikflow-primary: var(--tikflow-primary);
   --color-tikflow-primary-dark: var(--tikflow-primary-dark);
   --color-tikflow-secondary: var(--tikflow-secondary);
+  --color-tikflow-secondary-light: var(--tikflow-secondary-light);
   --color-tikflow-accent: var(--tikflow-accent);
   --color-tikflow-danger: var(--tikflow-danger);
   --color-tikflow-slate: var(--tikflow-slate);
   --color-card-bg: var(--card-bg);
+  --color-sidebar-bg: var(--sidebar-bg);
+  --color-sidebar-foreground: var(--sidebar-foreground);
   --color-glass-bg: var(--glass-bg);
   --color-glass-border: var(--glass-border);
 }
@@ -59,98 +69,107 @@
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  h1,
-  h2,
-  h3,
-  h4 {
+  h1, h2, h3, h4 {
     font-family: 'Outfit', sans-serif;
     letter-spacing: -0.02em;
     color: var(--foreground);
+    font-weight: 700;
   }
 }
 
 @layer components {
-  .container-v2 {
-    max-width: 1360px;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  }
+
+  .glass-nav {
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--glass-border);
   }
 
   .btn-v2-primary {
     background-color: var(--tikflow-primary);
     color: white;
-    font-weight: 700;
-    font-size: 0.9375rem;
-    border-radius: 1rem;
-    padding: 0.75rem 1.5rem;
-    display: flex;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border-radius: 0.75rem;
+    padding: 0.625rem 1.25rem;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.6rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 10px 15px -3px rgba(29, 78, 216, 0.2);
+    gap: 0.5rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
   }
 
   .btn-v2-primary:hover {
     background-color: var(--tikflow-primary-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 20px 25px -5px rgba(29, 78, 216, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
   }
 
   .btn-v2-secondary {
     background-color: var(--tikflow-secondary);
     color: white;
-    font-weight: 700;
-    font-size: 0.9375rem;
-    border-radius: 1rem;
-    padding: 0.75rem 1.5rem;
-    display: flex;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border-radius: 0.75rem;
+    padding: 0.625rem 1.25rem;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.6rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.2);
+    gap: 0.5rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px -1px rgba(249, 115, 22, 0.2);
   }
 
   .btn-v2-secondary:hover {
     background-color: #ea580c;
-    transform: translateY(-2px);
-    box-shadow: 0 20px 25px -5px rgba(249, 115, 22, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.3);
   }
 
-  .btn-v2-outline {
-    background-color: transparent;
-    color: var(--foreground);
-    font-weight: 600;
-    font-size: 0.9375rem;
-    border: 1px solid var(--glass-border);
-    border-radius: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    transition: all 0.2s;
-  }
-
-  .btn-v2-outline:hover {
-    background-color: var(--card-bg);
-  }
-
-  .card-v2 {
+  .card-v3 {
     background-color: var(--card-bg);
     border: 1px solid var(--glass-border);
-    border-radius: 1rem;
-    padding: 2rem;
+    border-radius: 1.25rem;
+    padding: 1.5rem;
     transition: all 0.3s ease;
   }
 
-  .card-v2:hover {
-    border-color: var(--tikflow-primary);
-    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+  .card-v3:hover {
+    border-color: rgba(37, 99, 235, 0.3);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
   }
+}
+
+.text-gradient-blue {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-orange {
+  background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }
 
 @keyframes marquee {
