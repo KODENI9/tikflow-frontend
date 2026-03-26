@@ -10,6 +10,7 @@ import { fr } from "date-fns/locale";
 import Link from "next/link";
 import { db } from "@/lib/firebase";
 import { collection, query, where, onSnapshot, orderBy, limit as firestoreLimit } from "firebase/firestore";
+import Portal from "./Portal";
 
 interface NotificationBellProps {
   isAdmin?: boolean;
@@ -204,63 +205,73 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
       )}
       {/* MODAL DE DÉTAILS */}
       {selectedNotification && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div 
-            className="bg-card-bg rounded-[2.5rem] w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 border border-glass-border"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header du Modal */}
-            <div className={`p-8 pb-6 flex justify-between items-start relative overflow-hidden`}>
-              {/* Fond décoratif (subtile gradient) */}
-              <div className="absolute inset-0 opacity-5 bg-gradient-to-br from-tikflow-primary to-indigo-900" />
-              
-              <div className="relative z-10 flex gap-5 items-center">
-                <div className="scale-125">
-                  {getIcon(selectedNotification.type)}
+        <Portal>
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+            {/* Overlay */}
+            <div 
+              className="absolute inset-0 bg-black/80 backdrop-blur-md animate-in fade-in duration-300"
+              onClick={() => setSelectedNotification(null)}
+            />
+            
+            {/* Contenu du Modal */}
+            <div 
+              className="relative z-10 w-full max-w-lg max-h-[90vh] flex flex-col bg-card-bg rounded-[2.5rem] shadow-[0_0_50px_rgba(0,0,0,0.5)] animate-in zoom-in-95 duration-300 border border-glass-border overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header du Modal */}
+              <div className={`p-8 pb-6 flex justify-between items-start relative shrink-0`}>
+                {/* Fond décoratif (subtile gradient) */}
+                <div className="absolute inset-0 opacity-5 bg-gradient-to-br from-tikflow-primary to-indigo-900" />
+                
+                <div className="relative z-10 flex gap-5 items-center">
+                  <div className="scale-125">
+                    {getIcon(selectedNotification.type)}
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-black text-foreground tracking-tight leading-tight">
+                      {selectedNotification.title}
+                    </h2>
+                    <p className="text-[10px] font-black text-tikflow-primary uppercase tracking-widest mt-1">
+                      {selectedNotification.type.replace(/_/g, ' ')}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-xl font-black text-foreground tracking-tight leading-tight">
-                    {selectedNotification.title}
-                  </h2>
-                  <p className="text-[10px] font-black text-tikflow-primary uppercase tracking-widest mt-1">
-                    {selectedNotification.type.replace('_', ' ')}
-                  </p>
+
+                <button 
+                  onClick={() => setSelectedNotification(null)}
+                  className="relative z-10 p-2 bg-foreground/5 hover:bg-foreground/10 text-tikflow-slate rounded-full transition-all hover:rotate-90"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Corps du Modal (Scrollable) */}
+              <div className="p-8 pt-2 space-y-6 overflow-y-auto custom-scrollbar flex-1">
+                <div className="bg-foreground/5 rounded-3xl p-6 border border-glass-border italic text-foreground/80 leading-relaxed font-medium">
+                  "{selectedNotification.message}"
+                </div>
+
+                <div className="flex items-center justify-between text-xs font-bold text-tikflow-slate">
+                    <span className="flex items-center gap-1.5 capitalize">
+                      <Check size={14} className={selectedNotification.read ? "text-tikflow-accent" : "text-tikflow-slate/20"} />
+                      {selectedNotification.read ? "Lue" : "Non lue"}
+                    </span>
+                    <span>
+                      {formatDistanceToNow(new Date(selectedNotification.created_at), { addSuffix: true, locale: fr })}
+                    </span>
                 </div>
               </div>
 
-              <button 
-                onClick={() => setSelectedNotification(null)}
-                className="relative z-10 p-2 bg-foreground/5 hover:bg-foreground/10 text-tikflow-slate rounded-full transition-all hover:rotate-90"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            {/* Corps du Modal */}
-            <div className="p-8 pt-2 space-y-6">
-              <div className="bg-foreground/5 rounded-3xl p-6 border border-glass-border italic text-foreground/80 leading-relaxed font-medium">
-                "{selectedNotification.message}"
-              </div>
-
-              <div className="flex items-center justify-between text-xs font-bold text-tikflow-slate">
-                  <span className="flex items-center gap-1.5 capitalize">
-                    <Check size={14} className={selectedNotification.read ? "text-tikflow-accent" : "text-tikflow-slate/20"} />
-                    {selectedNotification.read ? "Lue" : "Non lue"}
-                  </span>
-                  <span>
-                    {formatDistanceToNow(new Date(selectedNotification.created_at), { addSuffix: true, locale: fr })}
-                  </span>
-              </div>
-
-              <div className="pt-4 border-t border-glass-border flex gap-3">
+              {/* Footer du Modal (Fixed) */}
+              <div className="p-8 pt-4 border-t border-glass-border flex gap-3 shrink-0">
                 {selectedNotification.link && (
                   <Link 
                     href={selectedNotification.link}
                     onClick={() => setSelectedNotification(null)}
-                    className="flex-1 py-4 bg-tikflow-primary text-white rounded-2xl font-black text-sm flex items-center justify-center gap-2 shadow-xl shadow-tikflow-primary/20 hover:bg-tikflow-primary/90 transition-all uppercase tracking-wider"
+                    className="flex-1 py-4 bg-tikflow-primary text-white rounded-2xl font-black text-sm flex items-center justify-center gap-2 shadow-xl shadow-tikflow-primary/20 hover:bg-tikflow-primary/90 transition-all uppercase tracking-wider text-center"
                   >
                     <ExternalLink size={18} />
-                    Voir les détails
+                    Détails
                   </Link>
                 )}
                 <button 
@@ -272,7 +283,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
               </div>
             </div>
           </div>
-        </div>               
+        </Portal>               
       )}
     </div>
   );

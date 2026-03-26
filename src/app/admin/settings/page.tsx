@@ -22,6 +22,7 @@ import { adminApi } from "@/lib/api";
 import { useAuth } from "@clerk/nextjs";
 import { Package, ReceivedPayment, Recipient } from "@/types/api";
 import { toast } from "react-hot-toast";
+import Portal from "@/components/Portal";
 
 export default function SettingsAuditPage() {
   const { getToken, isLoaded } = useAuth();
@@ -291,120 +292,146 @@ export default function SettingsAuditPage() {
 
       {/* --- ADD PACKAGE MODAL --- */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-card-bg border border-glass-border rounded-[2rem] w-full max-w-md p-8 shadow-2xl animate-in fade-in zoom-in duration-200">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-black text-foreground">Nouveau Pack</h3>
-              <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-foreground/5 rounded-full text-tikflow-slate">
-                <X size={20} />
-              </button>
+        <Portal>
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+            <div 
+              className="absolute inset-0 bg-black/80 backdrop-blur-md animate-in fade-in duration-300"
+              onClick={() => setShowAddModal(false)}
+            />
+            <div 
+              className="relative z-10 w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden bg-card-bg border border-glass-border rounded-[2rem] shadow-[0_0_50px_rgba(0,0,0,0.5)] animate-in zoom-in-95 duration-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-8 pb-4 flex justify-between items-center bg-foreground/5 shrink-0">
+                <h3 className="text-lg font-black text-foreground">Nouveau Pack</h3>
+                <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-foreground/10 rounded-full text-tikflow-slate transition-colors">
+                  <X size={20} />
+                </button>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto custom-scrollbar p-8 pt-6">
+                <form onSubmit={handleCreatePackage} className="space-y-5">
+                  <div>
+                    <label className="text-[10px] font-black text-tikflow-slate uppercase tracking-wider ml-1">Nom du Pack</label>
+                    <input 
+                      autoFocus
+                      placeholder="Ex: TikFlow Starter" 
+                      value={newPackage.name}
+                      onChange={e => setNewPackage({...newPackage, name: e.target.value})}
+                      className="w-full bg-foreground/5 border border-glass-border rounded-xl p-4 text-sm font-bold focus:ring-4 ring-tikflow-primary/10 transition-all outline-none text-foreground"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <label className="text-[10px] font-black text-tikflow-slate uppercase tracking-wider ml-1">Coins TikTok</label>
+                        <input 
+                        type="number"
+                        placeholder="Ex: 70" 
+                        value={newPackage.coins}
+                        onChange={e => setNewPackage({...newPackage, coins: e.target.value})}
+                        className="w-full bg-foreground/5 border border-glass-border rounded-xl p-4 text-sm font-bold focus:ring-4 ring-tikflow-primary/10 transition-all outline-none text-foreground"
+                        />
+                    </div>
+                    <div>
+                        <label className="text-[10px] font-black text-tikflow-slate uppercase tracking-wider ml-1">Prix (CFA)</label>
+                        <input 
+                        type="number"
+                        placeholder="Ex: 1500" 
+                        value={newPackage.price}
+                        onChange={e => setNewPackage({...newPackage, price: e.target.value})}
+                        className="w-full bg-foreground/5 border border-glass-border rounded-xl p-4 text-sm font-bold focus:ring-4 ring-tikflow-primary/10 transition-all outline-none text-foreground"
+                        />
+                    </div>
+                  </div>
+                  <button 
+                    disabled={creating}
+                    className="w-full py-4 bg-tikflow-primary text-white rounded-2xl font-black text-sm hover:scale-[1.02] active:scale-95 transition-all mt-4 disabled:opacity-50 shadow-xl shadow-tikflow-primary/20 uppercase tracking-widest"
+                  >
+                    {creating ? "Création..." : "Créer le Pack"}
+                  </button>
+                </form>
+              </div>
             </div>
-            <form onSubmit={handleCreatePackage} className="space-y-4">
-              <div>
-                <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Nom du Pack</label>
-                <input 
-                  autoFocus
-                  placeholder="Ex: TikFlow Starter" 
-                  value={newPackage.name}
-                  onChange={e => setNewPackage({...newPackage, name: e.target.value})}
-                  className="w-full bg-foreground/5 border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                    <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Coins TikTok</label>
-                    <input 
-                    type="number"
-                    placeholder="Ex: 70" 
-                    value={newPackage.coins}
-                    onChange={e => setNewPackage({...newPackage, coins: e.target.value})}
-                    className="w-full bg-foreground/5 border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
-                    />
-                </div>
-                <div>
-                    <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Prix (CFA)</label>
-                    <input 
-                    type="number"
-                    placeholder="Ex: 1500" 
-                    value={newPackage.price}
-                    onChange={e => setNewPackage({...newPackage, price: e.target.value})}
-                    className="w-full bg-foreground/5 border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
-                    />
-                </div>
-              </div>
-              <button 
-                disabled={creating}
-                className="w-full py-3 bg-tikflow-primary text-white rounded-xl font-black text-sm hover:bg-tikflow-primary/90 transition-all mt-4 disabled:opacity-50 shadow-lg shadow-tikflow-primary/10"
-              >
-                {creating ? "Création..." : "Créer le Pack"}
-              </button>
-            </form>
           </div>
-        </div>
+        </Portal>
       )}
 
       {/* --- EDIT PACKAGE MODAL --- */}
       {showEditModal && editingPackage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-card-bg border border-glass-border rounded-[2rem] w-full max-w-md p-8 shadow-2xl animate-in fade-in zoom-in duration-200">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-black text-foreground">Modifier le Pack</h3>
-              <button onClick={() => setShowEditModal(false)} className="p-2 hover:bg-foreground/5 rounded-full text-tikflow-slate">
-                <X size={20} />
-              </button>
+        <Portal>
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+            <div 
+              className="absolute inset-0 bg-black/80 backdrop-blur-md animate-in fade-in duration-300"
+              onClick={() => setShowEditModal(false)}
+            />
+            <div 
+              className="relative z-10 w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden bg-card-bg border border-glass-border rounded-[2rem] shadow-[0_0_50px_rgba(0,0,0,0.5)] animate-in zoom-in-95 duration-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-8 pb-4 flex justify-between items-center bg-foreground/5 shrink-0">
+                <h3 className="text-lg font-black text-foreground">Modifier le Pack</h3>
+                <button onClick={() => setShowEditModal(false)} className="p-2 hover:bg-foreground/10 rounded-full text-tikflow-slate transition-colors">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto custom-scrollbar p-8 pt-6">
+                <form onSubmit={handleUpdatePackage} className="space-y-5">
+                  <div>
+                    <label className="text-[10px] font-black text-tikflow-slate uppercase tracking-wider ml-1">Nom du Pack</label>
+                    <input 
+                      autoFocus
+                      placeholder="Ex: TikFlow Starter" 
+                      value={editingPackage.name}
+                      onChange={e => setEditingPackage({...editingPackage, name: e.target.value})}
+                      className="w-full bg-foreground/5 border border-glass-border rounded-xl p-4 text-sm font-bold focus:ring-4 ring-tikflow-primary/10 transition-all outline-none text-foreground"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <label className="text-[10px] font-black text-tikflow-slate uppercase tracking-wider ml-1">Coins TikTok</label>
+                        <input 
+                        type="number"
+                        placeholder="Ex: 70" 
+                        value={editingPackage.coins}
+                        onChange={e => setEditingPackage({...editingPackage, coins: Number(e.target.value)})}
+                        className="w-full bg-foreground/5 border border-glass-border rounded-xl p-4 text-sm font-bold focus:ring-4 ring-tikflow-primary/10 transition-all outline-none text-foreground"
+                        />
+                    </div>
+                    <div>
+                        <label className="text-[10px] font-black text-tikflow-slate uppercase tracking-wider ml-1">Prix (CFA)</label>
+                        <input 
+                        type="number"
+                        placeholder="Ex: 1500" 
+                        value={editingPackage.price_cfa}
+                        onChange={e => setEditingPackage({...editingPackage, price_cfa: Number(e.target.value)})}
+                        className="w-full bg-foreground/5 border border-glass-border rounded-xl p-4 text-sm font-bold focus:ring-4 ring-tikflow-primary/10 transition-all outline-none text-foreground"
+                        />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 pt-2 bg-foreground/5 p-4 rounded-xl border border-glass-border">
+                    <input 
+                      type="checkbox" 
+                      id="active"
+                      checked={editingPackage.active}
+                      onChange={e => setEditingPackage({...editingPackage, active: e.target.checked})}
+                      className="size-5 rounded-lg border-glass-border bg-foreground/5 text-tikflow-primary focus:ring-tikflow-primary/20 transition-all"
+                    />
+                    <label htmlFor="active" className="text-xs font-black text-foreground uppercase tracking-widest cursor-pointer">Pack Actif</label>
+                  </div>
+                  <button 
+                    disabled={updating}
+                    className="w-full py-4 bg-tikflow-primary text-white rounded-2xl font-black text-sm hover:scale-[1.02] active:scale-95 transition-all mt-4 disabled:opacity-50 shadow-xl shadow-tikflow-primary/20 uppercase tracking-widest"
+                  >
+                    {updating ? "Mise à jour..." : "Enregistrer"}
+                  </button>
+                </form>
+              </div>
             </div>
-            <form onSubmit={handleUpdatePackage} className="space-y-4">
-              <div>
-                <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Nom du Pack</label>
-                <input 
-                  autoFocus
-                  placeholder="Ex: TikFlow Starter" 
-                  value={editingPackage.name}
-                  onChange={e => setEditingPackage({...editingPackage, name: e.target.value})}
-                  className="w-full bg-foreground/5 border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                    <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Coins TikTok</label>
-                    <input 
-                    type="number"
-                    placeholder="Ex: 70" 
-                    value={editingPackage.coins}
-                    onChange={e => setEditingPackage({...editingPackage, coins: Number(e.target.value)})}
-                    className="w-full bg-foreground/5 border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
-                    />
-                </div>
-                <div>
-                    <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Prix (CFA)</label>
-                    <input 
-                    type="number"
-                    placeholder="Ex: 1500" 
-                    value={editingPackage.price_cfa}
-                    onChange={e => setEditingPackage({...editingPackage, price_cfa: Number(e.target.value)})}
-                    className="w-full bg-foreground/5 border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
-                    />
-                </div>
-              </div>
-              <div className="flex items-center gap-2 pt-2">
-                <input 
-                  type="checkbox" 
-                  id="active"
-                  checked={editingPackage.active}
-                  onChange={e => setEditingPackage({...editingPackage, active: e.target.checked})}
-                  className="rounded border-glass-border bg-foreground/5 text-tikflow-primary"
-                />
-                <label htmlFor="active" className="text-xs font-bold text-tikflow-slate uppercase">Pack Actif</label>
-              </div>
-              <button 
-                disabled={updating}
-                className="w-full py-3 bg-tikflow-primary text-white rounded-xl font-black text-sm hover:bg-tikflow-primary/90 transition-all mt-4 disabled:opacity-50 shadow-lg shadow-tikflow-primary/10"
-              >
-                {updating ? "Mise à jour..." : "Enregistrer les modifications"}
-              </button>
-            </form>
           </div>
-        </div>
+        </Portal>
+      )}
+    </div>
       )}
 
       {/* --- PLATFORM SETTINGS (Support Number, etc.) --- */}
@@ -514,153 +541,176 @@ export default function SettingsAuditPage() {
 
       {/* --- ADD RECIPIENT MODAL --- */}
       {showAddRecipientModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-card-bg border border-glass-border rounded-[2rem] w-full max-w-md p-8 shadow-2xl animate-in fade-in zoom-in duration-200">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-black text-foreground">Nouveau Numéro</h3>
-              <button onClick={() => setShowAddRecipientModal(false)} className="p-2 hover:bg-foreground/5 rounded-full text-tikflow-slate">
-                <X size={20} />
-              </button>
+        <Portal>
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+            <div 
+              className="absolute inset-0 bg-black/80 backdrop-blur-md animate-in fade-in duration-300"
+              onClick={() => setShowAddRecipientModal(false)}
+            />
+            <div 
+              className="relative z-10 w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden bg-card-bg border border-glass-border rounded-[2rem] shadow-[0_0_50px_rgba(0,0,0,0.5)] animate-in zoom-in-95 duration-300"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-8 pb-4 flex justify-between items-center bg-foreground/5 shrink-0">
+                <h3 className="text-lg font-black text-foreground">Nouveau Numéro</h3>
+                <button onClick={() => setShowAddRecipientModal(false)} className="p-2 hover:bg-foreground/10 rounded-full text-tikflow-slate transition-colors">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto custom-scrollbar p-8 pt-6">
+                <form onSubmit={handleCreateRecipient} className="space-y-5">
+                  <div>
+                    <label className="text-[10px] font-black text-tikflow-slate uppercase tracking-wider ml-1">Opérateur</label>
+                    <select 
+                      className="w-full bg-foreground/5 border border-glass-border rounded-xl p-4 text-sm font-bold focus:ring-4 ring-tikflow-primary/10 transition-all outline-none text-foreground appearance-none"
+                      value={newRecipient.operator}
+                      onChange={e => setNewRecipient({...newRecipient, operator: e.target.value})}
+                    >
+                      <option value="flooz">Flooz</option>
+                      <option value="tmoney">TMoney</option>
+                      <option value="wave">Wave</option>
+                      <option value="moov">Moov Money</option>
+                      <option value="mtn">MTN</option>
+                      <option value="orange">Orange</option>
+                      <option value="skthib">SkThib</option>
+                    </select>
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-[10px] font-black text-tikflow-slate uppercase tracking-wider ml-1">Numéro de Téléphone</label>
+                      <input 
+                        placeholder="Ex: +228 90..." 
+                        value={newRecipient.phone}
+                        onChange={e => setNewRecipient({...newRecipient, phone: e.target.value})}
+                        className="w-full bg-foreground/5 border border-glass-border rounded-xl p-4 text-sm font-bold focus:ring-4 ring-tikflow-primary/10 transition-all outline-none text-foreground"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-black text-tikflow-primary uppercase tracking-wider ml-1 flex items-center gap-1">
+                        <Smartphone size={10} /> Modèle USSD (Template)
+                      </label>
+                      <input 
+                        placeholder="Ex: *145*1*{{number}}*{{amount}}*2#" 
+                        value={newRecipient.ussd_template}
+                        onChange={e => setNewRecipient({...newRecipient, ussd_template: e.target.value})}
+                        className="w-full bg-tikflow-primary/5 border border-tikflow-primary/20 rounded-xl p-4 text-sm font-bold focus:ring-4 ring-tikflow-primary/10 transition-all outline-none text-foreground placeholder:text-slate-400"
+                      />
+                      <p className="text-[9px] text-tikflow-primary/60 mt-1 italic font-black uppercase tracking-widest">Utilisez {"{{number}}"} et {"{{amount}}"} comme variables.</p>
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-black text-tikflow-slate uppercase tracking-wider ml-1">Nom du bénéficiaire</label>
+                      <input 
+                        placeholder="Ex: TikFlow Official" 
+                        value={newRecipient.beneficiary_name}
+                        onChange={e => setNewRecipient({...newRecipient, beneficiary_name: e.target.value})}
+                        className="w-full bg-foreground/5 border border-glass-border rounded-xl p-4 text-sm font-bold focus:ring-4 ring-tikflow-primary/10 transition-all outline-none text-foreground"
+                      />
+                    </div>
+                  </div>
+                  <button 
+                    disabled={creatingRecipient}
+                    className="w-full py-4 bg-tikflow-primary text-white rounded-2xl font-black text-sm hover:scale-[1.02] active:scale-95 transition-all mt-4 disabled:opacity-50 shadow-xl shadow-tikflow-primary/20 uppercase tracking-widest"
+                  >
+                    {creatingRecipient ? "Ajout..." : "Ajouter le Numéro"}
+                  </button>
+                </form>
+              </div>
             </div>
-            <form onSubmit={handleCreateRecipient} className="space-y-4">
-              <div>
-                <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Opérateur</label>
-                <select 
-                  className="w-full bg-foreground/5 border border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
-                  value={newRecipient.operator}
-                  onChange={e => setNewRecipient({...newRecipient, operator: e.target.value})}
-                >
-                  <option value="flooz">Flooz</option>
-                  <option value="tmoney">TMoney</option>
-                  <option value="wave">Wave</option>
-                  <option value="moov">Moov Money</option>
-                  <option value="mtn">MTN</option>
-                  <option value="orange">Orange</option>
-                  <option value="skthib">SkThib</option>
-                </select>
-              </div>
-              <div className="space-y-4">
-                <div>
-                   <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Numéro de Téléphone</label>
-                   <input 
-                    placeholder="Ex: +228 90..." 
-                    value={newRecipient.phone}
-                    onChange={e => setNewRecipient({...newRecipient, phone: e.target.value})}
-                    className="w-full bg-foreground/5 border border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
-                   />
-                </div>
-                <div>
-                 <div>
-                    <label className="text-[10px] font-black text-tikflow-primary uppercase ml-1 flex items-center gap-1">
-                      <Smartphone size={10} /> Modèle USSD (Template)
-                    </label>
-                    <input 
-                     placeholder="Ex: *145*1*{{number}}*{{amount}}*2#" 
-                     value={newRecipient.ussd_template}
-                     onChange={e => setNewRecipient({...newRecipient, ussd_template: e.target.value})}
-                     className="w-full bg-tikflow-primary/5 border border-tikflow-primary/20 rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground placeholder:text-slate-400"
-                    />
-                    <p className="text-[9px] text-tikflow-primary/60 mt-1 italic font-bold">Utilisez {"{{number}}"} et {"{{amount}}"} comme variables.</p>
-                 </div>
-                 </div>
-                <div>
-                   <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Nom du bénéficiaire</label>
-                   <input 
-                    placeholder="Ex: TikFlow Official" 
-                    value={newRecipient.beneficiary_name}
-                    onChange={e => setNewRecipient({...newRecipient, beneficiary_name: e.target.value})}
-                    className="w-full bg-foreground/5 border border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
-                   />
-                </div>
-              </div>
-              <button 
-                disabled={creatingRecipient}
-                className="w-full py-3 bg-tikflow-primary text-white rounded-xl font-black text-sm hover:bg-tikflow-primary/90 transition-all mt-4 disabled:opacity-50 shadow-lg shadow-tikflow-primary/10"
-              >
-                {creatingRecipient ? "Ajout..." : "Ajouter le Numéro"}
-              </button>
-            </form>
           </div>
+        </Portal>
+      )}
+    </div>
         </div>
       )}
 
       {/* --- EDIT RECIPIENT MODAL --- */}
       {showEditRecipientModal && editingRecipient && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-card-bg border border-glass-border rounded-[2rem] w-full max-w-md p-8 shadow-2xl animate-in fade-in zoom-in duration-200">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-black text-foreground">Modifier le Numéro</h3>
-              <button onClick={() => setShowEditRecipientModal(false)} className="p-2 hover:bg-foreground/5 rounded-full text-tikflow-slate">
-                <X size={20} />
-              </button>
-            </div>
-            <form onSubmit={handleUpdateRecipient} className="space-y-4">
-              <div>
-                <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Opérateur</label>
-                <select 
-                  className="w-full bg-foreground/5 border border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
-                  value={editingRecipient.operator}
-                  onChange={e => setEditingRecipient({...editingRecipient, operator: e.target.value as any})}
-                >
-                  <option value="flooz">Flooz</option>
-                  <option value="tmoney">TMoney</option>
-                  <option value="wave">Wave</option>
-                  <option value="moov">Moov Money</option>
-                  <option value="mtn">MTN</option>
-                  <option value="orange">Orange</option>
-                  <option value="skthib">SkThib</option>
-                </select>
+        <Portal>
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+            <div 
+              className="absolute inset-0 bg-black/80 backdrop-blur-md animate-in fade-in duration-300"
+              onClick={() => setShowEditRecipientModal(false)}
+            />
+            <div 
+              className="relative z-10 w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden bg-card-bg border border-glass-border rounded-[2rem] shadow-[0_0_50px_rgba(0,0,0,0.5)] animate-in zoom-in-95 duration-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-8 pb-4 flex justify-between items-center bg-foreground/5 shrink-0">
+                <h3 className="text-lg font-black text-foreground">Modifier le Numéro</h3>
+                <button onClick={() => setShowEditRecipientModal(false)} className="p-2 hover:bg-foreground/10 rounded-full text-tikflow-slate transition-colors">
+                  <X size={20} />
+                </button>
               </div>
-              <div className="space-y-4">
-                <div>
-                   <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Numéro de Téléphone</label>
-                   <input 
-                    value={editingRecipient.phone}
-                    onChange={e => setEditingRecipient({...editingRecipient, phone: e.target.value})}
-                    className="w-full bg-foreground/5 border border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
-                   />
-                </div>
-                <div>
-                 <div>
-                    <label className="text-[10px] font-black text-tikflow-primary uppercase ml-1 flex items-center gap-1">
-                      <Smartphone size={10} /> Modèle USSD (Template)
-                    </label>
+
+              <div className="flex-1 overflow-y-auto custom-scrollbar p-8 pt-6">
+                <form onSubmit={handleUpdateRecipient} className="space-y-5">
+                  <div>
+                    <label className="text-[10px] font-black text-tikflow-slate uppercase tracking-wider ml-1">Opérateur</label>
+                    <select 
+                      className="w-full bg-foreground/5 border border-glass-border rounded-xl p-4 text-sm font-bold focus:ring-4 ring-tikflow-primary/10 transition-all outline-none text-foreground appearance-none"
+                      value={editingRecipient.operator}
+                      onChange={e => setEditingRecipient({...editingRecipient, operator: e.target.value as any})}
+                    >
+                      <option value="flooz">Flooz</option>
+                      <option value="tmoney">TMoney</option>
+                      <option value="wave">Wave</option>
+                      <option value="moov">Moov Money</option>
+                      <option value="mtn">MTN</option>
+                      <option value="orange">Orange</option>
+                      <option value="skthib">SkThib</option>
+                    </select>
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-[10px] font-black text-tikflow-slate uppercase tracking-wider ml-1">Numéro de Téléphone</label>
+                      <input 
+                        value={editingRecipient.phone}
+                        onChange={e => setEditingRecipient({...editingRecipient, phone: e.target.value})}
+                        className="w-full bg-foreground/5 border border-glass-border rounded-xl p-4 text-sm font-bold focus:ring-4 ring-tikflow-primary/10 transition-all outline-none text-foreground"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-black text-tikflow-primary uppercase tracking-wider ml-1 flex items-center gap-1">
+                        <Smartphone size={10} /> Modèle USSD (Template)
+                      </label>
+                      <input 
+                        value={editingRecipient.ussd_template || ""}
+                        onChange={e => setEditingRecipient({...editingRecipient, ussd_template: e.target.value})}
+                        className="w-full bg-tikflow-primary/5 border border-tikflow-primary/20 rounded-xl p-4 text-sm font-bold focus:ring-4 ring-tikflow-primary/10 transition-all outline-none text-foreground"
+                      />
+                      <p className="text-[9px] text-tikflow-primary/60 mt-1 italic font-black uppercase tracking-widest">Ex: *145*1*{"{{number}}"}*{"{{amount}}"}*2#</p>
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-black text-tikflow-slate uppercase tracking-wider ml-1">Nom du bénéficiaire</label>
+                      <input 
+                        value={editingRecipient.beneficiary_name}
+                        onChange={e => setEditingRecipient({...editingRecipient, beneficiary_name: e.target.value})}
+                        className="w-full bg-foreground/5 border border-glass-border rounded-xl p-4 text-sm font-bold focus:ring-4 ring-tikflow-primary/10 transition-all outline-none text-foreground"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 pt-2 bg-foreground/5 p-4 rounded-xl border border-glass-border">
                     <input 
-                     value={editingRecipient.ussd_template || ""}
-                     onChange={e => setEditingRecipient({...editingRecipient, ussd_template: e.target.value})}
-                     className="w-full bg-tikflow-primary/5 border border-tikflow-primary/20 rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
+                      type="checkbox" 
+                      id="rec-active"
+                      checked={editingRecipient.active}
+                      onChange={e => setEditingRecipient({...editingRecipient, active: e.target.checked})}
+                      className="size-5 rounded-lg border-glass-border bg-foreground/5 text-tikflow-primary focus:ring-tikflow-primary/20 transition-all"
                     />
-                    <p className="text-[9px] text-tikflow-primary/60 mt-1 italic font-bold">Ex: *145*1*{"{{number}}"}*{"{{amount}}"}*2#</p>
-                 </div>
-                 </div>
-                <div>
-                   <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Nom du bénéficiaire</label>
-                   <input 
-                    value={editingRecipient.beneficiary_name}
-                    onChange={e => setEditingRecipient({...editingRecipient, beneficiary_name: e.target.value})}
-                    className="w-full bg-foreground/5 border border-glass-border rounded-xl p-3 text-sm font-bold focus:ring-2 ring-tikflow-primary/20 text-foreground"
-                   />
-                </div>
+                    <label htmlFor="rec-active" className="text-xs font-black text-foreground uppercase tracking-wider cursor-pointer">Numéro Actif</label>
+                  </div>
+                  <button 
+                    disabled={updatingRecipient}
+                    className="w-full py-4 bg-tikflow-primary text-white rounded-2xl font-black text-sm hover:scale-[1.02] active:scale-95 transition-all mt-4 disabled:opacity-50 shadow-xl shadow-tikflow-primary/20 uppercase tracking-widest"
+                  >
+                    {updatingRecipient ? "Mise à jour..." : "Enregistrer"}
+                  </button>
+                </form>
               </div>
-              <div className="flex items-center gap-2 pt-2">
-                <input 
-                  type="checkbox" 
-                  id="rec-active"
-                  checked={editingRecipient.active}
-                  onChange={e => setEditingRecipient({...editingRecipient, active: e.target.checked})}
-                  className="rounded border-glass-border bg-foreground/5 text-tikflow-primary"
-                />
-                <label htmlFor="rec-active" className="text-xs font-bold text-tikflow-slate uppercase">Numéro Actif</label>
-              </div>
-              <button 
-                disabled={updatingRecipient}
-                className="w-full py-3 bg-tikflow-primary text-white rounded-xl font-black text-sm hover:bg-tikflow-primary/90 transition-all mt-4 disabled:opacity-50 shadow-lg shadow-tikflow-primary/10"
-              >
-                {updatingRecipient ? "Mise à jour..." : "Enregistrer"}
-              </button>
-            </form>
+            </div>
           </div>
-        </div>
+        </Portal>
       )}
 
       {/* --- SECURITY & AUDIT LOGS --- */}
