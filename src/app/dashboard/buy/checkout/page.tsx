@@ -24,6 +24,8 @@ function CheckoutContent() {
   const [formData, setFormData] = useState({
     tiktok_username: "",
     tiktok_password: "",
+    phone: "",
+    nomclient: "",
   });
 
   const [linkedAccount, setLinkedAccount] = useState<{ username: string } | null>(null);
@@ -85,11 +87,17 @@ function CheckoutContent() {
   const handlePayment = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!useLinked && (!formData.tiktok_username || !formData.tiktok_password)) {
-      return toast.error("Veuillez remplir tous les champs");
+      return toast.error("Veuillez remplir les identifiants TikTok");
+    }
+    if (!formData.phone || !formData.nomclient) {
+      return toast.error("Veuillez remplir le numéro Mobile Money et votre nom");
     }
 
     setLoading(true);
     const result = await purchaseCoins({
+      amount: orderPrice,
+      phone: formData.phone,
+      nomclient: formData.nomclient,
       packageId: packId || undefined,
       amount_coins: customAmount?.coins,
       tiktok_username: useLinked ? (linkedAccount?.username || "") : formData.tiktok_username,
@@ -97,13 +105,13 @@ function CheckoutContent() {
       useLinkedAccount: useLinked
     });
 
-    if (result.success) {
-      toast.success("Achat réussi !");
-      router.push("/dashboard/history");
+    if (result.success && result.data?.paymentUrl) {
+      toast.success("Redirection vers MoneyFusion...");
+      window.location.href = result.data.paymentUrl;
     } else {
       toast.error(result.message || "Erreur lors de l'achat");
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   if (fetchingData) {
@@ -170,6 +178,32 @@ function CheckoutContent() {
                   </button>
                 </div>
               )}
+
+              {/* Champs de facturation MoneyFusion */}
+              <div className="space-y-5">
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Numéro Mobile Money</label>
+                  <input 
+                    required
+                    type="text" 
+                    placeholder="Ex: 0102030405"
+                    className="w-full px-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Nom Complet</label>
+                  <input 
+                    required
+                    type="text" 
+                    placeholder="Ex: Jean Dupont"
+                    className="w-full px-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold"
+                    value={formData.nomclient}
+                    onChange={(e) => setFormData({...formData, nomclient: e.target.value})}
+                  />
+                </div>
+              </div>
 
               {/* Identifiants TikTok */}
               <div className={`space-y-5 transition-all duration-300 ${useLinked ? 'opacity-50 pointer-events-none grayscale-[0.5]' : ''}`}>

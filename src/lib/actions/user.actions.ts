@@ -114,25 +114,22 @@ export async function fetchUserwalletBalance() {
 
 
 export async function createDepositAction(
-  payment_method: string,
-  ref_id: string,
-  amount_cfa: number,
-  raw_sms?: string,
+  amount: number,
+  phone: string,
+  nomclient: string
 ) {
   try {
     const session = await auth();
     const { getToken } = session;
     const token = await getToken();
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/orders/ch_wallet`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payments/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
       },
-      body: JSON.stringify(
-        { payment_method, ref_id, amount_cfa, raw_sms }
-      ),
+      body: JSON.stringify({ amount, phone, nomclient, type: 'DEPOSIT' }),
     });
 
     const data = await response.json();
@@ -205,23 +202,26 @@ export async function getTransactionByIdAction(id: string) {
 
 // Action pour l'achat de coins TikTok
 export async function purchaseCoins(formData: { 
+  amount: number,
+  phone: string,
+  nomclient: string,
   packageId?: string, 
   amount_coins?: number,
-  tiktok_username: string, 
-  tiktok_password: string,
+  tiktok_username?: string, 
+  tiktok_password?: string,
   useLinkedAccount?: boolean 
 }) {
   try {
     const session = await auth(); // Clerk ou ton système d'auth
     const token = await session.getToken();
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/orders/buy-coins`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payments/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify({ ...formData, type: 'PURCHASE' }),
     });
 
     const result = await response.json();
