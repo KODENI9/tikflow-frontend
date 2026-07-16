@@ -431,8 +431,6 @@ export default function SettingsAuditPage() {
           </div>
         </Portal>
       )}
-    </div>
-      )}
 
       {/* --- PLATFORM SETTINGS (Support Number, etc.) --- */}
       <div className="bg-card-bg rounded-[2.5rem] border border-glass-border shadow-sm p-8 space-y-6">
@@ -619,9 +617,6 @@ export default function SettingsAuditPage() {
             </div>
           </div>
         </Portal>
-      )}
-    </div>
-        </div>
       )}
 
       {/* --- EDIT RECIPIENT MODAL --- */}
