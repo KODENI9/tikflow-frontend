@@ -260,6 +260,33 @@ export async function purchaseCoins(formData: {
   }
 }
 
+// Action pour l'achat de coins TikTok avec le solde du portefeuille
+export async function payWithWalletAction(formData: { 
+  packageId?: string, 
+  amount_coins?: number,
+  tiktok_username?: string, 
+  tiktok_password?: string,
+}) {
+  try {
+    const session = await auth();
+    const token = await session.getToken();
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payments/pay-with-wallet`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const result = await response.json();
+    return result;
+  } catch (error: any) {
+    return { success: false, message: error.message || "Erreur réseau" };
+  }
+}
+
 export async function getDbUser() {
   try {
     const session = await auth();

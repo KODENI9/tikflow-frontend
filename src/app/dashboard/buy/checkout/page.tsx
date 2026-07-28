@@ -7,7 +7,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { packagesApi } from "@/lib/api";
 import { Package } from "@/types/api";
-import { purchaseCoins, getUserProfileAction } from "@/lib/actions/user.actions";
+import { purchaseCoins, getUserProfileAction, fetchUserwalletBalance, payWithWalletAction } from "@/lib/actions/user.actions";
 
 function CheckoutContent() {
   const { getToken } = useAuth();
@@ -21,6 +21,8 @@ function CheckoutContent() {
   const [loading, setLoading] = useState(false);
   const [fetchingData, setFetchingData] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [walletBalance, setWalletBalance] = useState<number>(0);
+  const [paymentMethod, setPaymentMethod] = useState<'moneyfusion' | 'wallet'>('moneyfusion');
   const [formData, setFormData] = useState({
     tiktok_username: "",
     tiktok_password: "",
@@ -45,16 +47,22 @@ function CheckoutContent() {
         
         // Parallel fetch for profile and pack (if needed)
         const profilePromise = getUserProfileAction();
+        const balancePromise = fetchUserwalletBalance();
         let packPromise: Promise<any> = Promise.resolve(null);
         
         if (packId) {
             packPromise = packagesApi.getPackageById(token, packId);
         }
 
-        const [packData, profileData] = await Promise.all([
+        const [packData, profileData, balanceData] = await Promise.all([
           packPromise,
-          profilePromise
+          profilePromise,
+          balancePromise
         ]);
+
+        if (balanceData) {
+            setWalletBalance(balanceData.balance || 0);
+        }
 
         if (packId && packData) {
             setPack(packData);
@@ -89,28 +97,48 @@ function CheckoutContent() {
     if (!useLinked && (!formData.tiktok_username || !formData.tiktok_password)) {
       return toast.error("Veuillez remplir les identifiants TikTok");
     }
-    if (!formData.phone || !formData.nomclient) {
-      return toast.error("Veuillez remplir le numéro Mobile Money et votre nom");
-    }
 
     setLoading(true);
-    const result = await purchaseCoins({
-      amount: orderPrice,
-      phone: formData.phone,
-      nomclient: formData.nomclient,
-      packageId: packId || undefined,
-      amount_coins: customAmount?.coins,
-      tiktok_username: useLinked ? (linkedAccount?.username || "") : formData.tiktok_username,
-      tiktok_password: useLinked ? "" : formData.tiktok_password,
-      useLinkedAccount: useLinked
-    });
 
-    if (result.success && result.data?.paymentUrl) {
-      toast.success("Redirection vers MoneyFusion...");
-      window.location.href = result.data.paymentUrl;
+    if (paymentMethod === 'wallet') {
+      const result = await payWithWalletAction({
+        packageId: packId || undefined,
+        amount_coins: customAmount?.coins,
+        tiktok_username: useLinked ? (linkedAccount?.username || "") : formData.tiktok_username,
+        tiktok_password: useLinked ? "" : formData.tiktok_password,
+      });
+
+      if (result.success) {
+        toast.success("Paiement réussi avec votre solde !");
+        router.push("/dashboard/history");
+      } else {
+        toast.error(result.message || "Erreur lors du paiement avec le solde");
+        setLoading(false);
+      }
     } else {
-      toast.error(result.message || "Erreur lors de l'achat");
-      setLoading(false);
+      if (!formData.phone || !formData.nomclient) {
+        setLoading(false);
+        return toast.error("Veuillez remplir le numéro Mobile Money et votre nom");
+      }
+
+      const result = await purchaseCoins({
+        amount: orderPrice,
+        phone: formData.phone,
+        nomclient: formData.nomclient,
+        packageId: packId || undefined,
+        amount_coins: customAmount?.coins,
+        tiktok_username: useLinked ? (linkedAccount?.username || "") : formData.tiktok_username,
+        tiktok_password: useLinked ? "" : formData.tiktok_password,
+        useLinkedAccount: useLinked
+      });
+
+      if (result.success && result.data?.paymentUrl) {
+        toast.success("Redirection vers MoneyFusion...");
+        window.location.href = result.data.paymentUrl;
+      } else {
+        toast.error(result.message || "Erreur lors de l'achat");
+        setLoading(false);
+      }
     }
   };
 
@@ -179,31 +207,82 @@ function CheckoutContent() {
                 </div>
               )}
 
-              {/* Champs de facturation MoneyFusion */}
-              <div className="space-y-5">
-                <div className="space-y-2">
-                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Numéro Mobile Money</label>
-                  <input 
-                    required
-                    type="text" 
-                    placeholder="Ex: 0102030405"
-                    className="w-full px-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Nom Complet</label>
-                  <input 
-                    required
-                    type="text" 
-                    placeholder="Ex: Jean Dupont"
-                    className="w-full px-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold"
-                    value={formData.nomclient}
-                    onChange={(e) => setFormData({...formData, nomclient: e.target.value})}
-                  />
+              {/* Méthodes de Paiement */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-black text-slate-800 uppercase tracking-wider mb-4">Mode de paiement</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Option Wallet */}
+                  <div 
+                    onClick={() => {
+                      if (walletBalance >= orderPrice) setPaymentMethod('wallet');
+                    }}
+                    className={`relative p-5 rounded-2xl border-2 transition-all cursor-pointer ${
+                      walletBalance < orderPrice 
+                        ? 'opacity-50 cursor-not-allowed border-slate-100 bg-slate-50' 
+                        : paymentMethod === 'wallet' 
+                          ? 'border-[#1152d4] bg-blue-50/30' 
+                          : 'border-slate-100 hover:border-slate-300'
+                    }`}
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="font-bold text-slate-900">Solde TikFlow</span>
+                      <div className={`size-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'wallet' ? 'border-[#1152d4]' : 'border-slate-300'}`}>
+                        {paymentMethod === 'wallet' && <div className="size-2.5 rounded-full bg-[#1152d4]" />}
+                      </div>
+                    </div>
+                    <p className="text-xl font-black text-[#1152d4]">{walletBalance.toLocaleString()} CFA</p>
+                    {walletBalance < orderPrice && (
+                      <p className="text-[10px] text-red-500 font-bold mt-2 bg-red-50 px-2 py-1 rounded-md inline-block">Solde insuffisant</p>
+                    )}
+                  </div>
+
+                  {/* Option MoneyFusion */}
+                  <div 
+                    onClick={() => setPaymentMethod('moneyfusion')}
+                    className={`relative p-5 rounded-2xl border-2 transition-all cursor-pointer ${
+                      paymentMethod === 'moneyfusion' 
+                        ? 'border-[#1152d4] bg-blue-50/30' 
+                        : 'border-slate-100 hover:border-slate-300'
+                    }`}
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="font-bold text-slate-900">Mobile Money</span>
+                      <div className={`size-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'moneyfusion' ? 'border-[#1152d4]' : 'border-slate-300'}`}>
+                        {paymentMethod === 'moneyfusion' && <div className="size-2.5 rounded-full bg-[#1152d4]" />}
+                      </div>
+                    </div>
+                    <p className="text-sm font-medium text-slate-500 mt-1">Wave, Orange, MTN, Moov...</p>
+                  </div>
                 </div>
               </div>
+
+              {/* Champs de facturation MoneyFusion (Affichés uniquement si Mobile Money choisi) */}
+              {paymentMethod === 'moneyfusion' && (
+                <div className="space-y-5 animate-in fade-in slide-in-from-top-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Numéro Mobile Money</label>
+                    <input 
+                      required
+                      type="text" 
+                      placeholder="Ex: 0102030405"
+                      className="w-full px-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Nom Complet</label>
+                    <input 
+                      required
+                      type="text" 
+                      placeholder="Ex: Jean Dupont"
+                      className="w-full px-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold"
+                      value={formData.nomclient}
+                      onChange={(e) => setFormData({...formData, nomclient: e.target.value})}
+                    />
+                  </div>
+                </div>
+              )}
 
               {/* Identifiants TikTok */}
               <div className={`space-y-5 transition-all duration-300 ${useLinked ? 'opacity-50 pointer-events-none grayscale-[0.5]' : ''}`}>
