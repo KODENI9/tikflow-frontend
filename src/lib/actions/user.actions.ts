@@ -139,7 +139,7 @@ export async function createDepositAction(
       throw new Error(data.error || data.message || "Erreur lors de la déclaration du dépôt");
     }
 
-    return { success: true, data };
+    return { success: true, data: data.data };
   } catch (error: any) {
     console.error("[DEPOSIT_ERROR]:", error);
     return { success: false, error: error.message };
