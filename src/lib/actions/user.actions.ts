@@ -146,6 +146,35 @@ export async function createDepositAction(
   }
 }
 
+export async function verifyPaymentAction(paymentId: string) {
+  try {
+    const session = await auth();
+    const token = await session.getToken();
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payments/${paymentId}/verify`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || data.message || "Erreur de vérification");
+    }
+
+    return { success: true, data: data.data };
+  } catch (error: any) {
+    console.error("[VERIFY_PAYMENT_ERROR]:", error);
+    return { success: false, error: error.message };
+  }
+}
+
 export async function getTransactionHistory() {
   try {
     const session = await auth();

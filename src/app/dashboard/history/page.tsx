@@ -1,6 +1,7 @@
 "use client";
 
-import { getTransactionHistory } from "@/lib/actions/user.actions";
+import { getTransactionHistory, verifyPaymentAction } from "@/lib/actions/user.actions";
+import { toast } from "react-hot-toast";
 import { 
   Filter, 
   Calendar, 
@@ -15,6 +16,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 
 // Helper pour mapper les icônes et couleurs selon les types Firebase
 const getTxnConfig = (type: string) => {
@@ -33,8 +35,11 @@ const getTxnConfig = (type: string) => {
 
 export default function HistoryPage() {
   const [loading, setLoading] = useState(true);
+  const [verifying, setVerifying] = useState(false);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [stats, setStats] = useState({ totalRecharged: 0, totalSpent: 0 });
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
 useEffect(() => {
   const fetchHistory = async () => {
@@ -66,6 +71,50 @@ useEffect(() => {
 
   fetchHistory();
 }, []);
+
+// Vérification automatique du paiement quand l'utilisateur revient de MoneyFusion
+useEffect(() => {
+  const paymentId = searchParams.get('paymentId');
+  const paymentStatus = searchParams.get('payment_status');
+
+  if (!paymentId || paymentStatus !== 'return') return;
+
+  const verify = async () => {
+    setVerifying(true);
+    toast.loading('Vérification de votre paiement...', { id: 'verify-payment' });
+
+    // Petit délai pour laisser le temps au webhook de s'exécuter
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    const result = await verifyPaymentAction(paymentId);
+
+    toast.dismiss('verify-payment');
+
+    if (result.success) {
+      if (result.data?.status === 'PAID') {
+        if (result.data?.credited) {
+          toast.success('✅ Paiement confirmé ! Votre compte a été crédité.');
+        } else {
+          toast.success('✅ Paiement déjà traité.');
+        }
+      } else {
+        toast.error('⚠️ Paiement en attente de confirmation MoneyFusion.');
+      }
+    } else {
+      toast.error(result.error || 'Erreur lors de la vérification du paiement.');
+    }
+
+    // Recharger l'historique avec les nouvelles données
+    const histResult = await getTransactionHistory();
+    if (histResult.success) setTransactions(histResult.transactions as any[]);
+
+    setVerifying(false);
+    // Nettoyer les query params de l'URL
+    router.replace('/dashboard/history');
+  };
+
+  verify();
+}, [searchParams]);
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center h-96">
