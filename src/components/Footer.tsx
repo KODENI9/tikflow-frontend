@@ -22,9 +22,9 @@ const Footer = () => {
                         <div className="space-y-6">
                             <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-tikflow-primary">Produit</h4>
                             <ul className="space-y-4">
-                                <li><Link href="/marche" className="text-tikflow-slate font-bold text-xs uppercase tracking-wider hover:text-tikflow-secondary transition-colors">Tarifs</Link></li>
+                                <li><Link href="/dashboard/buy" className="text-tikflow-slate font-bold text-xs uppercase tracking-wider hover:text-tikflow-secondary transition-colors">Tarifs</Link></li>
                                 <li><Link href="#" className="text-tikflow-slate font-bold text-xs uppercase tracking-wider hover:text-tikflow-secondary transition-colors">API</Link></li>
-                                <li><Link href="/support" className="text-tikflow-slate font-bold text-xs uppercase tracking-wider hover:text-tikflow-secondary transition-colors">Support</Link></li>
+                                <li><Link href="/dashboard/help" className="text-tikflow-slate font-bold text-xs uppercase tracking-wider hover:text-tikflow-secondary transition-colors">Support</Link></li>
                             </ul>
                         </div>
                         <div className="space-y-6">

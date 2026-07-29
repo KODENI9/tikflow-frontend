@@ -33,10 +33,10 @@ const Navbar = () => {
                 </Link>
 
                 <div className="hidden md:flex items-center gap-12">
-                    <Link href="/marche" className="text-[14px] font-bold text-tikflow-slate hover:text-tikflow-primary uppercase tracking-wider transition-colors">Marché</Link>
-                    <Link href="/communaute" className="text-[14px] font-bold text-tikflow-slate hover:text-tikflow-primary uppercase tracking-wider transition-colors">Communauté</Link>
-                    <Link href="/faq" className="text-[14px] font-bold text-tikflow-slate hover:text-tikflow-primary uppercase tracking-wider transition-colors">FAQ</Link>
-                    <Link href="/support" className="text-[14px] font-bold text-tikflow-slate hover:text-tikflow-primary uppercase tracking-wider transition-colors">Support</Link>
+                    <Link href="/" className="text-[14px] font-bold text-tikflow-slate hover:text-tikflow-primary uppercase tracking-wider transition-colors">Marché</Link>
+                    <Link href="/" className="text-[14px] font-bold text-tikflow-slate hover:text-tikflow-primary uppercase tracking-wider transition-colors">Communauté</Link>
+                    <Link href="/#faq" className="text-[14px] font-bold text-tikflow-slate hover:text-tikflow-primary uppercase tracking-wider transition-colors">FAQ</Link>
+                    <Link href="/dashboard/help" className="text-[14px] font-bold text-tikflow-slate hover:text-tikflow-primary uppercase tracking-wider transition-colors">Support</Link>
                 </div>
 
                 <div className="flex items-center gap-4">

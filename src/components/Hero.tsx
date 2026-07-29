@@ -33,7 +33,7 @@ export const Hero = () => {
                             Commencer l'aventure
                             <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
                         </Link>
-                        <Link href="/marche" className="btn-v2-secondary h-16 px-12 text-lg sm:w-auto w-full">
+                        <Link href="/dashboard/buy" className="btn-v2-secondary h-16 px-12 text-lg sm:w-auto w-full">
                             Voir nos tarifs
                         </Link>
                     </div>
