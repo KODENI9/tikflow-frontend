@@ -2,56 +2,77 @@
 
 import React from 'react';
 import { Zap, Shield, Globe, Cpu } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Card } from './ui/Card';
 
 const ProductShowcase = () => {
     const features = [
         {
             icon: <Zap size={24} />,
             title: "Transactions Éclairs",
-            desc: "Propulsé par des passerelles de paiement automatisées. Pas d'approbation manuelle, pas d'attente."
+            desc: "Propulsé par des passerelles automatisées. Pas d'attente."
         },
         {
             icon: <Cpu size={24} />,
             title: "Intégration Intelligente",
-            desc: "L'intégration directe à l'API TikTok garantit l'arrivée de vos pièces en quelques secondes."
+            desc: "L'API TikTok garantit l'arrivée de vos pièces en quelques secondes."
         },
         {
             icon: <Shield size={24} />,
             title: "Sécurité Bancaire",
-            desc: "Chiffrement multi-couches et systèmes de détection de fraude pour chaque transaction."
+            desc: "Chiffrement et détection de fraude pour chaque transaction."
         },
         {
             icon: <Globe size={24} />,
             title: "Portée Pan-Africaine",
-            desc: "Compatible avec les principaux opérateurs de Mobile Money à travers le continent."
+            desc: "Compatible avec les principaux opérateurs Mobile Money."
         }
     ];
 
     return (
-        <section className="py-32 bg-background/50 border-y border-glass-border">
+        <section className="py-32 bg-white">
             <div className="container-v2">
                 <div className="flex flex-col lg:flex-row gap-20">
                     <div className="lg:w-1/3 space-y-6">
-                        <h2 className="text-4xl md:text-5xl font-black tracking-tight text-foreground uppercase">
+                        <motion.h2 
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            className="text-4xl md:text-5xl font-black tracking-tight text-foreground leading-tight"
+                        >
                             Conçu pour <br />
-                            <span className="text-tikflow-primary">la performance.</span>
-                        </h2>
-                        <p className="text-lg text-tikflow-slate font-bold leading-relaxed italic">
-                            TikFlow est plus qu'un outil de recharge. C'est l'infrastructure qui propulse l'économie des créateurs en Afrique.
-                        </p>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-tikflow-primary to-tikflow-secondary">la performance.</span>
+                        </motion.h2>
+                        <motion.p 
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.1 }}
+                            className="text-lg text-tikflow-gray-medium leading-relaxed"
+                        >
+                            TikFlow est plus qu'un simple outil de recharge. C'est l'infrastructure premium qui propulse l'économie des créateurs.
+                        </motion.p>
                     </div>
 
-                    <div className="lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-6">
                         {features.map((f, i) => (
-                            <div key={i} className="card-v2 group border-none bg-foreground/[0.02] dark:bg-white/[0.02] hover:bg-tikflow-primary/5 transition-all duration-500">
-                                <div className="size-14 rounded-2xl bg-tikflow-primary/10 flex items-center justify-center text-tikflow-primary mb-6 group-hover:bg-tikflow-primary group-hover:text-white transition-all duration-300">
-                                    {f.icon}
-                                </div>
-                                <h3 className="text-xl font-black text-foreground mb-3 uppercase tracking-tight">{f.title}</h3>
-                                <p className="text-tikflow-slate font-bold leading-relaxed text-sm opacity-80">
-                                    {f.desc}
-                                </p>
-                            </div>
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.1 }}
+                            >
+                                <Card hoverEffect className="h-full border-none shadow-[0_2px_15px_-3px_rgba(0,0,0,0.05)] bg-background/50">
+                                    <div className="size-14 rounded-2xl bg-white shadow-sm border border-tikflow-gray-light flex items-center justify-center text-tikflow-secondary mb-6 transition-all duration-300">
+                                        {f.icon}
+                                    </div>
+                                    <h3 className="text-xl font-bold text-foreground mb-3 tracking-tight">{f.title}</h3>
+                                    <p className="text-tikflow-gray-medium leading-relaxed text-sm">
+                                        {f.desc}
+                                    </p>
+                                </Card>
+                            </motion.div>
                         ))}
                     </div>
                 </div>

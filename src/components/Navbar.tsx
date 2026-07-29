@@ -2,51 +2,55 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Currency } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { useAuth } from '@clerk/nextjs';
+import { Button } from '@/components/ui/Button';
 
 const Navbar = () => {
-    const [isScrolled, setIsScrolled] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+    const { isSignedIn } = useAuth();
 
     useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 20);
-        };
+        const handleScroll = () => setScrolled(window.scrollY > 20);
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     return (
-        <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-            isScrolled 
-            ? 'bg-background/80 backdrop-blur-xl border-b border-glass-border py-3 shadow-sm' 
-            : 'bg-transparent py-5'
-        }`}>
+        <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-background/90 backdrop-blur-md border-b border-tikflow-gray-light/30 shadow-sm py-4' : 'bg-transparent py-6'}`}>
             <div className="container-v2 flex items-center justify-between">
-                <Link href="/" className="flex items-center gap-2 group">
-                    <div className="size-9 flex items-center justify-center rounded-lg bg-tikflow-primary text-white font-black transition-transform group-hover:scale-110">
+                <Link href="/" className="flex items-center gap-3 group">
+                    <div className="size-10 flex items-center justify-center rounded-2xl bg-tikflow-secondary text-tikflow-black font-black text-xl transition-transform duration-300 group-hover:scale-105 group-hover:rotate-3 shadow-sm">
                         T
                     </div>
-                    <span className="text-xl font-bold tracking-tight text-foreground uppercase">
+                    <span className="text-2xl font-black tracking-tight text-foreground uppercase">
                         TikFlow
                     </span>
                 </Link>
 
-                <div className="hidden md:flex items-center gap-12">
-                    <Link href="/" className="text-[14px] font-bold text-tikflow-slate hover:text-tikflow-primary uppercase tracking-wider transition-colors">Marché</Link>
-                    <Link href="/" className="text-[14px] font-bold text-tikflow-slate hover:text-tikflow-primary uppercase tracking-wider transition-colors">Communauté</Link>
-                    <Link href="/#faq" className="text-[14px] font-bold text-tikflow-slate hover:text-tikflow-primary uppercase tracking-wider transition-colors">FAQ</Link>
-                    <Link href="/dashboard/help" className="text-[14px] font-bold text-tikflow-slate hover:text-tikflow-primary uppercase tracking-wider transition-colors">Support</Link>
+                <div className="hidden md:flex items-center gap-10">
+                    <Link href="/" className="text-[15px] font-bold text-tikflow-gray-dark hover:text-tikflow-secondary transition-colors">Marché</Link>
+                    <Link href="/" className="text-[15px] font-bold text-tikflow-gray-dark hover:text-tikflow-secondary transition-colors">Communauté</Link>
+                    <Link href="/#faq" className="text-[15px] font-bold text-tikflow-gray-dark hover:text-tikflow-secondary transition-colors">FAQ</Link>
+                    <Link href="/dashboard/help" className="text-[15px] font-bold text-tikflow-gray-dark hover:text-tikflow-secondary transition-colors">Support</Link>
                 </div>
 
                 <div className="flex items-center gap-4">
                     <ThemeToggle />
-                    <Link href="/sign-in" className="hidden sm:block text-[14px] font-semibold text-foreground hover:opacity-70 px-4">
-                        Connexion
-                    </Link>
-                    <Link href="/sign-up" className="btn-v2-primary py-2.5 px-6">
-                        S'inscrire
-                    </Link>
+                    {isSignedIn ? (
+                        <Link href="/dashboard">
+                            <Button variant="primary">Mon Espace</Button>
+                        </Link>
+                    ) : (
+                        <>
+                            <Link href="/sign-in" className="hidden sm:block">
+                                <Button variant="ghost">Connexion</Button>
+                            </Link>
+                            <Link href="/sign-up">
+                                <Button variant="primary">S'inscrire</Button>
+                            </Link>
+                        </>
+                    )}
                 </div>
             </div>
         </nav>

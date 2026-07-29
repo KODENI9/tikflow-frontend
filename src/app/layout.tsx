@@ -1,25 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from "sonner";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export const metadata = {
+export const metadata: Metadata = {
   title: 'TikFlow - Achetez vos TikTok Coins',
   description: 'Recharge sécurisée en Afrique',
 }
-
-import { Toaster } from "sonner";
-import { ThemeProvider } from "@/components/ThemeProvider";
 
 export default function RootLayout({
   children,
@@ -28,21 +21,14 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider dynamic>
-    <html lang="fr" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
+      <html lang="fr" className="dark" suppressHydrationWarning>
+        <body
+          className={`${plusJakartaSans.variable} font-sans antialiased bg-background text-foreground`}
         >
-          <Toaster position="top-right" richColors />
+          <Toaster position="top-right" richColors theme="dark" />
           {children}
-        </ThemeProvider>
-      </body>
-    </html>
+        </body>
+      </html>
     </ClerkProvider>
   );
 }
