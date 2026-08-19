@@ -18,7 +18,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <input
           ref={ref}
           className={cn(
-            "w-full h-12 rounded-xl border border-tikflow-gray-light bg-background px-4 text-[15px] font-medium text-foreground transition-all duration-200 placeholder:text-tikflow-gray-medium focus:border-tikflow-secondary focus:outline-none focus:ring-4 focus:ring-tikflow-secondary/10",
+            "w-full h-12 rounded-xl border border-tikflow-gray-light bg-white dark:bg-background px-4 text-[15px] font-medium text-gray-900 dark:text-foreground transition-all duration-200 placeholder:text-gray-400 dark:placeholder:text-tikflow-gray-medium focus:border-tikflow-secondary focus:outline-none focus:ring-4 focus:ring-tikflow-secondary/10",
             icon && "pl-11",
             error && "border-tikflow-danger focus:border-tikflow-danger focus:ring-tikflow-danger/10",
             className
