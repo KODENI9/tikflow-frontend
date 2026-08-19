@@ -68,7 +68,7 @@ function CheckoutContent() {
             setPack(packData);
         } else if (amountCoinsParam) {
             const coins = parseInt(amountCoinsParam);
-            const COIN_RATE = 12.5;
+            const COIN_RATE = 11.2;
             setCustomAmount({
                 coins,
                 price: coins * COIN_RATE
