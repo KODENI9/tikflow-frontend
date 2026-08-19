@@ -265,7 +265,7 @@ function CheckoutContent() {
                       required
                       type="text" 
                       placeholder="Ex: 0102030405"
-                      className="w-full px-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold"
+                      className="w-full px-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-900 placeholder:text-slate-400"
                       value={formData.phone}
                       onChange={(e) => setFormData({...formData, phone: e.target.value})}
                     />
@@ -276,7 +276,7 @@ function CheckoutContent() {
                       required
                       type="text" 
                       placeholder="Ex: Jean Dupont"
-                      className="w-full px-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold"
+                      className="w-full px-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-900 placeholder:text-slate-400"
                       value={formData.nomclient}
                       onChange={(e) => setFormData({...formData, nomclient: e.target.value})}
                     />
@@ -295,7 +295,7 @@ function CheckoutContent() {
                       disabled={useLinked}
                       type="text" 
                       placeholder="@votre_nom"
-                      className="w-full pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold"
+                      className="w-full pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-900 placeholder:text-slate-400"
                       value={formData.tiktok_username}
                       onChange={(e) => setFormData({...formData, tiktok_username: e.target.value})}
                     />
@@ -311,7 +311,7 @@ function CheckoutContent() {
                       disabled={useLinked}
                       type={showPassword ? "text" : "password"} 
                       placeholder="••••••••"
-                      className="w-full pl-12 pr-12 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold"
+                      className="w-full pl-12 pr-12 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-900 placeholder:text-slate-400"
                       value={formData.tiktok_password}
                       onChange={(e) => setFormData({...formData, tiktok_password: e.target.value})}
                     />

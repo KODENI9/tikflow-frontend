@@ -58,7 +58,7 @@ export default function DepositPage() {
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="Ex: 5000"
-              className="w-full px-4 py-4 bg-slate-50 border-none rounded-2xl text-lg font-bold"
+              className="w-full px-4 py-4 bg-slate-50 border-none rounded-2xl text-lg font-bold text-slate-900 placeholder:text-slate-400"
             />
           </div>
 
@@ -70,7 +70,7 @@ export default function DepositPage() {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="Ex: 0102030405"
-              className="w-full px-4 py-4 bg-slate-50 border-none rounded-2xl text-lg font-bold"
+              className="w-full px-4 py-4 bg-slate-50 border-none rounded-2xl text-lg font-bold text-slate-900 placeholder:text-slate-400"
             />
           </div>
 
@@ -82,7 +82,7 @@ export default function DepositPage() {
               value={nomclient}
               onChange={(e) => setNomclient(e.target.value)}
               placeholder="Ex: Jean Dupont"
-              className="w-full px-4 py-4 bg-slate-50 border-none rounded-2xl text-lg font-bold"
+              className="w-full px-4 py-4 bg-slate-50 border-none rounded-2xl text-lg font-bold text-slate-900 placeholder:text-slate-400"
             />
           </div>
 
