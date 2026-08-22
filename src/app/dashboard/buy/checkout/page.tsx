@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { Lock, AtSign, Eye, EyeOff, CheckCircle2, Loader2 } from "lucide-react";
+import { AtSign, CheckCircle2, Loader2, Mail } from "lucide-react";
 import { toast } from "sonner"; // Ou ton système de notification
 import { useEffect, useState, Suspense } from "react";
 import { useAuth } from "@clerk/nextjs";
@@ -20,12 +20,10 @@ function CheckoutContent() {
   const [customAmount, setCustomAmount] = useState<{ coins: number, price: number } | null>(null);
   const [loading, setLoading] = useState(false);
   const [fetchingData, setFetchingData] = useState(true);
-  const [showPassword, setShowPassword] = useState(false);
   const [walletBalance, setWalletBalance] = useState<number>(0);
   const [paymentMethod, setPaymentMethod] = useState<'moneyfusion' | 'wallet'>('moneyfusion');
   const [formData, setFormData] = useState({
     tiktok_username: "",
-    tiktok_password: "",
     phone: "",
     nomclient: "",
   });
@@ -94,8 +92,8 @@ function CheckoutContent() {
 
   const handlePayment = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!useLinked && (!formData.tiktok_username || !formData.tiktok_password)) {
-      return toast.error("Veuillez remplir les identifiants TikTok");
+    if (!useLinked && !formData.tiktok_username) {
+      return toast.error("Veuillez remplir l'adresse e-mail TikTok");
     }
 
     setLoading(true);
@@ -105,7 +103,7 @@ function CheckoutContent() {
         packageId: packId || undefined,
         amount_coins: customAmount?.coins,
         tiktok_username: useLinked ? (linkedAccount?.username || "") : formData.tiktok_username,
-        tiktok_password: useLinked ? "" : formData.tiktok_password,
+        tiktok_password: "",
       });
 
       if (result.success) {
@@ -128,7 +126,7 @@ function CheckoutContent() {
         packageId: packId || undefined,
         amount_coins: customAmount?.coins,
         tiktok_username: useLinked ? (linkedAccount?.username || "") : formData.tiktok_username,
-        tiktok_password: useLinked ? "" : formData.tiktok_password,
+        tiktok_password: "",
         useLinkedAccount: useLinked
       });
 
@@ -284,40 +282,21 @@ function CheckoutContent() {
                 </div>
               )}
 
-              {/* Identifiants TikTok */}
+              {/* Adresse e-mail TikTok */}
               <div className={`space-y-5 transition-all duration-300 ${useLinked ? 'opacity-50 pointer-events-none grayscale-[0.5]' : ''}`}>
                 <div className="space-y-2">
-                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Nom d'utilisateur TikTok</label>
+                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Adresse e-mail du compte TikTok</label>
                   <div className="relative">
-                    <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={20} />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={20} />
                     <input 
                       required={!useLinked}
                       disabled={useLinked}
-                      type="text" 
-                      placeholder="@votre_nom"
+                      type="email" 
+                      placeholder="exemple@gmail.com"
                       className="w-full pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-900 placeholder:text-slate-400"
                       value={formData.tiktok_username}
                       onChange={(e) => setFormData({...formData, tiktok_username: e.target.value})}
                     />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Mot de passe TikTok</label>
-                  <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={20} />
-                    <input 
-                      required={!useLinked}
-                      disabled={useLinked}
-                      type={showPassword ? "text" : "password"} 
-                      placeholder="••••••••"
-                      className="w-full pl-12 pr-12 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-900 placeholder:text-slate-400"
-                      value={formData.tiktok_password}
-                      onChange={(e) => setFormData({...formData, tiktok_password: e.target.value})}
-                    />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300">
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
                   </div>
                 </div>
               </div>
