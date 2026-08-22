@@ -219,7 +219,7 @@ export default function BuyCoinsPage() {
 function CustomPackageCard() {
   const [customCoins, setCustomCoins] = useState<number | "">("");
   const COIN_RATE = 11.2;
-  const MIN_COINS = 160;
+  const MIN_COINS = 90;
 
   const coins = typeof customCoins === "number" ? customCoins : 0;
   const price = coins * COIN_RATE;
