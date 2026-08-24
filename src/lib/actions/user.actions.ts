@@ -254,6 +254,11 @@ export async function purchaseCoins(formData: {
     });
 
     const result = await response.json();
+    if (!response.ok) {
+       console.error("Payment create error:", result);
+       const errorDetails = result.errors ? JSON.stringify(result.errors) : "";
+       return { success: false, message: `${result.message} ${errorDetails}` };
+    }
     return result;
   } catch (error: any) {
     return { success: false, message: error.message };
