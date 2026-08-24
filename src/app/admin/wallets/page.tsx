@@ -202,7 +202,9 @@ export default function WalletManagementPage() {
               <tbody className="divide-y divide-slate-50">
                 {transactions.slice(0, 10).map((tx) => (
                   <tr key={tx.id} className="text-xs font-bold text-tikflow-slate hover:bg-foreground/5 transition-colors">
-                    <td className="px-8 py-4 text-foreground truncate max-w-[150px]">{tx.user_id}</td>
+                    <td className="px-8 py-4 text-foreground truncate max-w-[150px]" title={tx.user_email || tx.user_id}>
+                      {tx.user_name || tx.user_email || tx.user_id}
+                    </td>
                     <td className="px-4 py-4">
                       <span className="px-2 py-1 bg-tikflow-primary/10 text-tikflow-primary rounded-md text-[9px] uppercase font-black">{tx.type}</span>
                     </td>

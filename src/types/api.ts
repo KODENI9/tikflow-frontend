@@ -17,6 +17,8 @@ export interface User {
 export interface Transaction {
   id: string;
   user_id: string;
+  user_name?: string;
+  user_email?: string;
   type: 'achat_coins' | 'recharge';
   payment_method: 'flooz' | 'tmoney' | 'moov' | 'skthib';
   ref_id: string;

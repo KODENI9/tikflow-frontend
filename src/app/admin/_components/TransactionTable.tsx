@@ -75,8 +75,11 @@ export function TransactionTable({ onActionSuccess }: { onActionSuccess?: () => 
                 {/* User & Type */}
                 <td className="px-6 py-4">
                   <div className="flex flex-col gap-1">
-                    <span className="text-sm font-bold text-foreground truncate max-w-[160px] group-hover:text-tikflow-primary transition-colors">
-                      {tx.user_id}
+                    <span 
+                      className="text-sm font-bold text-foreground truncate max-w-[160px] group-hover:text-tikflow-primary transition-colors"
+                      title={tx.user_email || tx.user_id}
+                    >
+                      {tx.user_name || tx.user_email || tx.user_id}
                     </span>
                     {/* JAUNE pour achat_coins (client), violet pour recharge */}
                     <TypeBadge type={tx.type} />

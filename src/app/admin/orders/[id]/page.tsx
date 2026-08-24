@@ -275,8 +275,10 @@ export default function OrderDetail() {
                 </span>
               </div>
               <div className="flex justify-between items-center bg-foreground/5 p-4 rounded-xl">
-                <span className="text-[10px] font-black text-tikflow-slate uppercase">User ID</span>
-                <span className="text-[10px] font-mono font-black text-foreground">{transaction.user_id}</span>
+                <span className="text-[10px] font-black text-tikflow-slate uppercase">Client</span>
+                <span className="text-[10px] font-mono font-black text-foreground" title={transaction.user_id}>
+                  {transaction.user_name || transaction.user_email || transaction.user_id}
+                </span>
               </div>
             </div>
 
