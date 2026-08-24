@@ -201,6 +201,12 @@ export const notificationApi = {
   markAllAsRead: (token: string) =>
     fetchApi<{ message: string }>(`${API_URL}/api/notifications/mark-all-read`, token, { method: 'PATCH' }),
 
+  replyToNotification: (token: string, id: string, message: string) =>
+    fetchApi<{ message: string }>(`${API_URL}/api/notifications/${id}/reply`, token, { 
+      method: "POST",
+      body: JSON.stringify({ message })
+    }),
+
   getAdminNotifications: (token: string) =>
     fetchApi<Notification[]>(`${API_URL}/api/notifications/admin`, token),
 

@@ -11,6 +11,7 @@ import Link from "next/link";
 import { db } from "@/lib/firebase";
 import { collection, query, where, onSnapshot, orderBy, limit as firestoreLimit } from "firebase/firestore";
 import Portal from "./Portal";
+import toast from "react-hot-toast";
 
 interface NotificationBellProps {
   isAdmin?: boolean;
@@ -23,6 +24,8 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
+  const [replyText, setReplyText] = useState("");
+  const [isSubmittingReply, setIsSubmittingReply] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -97,6 +100,25 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
       setUnreadCount(0);
     } catch (error) {
       console.error("Erreur marquage tout lu:", error);
+    }
+  };
+
+  const handleReply = async (id: string) => {
+    if (!replyText.trim()) return;
+    try {
+      const token = await getToken();
+      if (!token) return;
+
+      setIsSubmittingReply(true);
+      await notificationApi.replyToNotification(token, id, replyText);
+      setReplyText("");
+      toast.success("Réponse envoyée !");
+      setSelectedNotification(null);
+    } catch (error) {
+      console.error("Erreur lors de l'envoi de la réponse:", error);
+      toast.error("Erreur lors de l'envoi de la réponse");
+    } finally {
+      setIsSubmittingReply(false);
     }
   };
 
@@ -260,6 +282,26 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
                       {formatDistanceToNow(new Date(selectedNotification.created_at), { addSuffix: true, locale: fr })}
                     </span>
                 </div>
+
+                {selectedNotification.type === 'system_alert' && (
+                  <div className="pt-2">
+                    <h4 className="text-sm font-bold text-foreground mb-2">Répondre</h4>
+                    <textarea 
+                      className="w-full bg-foreground/5 border border-glass-border rounded-2xl p-4 text-sm font-medium focus:border-tikflow-primary focus:outline-none resize-none transition-all"
+                      rows={3}
+                      placeholder="Votre message..."
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                    />
+                    <button 
+                      onClick={() => handleReply(selectedNotification.id)}
+                      disabled={isSubmittingReply || !replyText.trim()}
+                      className="mt-2 w-full py-3 bg-tikflow-primary text-white rounded-xl font-bold text-sm hover:bg-tikflow-primary/90 disabled:opacity-50 transition-all shadow-md shadow-tikflow-primary/20"
+                    >
+                      {isSubmittingReply ? "Envoi en cours..." : "Envoyer la réponse"}
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Footer du Modal (Fixed) */}
