@@ -257,12 +257,13 @@ function CheckoutContent() {
               {/* Champs de facturation MoneyFusion (Affichés uniquement si Mobile Money choisi) */}
               {paymentMethod === 'moneyfusion' && (
                 <div className="space-y-5 animate-in fade-in slide-in-from-top-4">
-                  <div className="space-y-2">
-                    <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Numéro Mobile Money</label>
+                  <div className="space-y-1">
+                    <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Numéro WhatsApp</label>
+                    <p className="text-[10px] text-slate-400 font-bold ml-1 mb-2">Numéro WhatsApp sur lequel vous êtes en ligne (avec indicatif)</p>
                     <input 
                       required
                       type="text" 
-                      placeholder="Ex: 0102030405"
+                      placeholder="Ex: +228 90000000"
                       className="w-full px-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-900 placeholder:text-slate-400"
                       value={formData.phone}
                       onChange={(e) => setFormData({...formData, phone: e.target.value})}
