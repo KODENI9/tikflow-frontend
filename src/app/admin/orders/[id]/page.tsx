@@ -280,6 +280,18 @@ export default function OrderDetail() {
                   {transaction.user_name || transaction.user_email || transaction.user_id}
                 </span>
               </div>
+              <div className="flex justify-between items-center bg-green-500/10 border border-green-500/20 p-4 rounded-xl">
+                <span className="text-[10px] font-black text-green-600 uppercase">Numéro WhatsApp</span>
+                <span className="text-[10px] font-mono font-black text-green-600">
+                  {transaction.user_phone && transaction.user_phone !== 'N/A' ? (
+                    <a href={`https://wa.me/${transaction.user_phone.replace('+', '')}`} target="_blank" rel="noreferrer" className="hover:underline flex items-center gap-1">
+                      {transaction.user_phone}
+                    </a>
+                  ) : (
+                    'Non renseigné'
+                  )}
+                </span>
+              </div>
             </div>
 
             <div className="p-5 bg-amber-500/10 border border-amber-500/20 rounded-2xl space-y-2">

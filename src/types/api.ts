@@ -19,6 +19,7 @@ export interface Transaction {
   user_id: string;
   user_name?: string;
   user_email?: string;
+  user_phone?: string;
   type: 'achat_coins' | 'recharge';
   payment_method: 'flooz' | 'tmoney' | 'moov' | 'skthib';
   ref_id: string;
