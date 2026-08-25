@@ -10,8 +10,38 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'TikFlow - Achetez vos TikTok Coins',
-  description: 'Recharge sécurisée en Afrique',
+  title: {
+    default: 'TikFlow | Achetez vos Pièces TikTok en Afrique',
+    template: '%s | TikFlow'
+  },
+  description: 'Rechargez vos TikTok Coins (Pièces TikTok) rapidement et en toute sécurité en Afrique (Flooz, TMoney, Wave, Mobile Money). Service 100% fiable et livraison rapide.',
+  keywords: ['TikTok Coins', 'Pièces TikTok', 'Acheter TikTok Coins Afrique', 'Recharge TikTok', 'Mobile Money', 'Flooz', 'TMoney', 'TikFlow'],
+  authors: [{ name: 'TikFlow' }],
+  creator: 'TikFlow',
+  openGraph: {
+    type: 'website',
+    locale: 'fr_FR',
+    url: 'https://tikflowaf.online',
+    title: 'TikFlow | Achetez vos Pièces TikTok en Afrique',
+    description: 'Rechargez vos TikTok Coins (Pièces TikTok) rapidement et en toute sécurité en Afrique avec Mobile Money.',
+    siteName: 'TikFlow',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'TikFlow | Achetez vos Pièces TikTok en Afrique',
+    description: 'Rechargez vos TikTok Coins rapidement et en toute sécurité en Afrique.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 }
 
 export default function RootLayout({
