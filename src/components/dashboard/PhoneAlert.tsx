@@ -44,8 +44,8 @@ export const PhoneAlert = () => {
             <h4 className="font-black text-foreground text-sm uppercase tracking-tight">
               Profil incomplet
             </h4>
-            <p className="text-xs text-tikflow-slate font-medium">
-              Ajoutez votre numéro pour activer les rechargements Mobile Money.
+            <p className="text-xs text-tikflow-slate font-medium mt-1">
+              Ajoutez votre numéro WhatsApp pour activer les paiements et faciliter le suivi avec nos agents.
             </p>
           </div>
         </div>

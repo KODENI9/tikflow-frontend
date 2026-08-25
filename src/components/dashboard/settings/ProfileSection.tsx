@@ -68,7 +68,10 @@ export default function ProfileSection() {
                 </div>
             </div>
             <div className="space-y-1">
-                <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Numéro de Téléphone</label>
+                <div className="flex flex-col ml-1 mb-1">
+                  <label className="text-[10px] font-black text-tikflow-slate uppercase">Numéro WhatsApp</label>
+                  <span className="text-[9px] font-bold text-tikflow-slate/70">Recommandé pour un meilleur suivi avec nos agents.</span>
+                </div>
                 <div className="relative">
                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-tikflow-slate/50" size={18} />
                 <input 
