@@ -78,11 +78,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       )}
 
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-72 bg-background border-r border-glass-border p-5 transform transition-transform duration-300 ease-in-out
+        fixed inset-y-0 left-0 z-50 w-72 bg-background border-r border-glass-border p-5 transform transition-transform duration-300 ease-in-out overflow-y-auto
         md:relative md:translate-x-0 md:flex md:flex-col
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
       `}>
-        <div className="flex flex-col gap-8 h-full">
+        <div className="flex flex-col gap-8 min-h-full">
           <div className="flex items-center justify-between px-2">
             <div className="flex items-center gap-3">
               <div className="flex items-center justify-center size-10 rounded-xl bg-tikflow-primary text-white shadow-lg shadow-tikflow-primary/20">
