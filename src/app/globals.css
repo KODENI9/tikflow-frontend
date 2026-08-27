@@ -6,18 +6,18 @@
    ========================================== */
 
 :root {
-  /* Backgrounds */
-  --background:        #0D0F14;
-  --background-2:      #111318;
-  --background-3:      #161920;
-  --foreground:        #E8EAF0;
+  /* Backgrounds (Deep Navy from Logo) */
+  --background:        #080F20;
+  --background-2:      #0C162D;
+  --background-3:      #13203C;
+  --foreground:        #F8FAFC;
 
-  /* Brand Colors */
-  --tikflow-black:          #E8EAF0;
-  --tikflow-primary:        #F4C542; /* Jaune doré — accent principal */
-  --tikflow-primary-dark:   #E0B030; /* Jaune hover */
-  --tikflow-secondary:      #F4C542; /* Jaune (utilisé pour clients aussi) */
-  --tikflow-secondary-light: rgba(244, 197, 66, 0.08);
+  /* Brand Colors (Yellow to Vibrant Orange) */
+  --tikflow-black:          #F8FAFC;
+  --tikflow-primary:        #FF7300; /* Vibrant Orange */
+  --tikflow-primary-dark:   #E65C00;
+  --tikflow-secondary:      #FFD700; /* Bright Yellow */
+  --tikflow-secondary-light: rgba(255, 115, 0, 0.1);
 
   /* States */
   --tikflow-accent:    #22C55E; /* Success */
@@ -31,11 +31,11 @@
   --tikflow-slate:       #6B7280;
 
   /* Glass / Surfaces */
-  --glass-bg:     rgba(22, 25, 32, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-bg:     rgba(12, 22, 45, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.08);
 
-  --card-bg:             #161920;
-  --sidebar-bg:          #0D0F14;
+  --card-bg:             #0C162D;
+  --sidebar-bg:          #080F20;
   --sidebar-foreground:  #E8EAF0;
 }
 
@@ -138,15 +138,15 @@
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
   .admin-card:hover {
-    border-color: rgba(244, 197, 66, 0.2);
-    box-shadow: 0 0 0 1px rgba(244, 197, 66, 0.05), 0 8px 32px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 115, 0, 0.2);
+    box-shadow: 0 0 0 1px rgba(255, 115, 0, 0.05), 0 8px 32px rgba(0, 0, 0, 0.3);
   }
 
   /* Primary button */
   .btn-primary {
-    background: var(--tikflow-primary);
-    color: #0D0F14;
-    font-weight: 700;
+    background: linear-gradient(135deg, var(--tikflow-secondary) 0%, var(--tikflow-primary) 100%);
+    color: #000000;
+    font-weight: 800;
     font-size: 0.8125rem;
     border-radius: 0.75rem;
     padding: 0.625rem 1.25rem;
@@ -155,12 +155,13 @@
     justify-content: center;
     gap: 0.5rem;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 16px rgba(244, 197, 66, 0.25);
+    box-shadow: 0 4px 16px rgba(255, 115, 0, 0.25);
+    border: none;
   }
   .btn-primary:hover {
-    background: var(--tikflow-primary-dark);
     transform: translateY(-1px);
-    box-shadow: 0 8px 24px rgba(244, 197, 66, 0.35);
+    box-shadow: 0 8px 24px rgba(255, 115, 0, 0.4);
+    filter: brightness(1.1);
   }
   .btn-primary:active {
     transform: translateY(0);
@@ -191,6 +192,17 @@
 /* ==========================================
    TEXT GRADIENTS
    ========================================== */
+
+.text-gradient-logo {
+  background: linear-gradient(135deg, #FFD700 0%, #FF512F 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bg-gradient-logo {
+  background: linear-gradient(135deg, #FFD700 0%, #FF512F 100%);
+}
 
 .text-gradient-gold {
   background: linear-gradient(135deg, #F4C542 0%, #E0B030 100%);
