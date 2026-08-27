@@ -40,8 +40,9 @@ const filteredPayments = useMemo(() => {
   if (!Array.isArray(payments)) return [];
   
   return payments.filter((pay) => 
-    pay.ref_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    pay.sender_phone?.includes(searchTerm)
+    pay.orderId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    pay.phone?.includes(searchTerm) ||
+    pay.nomclient?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 }, [searchTerm, payments]);
 
@@ -52,9 +53,9 @@ const filteredPayments = useMemo(() => {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black uppercase flex items-center gap-2 text-foreground">
-            <History className="text-tikflow-primary" /> Journal des Flux SMS
+            <History className="text-tikflow-primary" /> Journal des Paiements (MoneyFusion)
           </h1>
-          <p className="text-tikflow-slate text-sm font-medium">Réconciliation des paiements en temps réel</p>
+          <p className="text-tikflow-slate text-sm font-medium">Suivi des sessions de paiement en ligne</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -84,9 +85,9 @@ const filteredPayments = useMemo(() => {
             <thead>
               <tr className="bg-foreground/5 border-b border-glass-border">
                 <th className="p-5 text-[10px] font-black uppercase text-tikflow-slate tracking-wider">Date & Heure</th>
-                <th className="p-5 text-[10px] font-black uppercase text-tikflow-slate tracking-wider">Référence ID</th>
-                <th className="p-5 text-[10px] font-black uppercase text-tikflow-slate tracking-wider">Montant</th>
-                <th className="p-5 text-[10px] font-black uppercase text-tikflow-slate tracking-wider">Source</th>
+                <th className="p-5 text-[10px] font-black uppercase text-tikflow-slate tracking-wider">Commande ID</th>
+                <th className="p-5 text-[10px] font-black uppercase text-tikflow-slate tracking-wider">Client & Tel</th>
+                <th className="p-5 text-[10px] font-black uppercase text-tikflow-slate tracking-wider">Montant & Type</th>
                 <th className="p-5 text-[10px] font-black uppercase text-tikflow-slate tracking-wider text-center">Statut</th>
               </tr>
             </thead>
@@ -94,28 +95,34 @@ const filteredPayments = useMemo(() => {
               {filteredPayments.map((pay) => (
                 <tr key={pay.id} className="hover:bg-foreground/5 transition-colors">
                   <td className="p-5 font-bold text-tikflow-slate">
-                    {new Date(pay.received_at?._seconds * 1000 || pay.received_at).toLocaleString('fr-FR')}
+                    {new Date(pay.createdAt?._seconds * 1000 || pay.createdAt).toLocaleString('fr-FR')}
                   </td>
                   <td className="p-5">
                     <span className="bg-tikflow-primary/10 text-tikflow-primary px-3 py-1 rounded-lg font-mono font-black border border-tikflow-primary/20">
-                      {pay.ref_id}
+                      {pay.orderId}
                     </span>
                   </td>
-                  <td className="p-5 font-black text-foreground">
-                    {pay.amount?.toLocaleString()} XOF
+                  <td className="p-5 text-tikflow-slate">
+                    <div className="font-black text-foreground">{pay.nomclient}</div>
+                    <div className="font-semibold italic text-xs">{pay.phone}</div>
                   </td>
-                  <td className="p-5 text-tikflow-slate font-semibold italic">
-                    {pay.sender_phone}
+                  <td className="p-5">
+                    <div className="font-black text-foreground">{pay.amount?.toLocaleString()} XOF</div>
+                    <div className="text-[10px] uppercase font-bold text-tikflow-slate mt-1">{pay.type}</div>
                   </td>
                   <td className="p-5">
                     <div className="flex justify-center">
-                      {pay.status === 'used' ? (
+                      {pay.status === 'PAID' ? (
                         <span className="flex items-center gap-1.5 text-[9px] font-black uppercase text-green-500 bg-green-500/10 border border-green-500/20 px-3 py-1.5 rounded-full">
-                          <CheckCircle2 size={12} /> Utilisé
+                          <CheckCircle2 size={12} /> Payé
+                        </span>
+                      ) : pay.status === 'PENDING' ? (
+                        <span className="flex items-center gap-1.5 text-[9px] font-black uppercase text-orange-500 bg-orange-500/10 border border-orange-500/20 px-3 py-1.5 rounded-full animate-pulse">
+                          <AlertCircle size={12} /> En attente
                         </span>
                       ) : (
-                        <span className="flex items-center gap-1.5 text-[9px] font-black uppercase text-tikflow-accent bg-tikflow-accent/10 border border-tikflow-accent/20 px-3 py-1.5 rounded-full animate-pulse">
-                          <AlertCircle size={12} /> Orphelin
+                        <span className="flex items-center gap-1.5 text-[9px] font-black uppercase text-red-500 bg-red-500/10 border border-red-500/20 px-3 py-1.5 rounded-full">
+                          <AlertCircle size={12} /> {pay.status === 'FAILED' ? 'Échoué' : 'Annulé'}
                         </span>
                       )}
                     </div>
