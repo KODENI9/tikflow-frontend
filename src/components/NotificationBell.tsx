@@ -12,6 +12,7 @@ import { db } from "@/lib/firebase";
 import { collection, query, where, onSnapshot, orderBy, limit as firestoreLimit } from "firebase/firestore";
 import Portal from "./Portal";
 import toast from "react-hot-toast";
+import { updateAppBadge, clearAppBadge } from "@/lib/badge";
 
 interface NotificationBellProps {
   isAdmin?: boolean;
@@ -53,7 +54,10 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
       } as Notification));
       
       setNotifications(notifs);
-      setUnreadCount(notifs.filter(n => !n.read).length);
+      const unread = notifs.filter(n => !n.read).length;
+      setUnreadCount(unread);
+      // Sync badge with real-time unread count
+      updateAppBadge(unread);
       setError(null);
     }, (err) => {
       console.error("Firestore onSnapshot error:", err);
@@ -64,7 +68,10 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      // Don't clear badge on unmount; it should persist across navigation
+    };
   }, [isAdmin, userId]);
 
   useEffect(() => {
@@ -84,7 +91,11 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
 
       await notificationApi.markAsRead(token, id);
       setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
-      setUnreadCount(prev => Math.max(0, prev - 1));
+      setUnreadCount(prev => {
+        const next = Math.max(0, prev - 1);
+        updateAppBadge(next);
+        return next;
+      });
     } catch (error) {
       console.error("Erreur marquage lecture:", error);
     }
@@ -98,6 +109,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
       await notificationApi.markAllAsRead(token);
       setNotifications(prev => prev.map(n => ({ ...n, read: true })));
       setUnreadCount(0);
+      clearAppBadge();
     } catch (error) {
       console.error("Erreur marquage tout lu:", error);
     }
