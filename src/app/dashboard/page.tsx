@@ -6,6 +6,7 @@ import { useUser } from "@clerk/nextjs";
 import { fetchUserwalletBalance } from "@/lib/actions/user.actions";
 import { useEffect, useState, useCallback, useRef } from "react"; // Ajout de useRef
 import Link from "next/link";
+import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 
 export default function DashboardPage() {
   const { isLoaded, user } = useUser();
@@ -125,7 +126,7 @@ export default function DashboardPage() {
         </div>
 
         {/* PROMO SIDEBAR */}
-        <div className="lg:col-span-4">
+        <div className="lg:col-span-4 space-y-6">
            <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-8 text-white text-center relative overflow-hidden shadow-xl shadow-indigo-500/20 group">
               <div className="relative z-10 flex flex-col items-center">
                  <div className="p-4 bg-white/10 rounded-2xl mb-4 backdrop-blur-xl border border-white/20">
@@ -140,6 +141,8 @@ export default function DashboardPage() {
                  </button>
               </div>
            </div>
+
+           <InstallPrompt />
         </div>
       </div>
     </div>
