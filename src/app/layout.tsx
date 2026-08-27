@@ -7,6 +7,7 @@ import { NotificationPrompt } from "@/components/pwa/NotificationPrompt";
 import { GlobalInstallPrompt } from "@/components/pwa/GlobalInstallPrompt";
 import { BadgeSyncer } from "@/components/pwa/BadgeSyncer";
 import { PwaInstallTracker } from "@/components/pwa/PwaInstallTracker";
+import { RemoteInstallListener } from "@/components/pwa/RemoteInstallListener";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -77,6 +78,7 @@ export default function RootLayout({
           <GlobalInstallPrompt />
           <BadgeSyncer />
           <PwaInstallTracker />
+          <RemoteInstallListener />
           <Toaster position="top-right" richColors theme="dark" />
           {children}
         </body>

@@ -2,9 +2,10 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@clerk/nextjs";
-import { Smartphone, Users, Search, RefreshCcw, CheckCircle2, XCircle, Monitor, Apple, ChevronLeft, ChevronRight } from "lucide-react";
+import { Smartphone, Users, Search, RefreshCcw, CheckCircle2, XCircle, Monitor, Apple, ChevronLeft, ChevronRight, Send } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
+import { toast } from "react-hot-toast";
 
 const BACKEND_URL = (process.env.NEXT_PUBLIC_BACKEND_URL || "").replace(/\/$/, "");
 
@@ -27,9 +28,26 @@ export default function AdminTrackingPage() {
       const json = await res.json();
       setData(json.data);
     } catch {
-      // handle error
+      toast.error("Erreur de chargement");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const triggerInstall = async (userId: string, fullname: string) => {
+    try {
+      const token = await getToken();
+      const res = await fetch(`${BACKEND_URL}/api/tracking/trigger-install/${userId}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        toast.success(`Popup d'installation déclenché pour ${fullname}`);
+      } else {
+        toast.error("Échec du déclenchement");
+      }
+    } catch (e) {
+      toast.error("Erreur réseau");
     }
   };
 
@@ -183,9 +201,18 @@ export default function AdminTrackingPage() {
                         <CheckCircle2 size={12} /> Installée
                       </span>
                     ) : (
-                      <span className="flex items-center gap-1.5 text-[10px] font-black uppercase px-3 py-1.5 rounded-full w-fit bg-foreground/5 text-tikflow-slate border border-glass-border">
-                        <XCircle size={12} /> Non installée
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="flex items-center gap-1.5 text-[10px] font-black uppercase px-3 py-1.5 rounded-full w-fit bg-foreground/5 text-tikflow-slate border border-glass-border">
+                          <XCircle size={12} /> Non installée
+                        </span>
+                        <button
+                          onClick={() => triggerInstall(user.id, user.fullname)}
+                          className="p-1.5 rounded-full bg-tikflow-primary/10 text-tikflow-primary hover:bg-tikflow-primary hover:text-white transition-all shadow-sm group relative"
+                          title="Forcer l'installation sur l'écran de l'utilisateur"
+                        >
+                          <Send size={14} />
+                        </button>
+                      </div>
                     )}
                   </td>
                   <td className="p-5">

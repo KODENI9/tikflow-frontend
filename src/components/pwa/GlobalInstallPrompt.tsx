@@ -3,7 +3,12 @@
 import { useState, useEffect } from "react";
 import { Download, Share, PlusSquare, X } from "lucide-react";
 
-export function GlobalInstallPrompt() {
+interface GlobalInstallPromptProps {
+  forceShow?: boolean;   // If true, bypasses the 3s delay and localStorage dismissal
+  onDismiss?: () => void; // Called when user dismisses, in addition to internal logic
+}
+
+export function GlobalInstallPrompt({ forceShow = false, onDismiss }: GlobalInstallPromptProps = {}) {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isIOS, setIsIOS] = useState(false);
   const [isIOSChrome, setIsIOSChrome] = useState(false);
@@ -20,13 +25,17 @@ export function GlobalInstallPrompt() {
       return;
     }
 
-    // Check localStorage to not bother user if they dismissed recently
-    const dismissedAt = localStorage.getItem("tikflow_install_dismissed");
-    if (dismissedAt) {
-      const daysSinceDismissed = (Date.now() - parseInt(dismissedAt)) / (1000 * 60 * 60 * 24);
-      if (daysSinceDismissed < 3) {
-        // If dismissed less than 3 days ago, don't show the global prompt
-        return;
+    // If forced by admin, skip the localStorage/timing checks and show immediately
+    if (forceShow) {
+      setShowMainPrompt(true);
+    } else {
+      // Check localStorage to not bother user if they dismissed recently
+      const dismissedAt = localStorage.getItem("tikflow_install_dismissed");
+      if (dismissedAt) {
+        const daysSinceDismissed = (Date.now() - parseInt(dismissedAt)) / (1000 * 60 * 60 * 24);
+        if (daysSinceDismissed < 3) {
+          return;
+        }
       }
     }
 
@@ -52,21 +61,19 @@ export function GlobalInstallPrompt() {
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 
-    // Show the global prompt after 3 seconds of navigating the app
+    // Show the global prompt after 3 seconds (unless forced)
+    const delay = forceShow ? 0 : 3500;
     const timer = setTimeout(() => {
-      // Only show if installable on Android, OR if it's an iOS device
       if (isIOSDevice || isSafari || isChromeIOS || (window as any).deferredPrompt || deferredPrompt === null) {
-        // Wait, if deferredPrompt is null and not iOS, we shouldn't show it?
-        // Actually, beforeinstallprompt fires very quickly.
-        setShowMainPrompt(true);
+        if (!forceShow) setShowMainPrompt(true); // forceShow already set it above
       }
-    }, 3500);
+    }, delay);
 
     return () => {
       window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
       clearTimeout(timer);
     };
-  }, [deferredPrompt]);
+  }, [deferredPrompt, forceShow]);
 
   const handleInstallClick = async () => {
     setShowMainPrompt(false);
@@ -94,7 +101,11 @@ export function GlobalInstallPrompt() {
     setShowMainPrompt(false);
     setShowIOSPrompt(false);
     setShowIOSChromePrompt(false);
-    localStorage.setItem("tikflow_install_dismissed", Date.now().toString());
+    if (!forceShow) {
+      // Only save dismiss to localStorage for organic prompts, not admin-triggered ones
+      localStorage.setItem("tikflow_install_dismissed", Date.now().toString());
+    }
+    onDismiss?.();
   };
 
   if (isStandalone) return null;
