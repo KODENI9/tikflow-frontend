@@ -1,6 +1,3 @@
-import { api } from './api';
-import { useAuth } from '@clerk/nextjs';
-
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || '';
 
 // Utility function to convert VAPID key
