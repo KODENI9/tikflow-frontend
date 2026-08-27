@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { Bell, BellRing, X } from "lucide-react";
-import { useUser } from "@clerk/nextjs";
+import { useUser, useAuth } from "@clerk/nextjs";
 import { subscribeToPushNotifications } from "@/lib/push";
 import { toast } from "sonner";
 
 export function NotificationPrompt() {
   const { user } = useUser();
+  const { getToken } = useAuth();
   const [showPrompt, setShowPrompt] = useState(false);
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [permission, setPermission] = useState<NotificationPermission>("default");
@@ -30,7 +31,8 @@ export function NotificationPrompt() {
     
     setIsSubscribing(true);
     try {
-      await subscribeToPushNotifications(user.id);
+      const token = await getToken();
+      await subscribeToPushNotifications(user.id, token || "");
       setPermission("granted");
       setShowPrompt(false);
       toast.success("Notifications activées avec succès !");

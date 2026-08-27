@@ -16,7 +16,7 @@ function urlBase64ToUint8Array(base64String: string) {
   return outputArray;
 }
 
-export async function subscribeToPushNotifications(userId: string) {
+export async function subscribeToPushNotifications(userId: string, token: string) {
   if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
     throw new Error('Push notifications are not supported in this browser.');
   }
@@ -32,7 +32,7 @@ export async function subscribeToPushNotifications(userId: string) {
     const existingSubscription = await registration.pushManager.getSubscription();
     if (existingSubscription) {
       // Already subscribed, just make sure backend has it
-      await sendSubscriptionToBackend(existingSubscription, userId);
+      await sendSubscriptionToBackend(existingSubscription, userId, token);
       return existingSubscription;
     }
 
@@ -42,7 +42,7 @@ export async function subscribeToPushNotifications(userId: string) {
       applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
     });
 
-    await sendSubscriptionToBackend(subscription, userId);
+    await sendSubscriptionToBackend(subscription, userId, token);
     return subscription;
   } catch (error) {
     console.error('Failed to subscribe to push notifications:', error);
@@ -50,12 +50,13 @@ export async function subscribeToPushNotifications(userId: string) {
   }
 }
 
-async function sendSubscriptionToBackend(subscription: PushSubscription, userId: string) {
+async function sendSubscriptionToBackend(subscription: PushSubscription, userId: string, token: string) {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/push/subscribe`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({
         userId,
