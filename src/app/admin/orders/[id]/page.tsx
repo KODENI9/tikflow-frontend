@@ -114,12 +114,12 @@ export default function OrderDetail() {
             </span>
           </div>
           <p className="text-xs font-bold text-tikflow-slate">
-            Commandé le {new Date(transaction.created_at).toLocaleString('fr-FR')}
+            Commandé le {new Date(transaction.created_at?._seconds * 1000 || transaction.created_at).toLocaleString('fr-FR')}
           </p>
         </div>
         
-        <div className="px-4 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-tighter shadow-lg shadow-blue-100">
-          PAIEMENT WALLET (OK)
+        <div className={`px-4 py-2 text-white rounded-xl text-[10px] font-black uppercase tracking-tighter shadow-lg ${transaction.payment_method === 'moneyfusion' ? 'bg-orange-500 shadow-orange-500/20' : 'bg-blue-600 shadow-blue-100'}`}>
+          {transaction.payment_method === 'moneyfusion' ? 'MOBILE MONEY' : 'PAIEMENT WALLET (OK)'}
         </div>
       </div>
 
