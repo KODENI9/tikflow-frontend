@@ -138,7 +138,7 @@ export default function AnalyticsPage() {
                 <Tooltip 
                   contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                   cursor={{ stroke: '#cbd5e1', strokeWidth: 1, strokeDasharray: '4 4' }}
-                  formatter={(value: number) => Math.round(value).toString()}
+                  formatter={(value: any) => Math.round(Number(value) || 0).toString()}
                 />
                 <Legend iconType="circle" wrapperStyle={{ paddingTop: '10px' }} />
                 <Area type="monotone" dataKey="sales" name="Revenus" stroke="#1152d4" strokeWidth={3} fillOpacity={1} fill="url(#colorSales)" />
@@ -169,7 +169,7 @@ export default function AnalyticsPage() {
                 <Tooltip 
                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                    cursor={{ stroke: '#cbd5e1', strokeWidth: 1, strokeDasharray: '4 4' }}
-                   formatter={(value: number) => Math.round(value).toString()}
+                   formatter={(value: any) => Math.round(Number(value) || 0).toString()}
                 />
                 <Legend iconType="circle" wrapperStyle={{ paddingTop: '10px' }} />
                 <Area type="monotone" dataKey="profit" name="Bénéfice Net" stroke="#f97316" strokeWidth={3} fillOpacity={1} fill="url(#colorProfitOrange)" />
@@ -198,7 +198,7 @@ export default function AnalyticsPage() {
                  <Tooltip 
                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                    cursor={{ stroke: '#cbd5e1', strokeWidth: 1, strokeDasharray: '4 4' }}
-                   formatter={(value: number) => Math.round(value).toString()}
+                   formatter={(value: any) => Math.round(Number(value) || 0).toString()}
                 />
                 <Legend iconType="circle" wrapperStyle={{ paddingTop: '10px' }} />
                 <Area type="monotone" dataKey="transactions" name="Transactions" stroke="#6366f1" strokeWidth={3} fillOpacity={1} fill="url(#colorTransactions)" />
