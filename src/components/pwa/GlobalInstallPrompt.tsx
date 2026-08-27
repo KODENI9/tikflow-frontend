@@ -1,0 +1,252 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { Download, Share, PlusSquare, X } from "lucide-react";
+
+export function GlobalInstallPrompt() {
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isIOS, setIsIOS] = useState(false);
+  const [isIOSChrome, setIsIOSChrome] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
+  
+  const [showMainPrompt, setShowMainPrompt] = useState(false);
+  const [showIOSPrompt, setShowIOSPrompt] = useState(false);
+  const [showIOSChromePrompt, setShowIOSChromePrompt] = useState(false);
+
+  useEffect(() => {
+    // Check if already installed
+    if (window.matchMedia("(display-mode: standalone)").matches || (window.navigator as any).standalone) {
+      setIsStandalone(true);
+      return;
+    }
+
+    // Check localStorage to not bother user if they dismissed recently
+    const dismissedAt = localStorage.getItem("tikflow_install_dismissed");
+    if (dismissedAt) {
+      const daysSinceDismissed = (Date.now() - parseInt(dismissedAt)) / (1000 * 60 * 60 * 24);
+      if (daysSinceDismissed < 3) {
+        // If dismissed less than 3 days ago, don't show the global prompt
+        return;
+      }
+    }
+
+    // Check for iOS Safari and Chrome
+    const ua = window.navigator.userAgent;
+    const webkit = !!ua.match(/WebKit/i);
+    const isIOSDevice = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
+    const isChromeIOS = isIOSDevice && !!ua.match(/CriOS/i);
+    const isSafari = isIOSDevice && webkit && !isChromeIOS;
+
+    if (isIOSDevice && isSafari) {
+      setIsIOS(true);
+    }
+    if (isChromeIOS) {
+      setIsIOSChrome(true);
+    }
+
+    // Android/Chrome beforeinstallprompt
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+
+    // Show the global prompt after 3 seconds of navigating the app
+    const timer = setTimeout(() => {
+      // Only show if installable on Android, OR if it's an iOS device
+      if (isIOSDevice || isSafari || isChromeIOS || (window as any).deferredPrompt || deferredPrompt === null) {
+        // Wait, if deferredPrompt is null and not iOS, we shouldn't show it?
+        // Actually, beforeinstallprompt fires very quickly.
+        setShowMainPrompt(true);
+      }
+    }, 3500);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+      clearTimeout(timer);
+    };
+  }, [deferredPrompt]);
+
+  const handleInstallClick = async () => {
+    setShowMainPrompt(false);
+    
+    if (isIOS) {
+      setShowIOSPrompt(true);
+      return;
+    }
+    if (isIOSChrome) {
+      setShowIOSChromePrompt(true);
+      return;
+    }
+
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === "accepted") {
+      setDeferredPrompt(null);
+    }
+  };
+
+  const handleDismiss = () => {
+    setShowMainPrompt(false);
+    setShowIOSPrompt(false);
+    setShowIOSChromePrompt(false);
+    localStorage.setItem("tikflow_install_dismissed", Date.now().toString());
+  };
+
+  if (isStandalone) return null;
+  // If not iOS and no prompt available, don't show anything (e.g. unsupported browser)
+  if (!deferredPrompt && !isIOS && !isIOSChrome) return null;
+
+  return (
+    <>
+      {/* Global Bottom Banner / Modal */}
+      {showMainPrompt && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-card-bg border border-glass-border rounded-t-3xl sm:rounded-3xl p-6 max-w-sm w-full shadow-2xl relative animate-in slide-in-from-bottom-10 sm:zoom-in-95">
+            <button 
+              onClick={handleDismiss}
+              className="absolute right-4 top-4 text-tikflow-slate hover:text-foreground"
+            >
+              <X size={20} />
+            </button>
+            
+            <div className="flex flex-col items-center text-center mt-2 mb-6">
+              <div className="w-16 h-16 bg-gradient-to-tr from-tikflow-primary to-orange-500 rounded-2xl flex items-center justify-center shadow-lg shadow-tikflow-primary/20 mb-4">
+                <Download size={32} className="text-white" />
+              </div>
+              <h3 className="text-xl font-black uppercase text-foreground mb-2">
+                Installez l'Application
+              </h3>
+              <p className="text-sm font-medium text-tikflow-slate">
+                Profitez d'une expérience plus rapide, plus fluide, et recevez les notifications en temps réel.
+              </p>
+            </div>
+            
+            <div className="space-y-3">
+              <button 
+                onClick={handleInstallClick}
+                className="w-full py-3.5 bg-tikflow-primary text-white font-black uppercase rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-tikflow-primary/20"
+              >
+                Installer maintenant
+              </button>
+              <button 
+                onClick={handleDismiss}
+                className="w-full py-3.5 bg-foreground/5 text-foreground font-bold uppercase rounded-xl hover:bg-foreground/10 transition-colors"
+              >
+                Plus tard
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal iOS Safari */}
+      {showIOSPrompt && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-card-bg border border-glass-border rounded-3xl p-6 max-w-sm w-full shadow-2xl relative">
+            <button 
+              onClick={handleDismiss}
+              className="absolute right-4 top-4 text-tikflow-slate hover:text-foreground"
+            >
+              <X size={20} />
+            </button>
+            
+            <h3 className="text-lg font-black uppercase text-foreground mb-4 flex items-center gap-2">
+              <Download className="text-tikflow-primary" />
+              Installer l'application
+            </h3>
+            
+            <p className="text-sm font-medium text-tikflow-slate mb-6">
+              Pour installer TikFlow sur votre iPhone et y accéder comme une vraie application :
+            </p>
+            
+            <div className="space-y-4">
+              <div className="flex items-start gap-4">
+                <div className="bg-foreground/5 p-2 rounded-xl text-foreground mt-1">
+                  <Share size={20} />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-foreground">1. Appuyez sur Partager</p>
+                  <p className="text-xs text-tikflow-slate">Dans la barre de navigation de Safari en bas.</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div className="bg-foreground/5 p-2 rounded-xl text-foreground mt-1">
+                  <PlusSquare size={20} />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-foreground">2. Ajouter à l'écran d'accueil</p>
+                  <p className="text-xs text-tikflow-slate">Faites défiler le menu et sélectionnez cette option.</p>
+                </div>
+              </div>
+            </div>
+            
+            <button 
+              onClick={handleDismiss}
+              className="w-full mt-8 py-3 bg-foreground/10 text-foreground font-black uppercase rounded-xl hover:bg-foreground/20 transition-colors"
+            >
+              J'ai compris
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal iOS Chrome */}
+      {showIOSChromePrompt && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-card-bg border border-glass-border rounded-3xl p-6 max-w-sm w-full shadow-2xl relative">
+            <button 
+              onClick={handleDismiss}
+              className="absolute right-4 top-4 text-tikflow-slate hover:text-foreground"
+            >
+              <X size={20} />
+            </button>
+            
+            <h3 className="text-lg font-black uppercase text-foreground mb-4 flex items-center gap-2">
+              <Download className="text-tikflow-primary" />
+              Installer l'application
+            </h3>
+            
+            <p className="text-sm font-medium text-tikflow-slate mb-6">
+              Pour installer TikFlow depuis Chrome sur votre iPhone :
+            </p>
+            
+            <div className="space-y-4">
+              <div className="flex items-start gap-4">
+                <div className="bg-foreground/5 p-2 rounded-xl text-foreground mt-1">
+                  <Share size={20} />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-foreground">1. Appuyez sur Partager</p>
+                  <p className="text-xs text-tikflow-slate">L'icône en haut à droite dans la barre d'adresse de Chrome.</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div className="bg-foreground/5 p-2 rounded-xl text-foreground mt-1">
+                  <PlusSquare size={20} />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-foreground">2. Ajouter à l'écran d'accueil</p>
+                  <p className="text-xs text-tikflow-slate">Faites défiler le menu et sélectionnez cette option.</p>
+                </div>
+              </div>
+            </div>
+            
+            <button 
+              onClick={handleDismiss}
+              className="w-full mt-8 py-3 bg-foreground/10 text-foreground font-black uppercase rounded-xl hover:bg-foreground/20 transition-colors"
+            >
+              J'ai compris
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}

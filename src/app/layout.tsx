@@ -4,6 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
 import { NotificationPrompt } from "@/components/pwa/NotificationPrompt";
+import { GlobalInstallPrompt } from "@/components/pwa/GlobalInstallPrompt";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -71,6 +72,7 @@ export default function RootLayout({
         >
           <PWARegistrar />
           <NotificationPrompt />
+          <GlobalInstallPrompt />
           <Toaster position="top-right" richColors theme="dark" />
           {children}
         </body>
