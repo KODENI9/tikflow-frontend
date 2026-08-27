@@ -44,9 +44,9 @@ export default function WalletManagementPage() {
         // Calculer les volumes par méthode
         const volumes: Record<string, number> = {};
         (txData || []).forEach(tx => {
-            if (tx.status === 'completed' && tx.type === 'recharge') {
-                const method = tx.payment_method || 'other';
-                volumes[method] = (volumes[method] || 0) + tx.amount_cfa;
+            if (tx.status === 'completed') {
+                const method = tx.payment_method?.toLowerCase() || 'other';
+                volumes[method] = (volumes[method] || 0) + (tx.amount_cfa || 0);
             }
         });
         setMethodVolumes(volumes);
@@ -148,8 +148,8 @@ export default function WalletManagementPage() {
             <h3 className="font-black text-sm text-foreground uppercase tracking-wider mb-6">System Wallets (Inflow)</h3>
             <div className="space-y-6">
               {[
-                { name: "TMoney (Togo)", sub: "AGGREGATED VOLUME", balance: methodVolumes['tmoney'] || 0, color: "text-tikflow-accent", bg: "bg-tikflow-accent", width: "w-[85%]" },
-                { name: "Flooz (Moov Money)", sub: "AGGREGATED VOLUME", balance: methodVolumes['flooz'] || 0, color: "text-tikflow-primary", bg: "bg-tikflow-primary", width: "w-[65%]" },
+                { name: "MoneyFusion", sub: "ONLINE PAYMENT", balance: methodVolumes['moneyfusion'] || 0, color: "text-tikflow-accent", bg: "bg-tikflow-accent", width: "w-[85%]" },
+                { name: "Internal Wallet", sub: "SKTHIB (USER BALANCES)", balance: methodVolumes['skthib'] || 0, color: "text-tikflow-primary", bg: "bg-tikflow-primary", width: "w-[65%]" },
                 // { name: "MTN Mobile Money", sub: "CARRIER WALLET", balance: methodVolumes['mtn'] || 0, color: "text-green-600", bg: "bg-green-500", width: "w-[30%]" },
               ].map((wallet, i) => (
                 <div key={i} className="space-y-2">
