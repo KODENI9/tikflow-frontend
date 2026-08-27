@@ -40,7 +40,7 @@ export function NotificationPrompt() {
         setPermission("denied");
         toast.error("Vous avez bloqué les notifications dans votre navigateur.");
       } else {
-        toast.error("Erreur lors de l'activation des notifications.");
+        toast.error(error?.message || "Erreur lors de l'activation des notifications.");
       }
     } finally {
       setIsSubscribing(false);

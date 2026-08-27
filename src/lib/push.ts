@@ -20,6 +20,10 @@ export async function subscribeToPushNotifications(userId: string) {
   if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
     throw new Error('Push notifications are not supported in this browser.');
   }
+  
+  if (!VAPID_PUBLIC_KEY) {
+    throw new Error('VAPID public key is missing. Please check your environment variables (.env). Restart your dev server if you just added it.');
+  }
 
   const registration = await navigator.serviceWorker.ready;
   
