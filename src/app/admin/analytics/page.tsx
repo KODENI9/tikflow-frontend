@@ -68,43 +68,43 @@ export default function AnalyticsPage() {
     <div className="space-y-8 max-w-7xl mx-auto">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-black text-foreground tracking-tight">Financial Analytics</h1>
+        <h1 className="text-3xl font-black text-foreground tracking-tight">Analyses Financières</h1>
         <p className="text-tikflow-slate font-medium mt-1">
-          Detailed breakdown of platform revenue, costs, and user growth.
+          Aperçu détaillé des revenus, des coûts et de la croissance de la plateforme.
         </p>
       </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <AnalyticsCard
-          title="Total Revenue"
-          value={`${stats?.financials?.totalSalesVolume?.toLocaleString() || 0} CFA`}
+          title="Revenus Totaux"
+          value={`${(stats?.financials?.totalSalesVolume || 0).toLocaleString('fr-FR', { maximumFractionDigits: 0 })} CFA`}
           icon={TrendingUp}
           trend="+12%" // Mock trend or calc from monthly
           color="text-green-600"
           bg="bg-green-50"
         />
         <AnalyticsCard
-          title="Net Profit"
-          value={`${stats?.financials?.totalProfit?.toLocaleString() || 0} CFA`}
+          title="Bénéfice Net"
+          value={`${(stats?.financials?.totalProfit || 0).toLocaleString('fr-FR', { maximumFractionDigits: 0 })} CFA`}
           icon={DollarSign}
           trend="+8%"
           color="text-blue-600"
           bg="bg-blue-50"
         />
         <AnalyticsCard
-          title="Est. Costs"
-          value={`${stats?.financials?.totalCost?.toLocaleString() || 0} CFA`}
+          title="Coûts Estimés"
+          value={`${(stats?.financials?.totalCost || 0).toLocaleString('fr-FR', { maximumFractionDigits: 0 })} CFA`}
           icon={CreditCard}
           trend="-2%"
           color="text-orange-600"
           bg="bg-orange-50"
         />
         <AnalyticsCard
-          title="User Balances"
-          value={`${stats?.financials?.totalUsersBalance?.toLocaleString() || 0} CFA`}
+          title="Soldes Utilisateurs"
+          value={`${(stats?.financials?.totalUsersBalance || 0).toLocaleString('fr-FR', { maximumFractionDigits: 0 })} CFA`}
           icon={Wallet}
-          trend="Liability"
+          trend="Passif"
           color="text-purple-600"
           bg="bg-purple-50"
         />
@@ -117,7 +117,7 @@ export default function AnalyticsPage() {
         <div className="bg-card-bg p-6 rounded-[2rem] border border-glass-border shadow-sm">
           <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
             <Activity size={18} className="text-tikflow-primary" />
-            Revenue & Cost Analysis
+            Analyse des Revenus & Coûts
           </h3>
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -134,14 +134,15 @@ export default function AnalyticsPage() {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" opacity={0.5} />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#94a3b8'}} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#94a3b8'}} />
+                <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#94a3b8'}} tickFormatter={(val) => Math.round(val).toString()} />
                 <Tooltip 
                   contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                   cursor={{ stroke: '#cbd5e1', strokeWidth: 1, strokeDasharray: '4 4' }}
+                  formatter={(value: number) => Math.round(value).toString()}
                 />
                 <Legend iconType="circle" wrapperStyle={{ paddingTop: '10px' }} />
-                <Area type="monotone" dataKey="sales" name="Revenue" stroke="#1152d4" strokeWidth={3} fillOpacity={1} fill="url(#colorSales)" />
-                <Area type="monotone" dataKey="cost" name="Cost" stroke="#f97316" strokeWidth={3} fillOpacity={1} fill="url(#colorCost)" />
+                <Area type="monotone" dataKey="sales" name="Revenus" stroke="#1152d4" strokeWidth={3} fillOpacity={1} fill="url(#colorSales)" />
+                <Area type="monotone" dataKey="cost" name="Coût" stroke="#f97316" strokeWidth={3} fillOpacity={1} fill="url(#colorCost)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -151,7 +152,7 @@ export default function AnalyticsPage() {
         <div className="bg-card-bg p-6 rounded-[2rem] border border-glass-border shadow-sm">
           <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
             <TrendingUp size={18} className="text-green-600" />
-            Profit Trend
+            Tendance des Bénéfices
           </h3>
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -164,13 +165,14 @@ export default function AnalyticsPage() {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" opacity={0.5} />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#94a3b8'}} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#94a3b8'}} />
+                <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#94a3b8'}} tickFormatter={(val) => Math.round(val).toString()} />
                 <Tooltip 
                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                    cursor={{ stroke: '#cbd5e1', strokeWidth: 1, strokeDasharray: '4 4' }}
+                   formatter={(value: number) => Math.round(value).toString()}
                 />
                 <Legend iconType="circle" wrapperStyle={{ paddingTop: '10px' }} />
-                <Area type="monotone" dataKey="profit" name="Net Profit" stroke="#f97316" strokeWidth={3} fillOpacity={1} fill="url(#colorProfitOrange)" />
+                <Area type="monotone" dataKey="profit" name="Bénéfice Net" stroke="#f97316" strokeWidth={3} fillOpacity={1} fill="url(#colorProfitOrange)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -180,7 +182,7 @@ export default function AnalyticsPage() {
 
       {/* Transaction Volume Trend */}
       <div className="bg-card-bg p-6 rounded-[2rem] border border-glass-border shadow-sm">
-          <h3 className="text-lg font-bold mb-6">Transaction Volume (Count)</h3>
+          <h3 className="text-lg font-bold mb-6">Volume de Transactions (Nombre)</h3>
           <div className="h-[250px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={monthlyData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
@@ -192,10 +194,11 @@ export default function AnalyticsPage() {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" opacity={0.5} />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#94a3b8'}} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#94a3b8'}} />
+                <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#94a3b8'}} tickFormatter={(val) => Math.round(val).toString()} />
                  <Tooltip 
                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                    cursor={{ stroke: '#cbd5e1', strokeWidth: 1, strokeDasharray: '4 4' }}
+                   formatter={(value: number) => Math.round(value).toString()}
                 />
                 <Legend iconType="circle" wrapperStyle={{ paddingTop: '10px' }} />
                 <Area type="monotone" dataKey="transactions" name="Transactions" stroke="#6366f1" strokeWidth={3} fillOpacity={1} fill="url(#colorTransactions)" />
@@ -214,7 +217,7 @@ function AnalyticsCard({ title, value, icon: Icon, trend, color, bg }: any) {
         <div className={`p-3 rounded-2xl ${bg} ${color}`}>
           <Icon size={24} />
         </div>
-        <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wide ${trend === 'Liability' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
+        <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wide ${trend === 'Passif' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
           {trend}
         </div>
       </div>
