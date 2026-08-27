@@ -6,8 +6,10 @@ import { Download, Share, PlusSquare, X } from "lucide-react";
 export function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isIOS, setIsIOS] = useState(false);
+  const [isIOSChrome, setIsIOSChrome] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
   const [showIOSPrompt, setShowIOSPrompt] = useState(false);
+  const [showIOSChromePrompt, setShowIOSChromePrompt] = useState(false);
 
   useEffect(() => {
     // Check if already installed
@@ -16,14 +18,18 @@ export function InstallPrompt() {
       return;
     }
 
-    // Check for iOS Safari
+    // Check for iOS Safari and Chrome
     const ua = window.navigator.userAgent;
     const webkit = !!ua.match(/WebKit/i);
     const isIOSDevice = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
-    const isSafari = isIOSDevice && webkit && !ua.match(/CriOS/i);
+    const isChromeIOS = isIOSDevice && !!ua.match(/CriOS/i);
+    const isSafari = isIOSDevice && webkit && !isChromeIOS;
 
     if (isIOSDevice && isSafari) {
       setIsIOS(true);
+    }
+    if (isChromeIOS) {
+      setIsIOSChrome(true);
     }
 
     // Android/Chrome beforeinstallprompt
@@ -44,6 +50,10 @@ export function InstallPrompt() {
       setShowIOSPrompt(true);
       return;
     }
+    if (isIOSChrome) {
+      setShowIOSChromePrompt(true);
+      return;
+    }
 
     if (!deferredPrompt) return;
 
@@ -56,7 +66,7 @@ export function InstallPrompt() {
   };
 
   if (isStandalone) return null;
-  if (!deferredPrompt && !isIOS) return null; // App is neither installable on Android nor iOS Safari
+  if (!deferredPrompt && !isIOS && !isIOSChrome) return null; // App is neither installable on Android nor iOS Safari/Chrome
 
   return (
     <>
@@ -113,6 +123,42 @@ export function InstallPrompt() {
             <button 
               onClick={() => setShowIOSPrompt(false)}
               className="w-full mt-8 py-3 bg-foreground/10 text-foreground font-black uppercase rounded-xl hover:bg-foreground/20 transition-colors"
+            >
+              J'ai compris
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal iOS Chrome */}
+      {showIOSChromePrompt && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-card-bg border border-glass-border rounded-3xl p-6 max-w-sm w-full shadow-2xl relative">
+            <button 
+              onClick={() => setShowIOSChromePrompt(false)}
+              className="absolute right-4 top-4 text-tikflow-slate hover:text-foreground"
+            >
+              <X size={20} />
+            </button>
+            
+            <h3 className="text-lg font-black uppercase text-foreground mb-4 flex items-center gap-2">
+              <Download className="text-tikflow-primary" />
+              Navigateur non supporté
+            </h3>
+            
+            <p className="text-sm font-medium text-tikflow-slate mb-6 leading-relaxed">
+              Apple ne permet pas l'installation d'applications depuis Google Chrome sur iPhone.
+            </p>
+            
+            <div className="bg-foreground/5 p-4 rounded-2xl mb-6">
+              <p className="text-sm text-foreground font-medium text-center">
+                Veuillez copier le lien du site et l'ouvrir dans le navigateur <strong>Safari</strong> pour installer l'application.
+              </p>
+            </div>
+            
+            <button 
+              onClick={() => setShowIOSChromePrompt(false)}
+              className="w-full mt-2 py-3 bg-tikflow-primary text-white font-black uppercase rounded-xl hover:opacity-90 transition-opacity"
             >
               J'ai compris
             </button>
