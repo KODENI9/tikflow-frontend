@@ -23,7 +23,7 @@ const menuItems = [
   { name: "Analytics",         href: "/admin/analytics",    icon: TrendingUp,      group: "main" },
   { name: "Utilisateurs",      href: "/admin/users",        icon: Users,           group: "main" },
   { name: "Transactions",      href: "/admin/transactions", icon: ArrowLeftRight,  group: "finance" },
-  { name: "Top-Ups SMS",       href: "/admin/sms-input",    icon: MessageSquarePlus, group: "finance" },
+
   { name: "Paiements",         href: "/admin/payments",     icon: CreditCard,      group: "finance" },
   { name: "Wallets",           href: "/admin/wallets",      icon: Wallet,          group: "finance" },
   { name: "Feedbacks",         href: "/admin/feedbacks",    icon: Star,            group: "other" },
