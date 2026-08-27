@@ -127,13 +127,13 @@ export default function OrderDetail() {
         <div className="lg:col-span-2 space-y-6">
           
           {/* TIKTOK CREDENTIALS CARD */}
-          <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
-              <div className="flex items-center gap-2 text-slate-900">
-                <Smartphone size={20} className="text-blue-600" />
+          <div className="bg-card-bg rounded-[2rem] border border-glass-border shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-glass-border flex justify-between items-center bg-foreground/5">
+              <div className="flex items-center gap-2 text-foreground">
+                <Smartphone size={20} className="text-tikflow-primary" />
                 <h2 className="font-black text-sm uppercase tracking-wider">Identifiants TikTok</h2>
               </div>
-              <span className="text-[10px] font-black px-3 py-1 rounded-md bg-blue-100 text-blue-600 uppercase">
+              <span className="text-[10px] font-black px-3 py-1.5 rounded-full bg-tikflow-primary/10 border border-tikflow-primary/20 text-tikflow-primary uppercase animate-pulse">
                 Livraison Requise
               </span>
             </div>
