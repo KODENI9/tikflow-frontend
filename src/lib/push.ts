@@ -25,10 +25,10 @@ export async function subscribeToPushNotifications(userId: string, token: string
     throw new Error('VAPID public key is missing. Please check your environment variables (.env). Restart your dev server if you just added it.');
   }
 
-  // Use Promise.race to timeout if serviceWorker.ready hangs (e.g. non-HTTPS on mobile)
+  // Use Promise.race to timeout if serviceWorker.ready hangs
   const readyPromise = navigator.serviceWorker.ready;
   const timeoutPromise = new Promise<ServiceWorkerRegistration>((_, reject) => {
-    setTimeout(() => reject(new Error('Service Worker timeout. Vérifiez que vous êtes en HTTPS (ou localhost).')), 5000);
+    setTimeout(() => reject(new Error("L'activation des notifications prend trop de temps. Veuillez réessayer ultérieurement.")), 5000);
   });
   
   const registration = await Promise.race([readyPromise, timeoutPromise]);
