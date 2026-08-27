@@ -3,13 +3,22 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
+import { NotificationPrompt } from "@/components/pwa/NotificationPrompt";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
 });
 
+import { PWARegistrar } from "@/components/pwa/PWARegistrar";
+import type { Viewport } from "next";
+
+export const viewport: Viewport = {
+  themeColor: "#0f172a",
+};
+
 export const metadata: Metadata = {
+  manifest: "/manifest.json",
   title: {
     default: 'TikFlow | Achetez vos Pièces TikTok en Afrique',
     template: '%s | TikFlow'
@@ -42,6 +51,11 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "TikFlow",
+  },
 }
 
 export default function RootLayout({
@@ -55,6 +69,8 @@ export default function RootLayout({
         <body
           className={`${plusJakartaSans.variable} font-sans antialiased bg-background text-foreground`}
         >
+          <PWARegistrar />
+          <NotificationPrompt />
           <Toaster position="top-right" richColors theme="dark" />
           {children}
         </body>

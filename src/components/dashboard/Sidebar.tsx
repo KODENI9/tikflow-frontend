@@ -29,6 +29,8 @@ interface SidebarProps {
   onClose: () => void;
 }
 
+import { InstallPrompt } from "@/components/pwa/InstallPrompt";
+
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const { user, isLoaded: userLoaded } = useUser();
@@ -113,6 +115,10 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               </Link>
             ))}
           </nav>
+          
+          <div className="px-2">
+            <InstallPrompt />
+          </div>
 
           <div className="mx-2 p-4 bg-tikflow-primary/5 rounded-2xl border border-tikflow-primary/10 flex flex-col gap-3">
             <div className="flex items-center gap-2 text-tikflow-primary">

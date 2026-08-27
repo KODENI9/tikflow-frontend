@@ -15,6 +15,7 @@ import {
   TrendingUp,
   ChevronRight,
   CreditCard,
+  Bell,
 } from "lucide-react";
 import { SignOutButton } from "@clerk/nextjs";
 
@@ -26,6 +27,7 @@ const menuItems = [
 
   { name: "Paiements",         href: "/admin/payments",     icon: CreditCard,      group: "finance" },
   { name: "Wallets",           href: "/admin/wallets",      icon: Wallet,          group: "finance" },
+  { name: "Notifications",     href: "/admin/notifications",icon: Bell,            group: "other" },
   { name: "Feedbacks",         href: "/admin/feedbacks",    icon: Star,            group: "other" },
   { name: "Paramètres",        href: "/admin/settings",     icon: Settings,        group: "other" },
 ];
