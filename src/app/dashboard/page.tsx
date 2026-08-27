@@ -82,6 +82,7 @@ export default function DashboardPage() {
         
         {/* COLONNE GAUCHE - Portefeuille */}
         <div className="lg:col-span-8 space-y-6">
+          <InstallPrompt />
           <div className="bg-card-bg rounded-3xl p-5 md:p-8 shadow-sm border border-glass-border flex flex-col xl:flex-row gap-8 items-center">
             
             {/* Wallet Card */}
@@ -141,8 +142,6 @@ export default function DashboardPage() {
                  </button>
               </div>
            </div>
-
-           <InstallPrompt />
         </div>
       </div>
     </div>
