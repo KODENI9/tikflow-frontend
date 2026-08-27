@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Menu } from "lucide-react";
-import { UserButton, useUser, useAuth } from "@clerk/nextjs";
+import { Menu, LogOut } from "lucide-react";
+import { UserButton, useUser, useClerk } from "@clerk/nextjs";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { SyncUser } from "@/components/auth/SyncUser";
 import dynamic from "next/dynamic";
@@ -17,6 +17,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [showFeedback, setShowFeedback] = useState(false);
   const [dbUser, setDbUser] = useState<any>(null);
   const { isLoaded, user } = useUser();
+  const { signOut } = useClerk();
 
   useEffect(() => {
     const checkFeedback = async () => {
@@ -84,9 +85,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </h2>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
              <ThemeToggle />
              <NotificationBell />
+             <button 
+               onClick={() => signOut({ redirectUrl: "/" })}
+               className="hidden sm:flex items-center gap-2 text-red-500 hover:bg-red-500/10 p-2 px-3 rounded-xl transition-colors font-bold text-xs uppercase"
+             >
+               <LogOut size={16} />
+               Déconnexion
+             </button>
              <UserButton />
           </div>
         </header>

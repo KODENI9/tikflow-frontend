@@ -142,6 +142,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             </div>
           </div>
 
+          <button 
+             onClick={() => signOut({ redirectUrl: "/" })}
+             className="mx-2 mt-2 flex items-center justify-center gap-2 py-3 bg-red-500/10 text-red-500 rounded-xl font-black uppercase text-xs hover:bg-red-500/20 transition-colors"
+          >
+             <LogOut size={16} />
+             Se déconnecter
+          </button>
+
           <div className="mt-auto border-t border-glass-border pt-4 flex items-center gap-3 px-2">
             <UserButton afterSignOutUrl="/" />
             <div className="flex-1 overflow-hidden">
