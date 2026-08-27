@@ -16,6 +16,7 @@ import {
   ChevronRight,
   CreditCard,
   Bell,
+  Smartphone,
 } from "lucide-react";
 import { SignOutButton } from "@clerk/nextjs";
 
@@ -29,6 +30,7 @@ const menuItems = [
   { name: "Wallets",           href: "/admin/wallets",      icon: Wallet,          group: "finance" },
   { name: "Notifications",     href: "/admin/notifications",icon: Bell,            group: "other" },
   { name: "Feedbacks",         href: "/admin/feedbacks",    icon: Star,            group: "other" },
+  { name: "PWA Tracking",      href: "/admin/tracking",     icon: Smartphone,      group: "other" },
   { name: "Paramètres",        href: "/admin/settings",     icon: Settings,        group: "other" },
 ];
 
