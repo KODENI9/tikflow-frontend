@@ -17,6 +17,7 @@ import {
   CreditCard,
   Bell,
   Smartphone,
+  Landmark,
 } from "lucide-react";
 import { SignOutButton } from "@clerk/nextjs";
 
@@ -27,6 +28,7 @@ const menuItems = [
   { name: "Transactions",      href: "/admin/transactions", icon: ArrowLeftRight,  group: "finance" },
 
   { name: "Paiements",         href: "/admin/payments",     icon: CreditCard,      group: "finance" },
+  { name: "Dépenses",          href: "/admin/expenses",     icon: Landmark,        group: "finance" },
   { name: "Wallets",           href: "/admin/wallets",      icon: Wallet,          group: "finance" },
   { name: "Notifications",     href: "/admin/notifications",icon: Bell,            group: "other" },
   { name: "Feedbacks",         href: "/admin/feedbacks",    icon: Star,            group: "other" },
