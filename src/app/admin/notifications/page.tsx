@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Send, Bell, Link as LinkIcon, Users, Image as ImageIcon } from "lucide-react";
+import { Send, Bell, Link as LinkIcon, Users, Image as ImageIcon, ChevronDown, Check, Search } from "lucide-react";
 import { adminApi } from "@/lib/api";
 import { toast } from "sonner";
 import { useAuth } from "@clerk/nextjs";
@@ -15,6 +15,14 @@ export default function AdminNotificationsPage() {
   const [body, setBody] = useState("");
   const [url, setUrl] = useState("");
   const [targetUserId, setTargetUserId] = useState("all");
+  
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredUsers = users.filter(user => 
+    (user.fullname || '').toLowerCase().includes(searchQuery.toLowerCase()) || 
+    (user.email || '').toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -103,18 +111,74 @@ export default function AdminNotificationsPage() {
                 <label className="text-xs font-bold uppercase text-tikflow-slate flex items-center gap-2">
                   <Users size={14} /> Destinataires
                 </label>
-                <select 
-                  value={targetUserId}
-                  onChange={(e) => setTargetUserId(e.target.value)}
-                  className="w-full bg-background border border-glass-border rounded-xl p-3 text-sm text-foreground focus:border-tikflow-primary focus:ring-1 focus:ring-tikflow-primary outline-none transition-all"
-                >
-                  <option value="all">Tous les utilisateurs (Broadcast)</option>
-                  {users.map(user => (
-                    <option key={user.id || user.uid} value={user.id || user.uid}>
-                      {user.fullname || user.email || 'Utilisateur inconnu'} {user.email ? `(${user.email})` : ''}
-                    </option>
-                  ))}
-                </select>
+                <div className="relative">
+                  <button 
+                    type="button"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="w-full flex items-center justify-between bg-background border border-glass-border rounded-xl p-3 text-sm text-foreground hover:border-tikflow-primary/50 focus:border-tikflow-primary outline-none transition-all shadow-sm"
+                  >
+                    <span className="truncate font-medium text-left">
+                      {targetUserId === "all" 
+                        ? "Tous les utilisateurs (Broadcast)" 
+                        : (() => {
+                            const user = users.find(u => (u.id || u.uid) === targetUserId);
+                            return user ? `${user.fullname || 'Utilisateur inconnu'} (${user.email || ''})` : "Utilisateur sélectionné";
+                          })()
+                      }
+                    </span>
+                    <ChevronDown size={16} className={`text-tikflow-slate transition-transform duration-200 shrink-0 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {isDropdownOpen && (
+                    <div className="absolute z-50 w-full mt-2 bg-[#0C162D] border border-glass-border rounded-xl shadow-2xl max-h-64 overflow-hidden flex flex-col backdrop-blur-md">
+                      <div className="p-2 border-b border-glass-border sticky top-0 bg-[#080F20]/95 z-10 flex items-center gap-2">
+                        <Search size={14} className="text-tikflow-slate ml-2 shrink-0" />
+                        <input 
+                          type="text" 
+                          placeholder="Rechercher un utilisateur..." 
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="w-full bg-transparent border-none text-sm text-foreground outline-none p-1.5 placeholder:text-tikflow-slate"
+                          autoFocus
+                        />
+                      </div>
+                      <div className="overflow-y-auto p-1.5 flex-1 custom-scrollbar">
+                        <button
+                          type="button"
+                          onClick={() => { setTargetUserId("all"); setIsDropdownOpen(false); setSearchQuery(""); }}
+                          className={`w-full text-left px-3 py-2.5 rounded-lg text-sm flex items-center justify-between transition-colors ${targetUserId === "all" ? 'bg-tikflow-primary/10 text-tikflow-primary font-bold' : 'text-foreground hover:bg-white/5'}`}
+                        >
+                          <span className="truncate">Tous les utilisateurs (Broadcast)</span>
+                          {targetUserId === "all" && <Check size={14} className="shrink-0" />}
+                        </button>
+                        
+                        <div className="h-px bg-glass-border my-1.5 mx-2"></div>
+                        
+                        {filteredUsers.length === 0 ? (
+                          <div className="p-4 text-center text-sm text-tikflow-slate italic">Aucun utilisateur trouvé</div>
+                        ) : (
+                          filteredUsers.map(user => {
+                            const uid = user.id || user.uid;
+                            const isSelected = targetUserId === uid;
+                            return (
+                              <button
+                                key={uid}
+                                type="button"
+                                onClick={() => { setTargetUserId(uid); setIsDropdownOpen(false); setSearchQuery(""); }}
+                                className={`w-full text-left px-3 py-2.5 rounded-lg text-sm flex items-center justify-between transition-colors ${isSelected ? 'bg-tikflow-primary/10 text-tikflow-primary font-bold' : 'text-foreground hover:bg-white/5'}`}
+                              >
+                                <span className="truncate pr-2">
+                                  {user.fullname || user.email || 'Utilisateur inconnu'} {user.email ? <span className="opacity-50 text-xs ml-1 font-normal">({user.email})</span> : ''}
+                                </span>
+                                {isSelected && <Check size={14} className="shrink-0" />}
+                              </button>
+                            );
+                          })
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <p className="text-xs text-tikflow-slate mt-1">
                   Sélectionnez un utilisateur spécifique ou envoyez à tout le monde.
                 </p>
