@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Send, Bell, Link as LinkIcon, Users, Image as ImageIcon } from "lucide-react";
 import { adminApi } from "@/lib/api";
 import { toast } from "sonner";
@@ -9,11 +9,30 @@ import { useAuth } from "@clerk/nextjs";
 export default function AdminNotificationsPage() {
   const { getToken } = useAuth();
   const [isSending, setIsSending] = useState(false);
+  const [users, setUsers] = useState<any[]>([]);
   
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [url, setUrl] = useState("");
   const [targetUserId, setTargetUserId] = useState("all");
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const token = await getToken();
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL_ADMIN}/users`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setUsers(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch users", error);
+      }
+    };
+    fetchUsers();
+  }, [getToken]);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,10 +109,14 @@ export default function AdminNotificationsPage() {
                   className="w-full bg-background border border-glass-border rounded-xl p-3 text-sm text-foreground focus:border-tikflow-primary focus:ring-1 focus:ring-tikflow-primary outline-none transition-all"
                 >
                   <option value="all">Tous les utilisateurs (Broadcast)</option>
-                  {/* Plus tard, on pourra charger la liste des utilisateurs pour cibler */}
+                  {users.map(user => (
+                    <option key={user.id || user.uid} value={user.id || user.uid}>
+                      {user.fullname || user.email || 'Utilisateur inconnu'} {user.email ? `(${user.email})` : ''}
+                    </option>
+                  ))}
                 </select>
-                <p className="text-xs text-tikflow-slate">
-                  Note : Vous pouvez entrer l'ID d'un utilisateur spécifique si vous modifiez la valeur dans l'inspecteur pour l'instant.
+                <p className="text-xs text-tikflow-slate mt-1">
+                  Sélectionnez un utilisateur spécifique ou envoyez à tout le monde.
                 </p>
               </div>
 
