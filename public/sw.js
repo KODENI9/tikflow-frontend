@@ -46,7 +46,7 @@ self.addEventListener('push', function(event) {
     badge: '/icon-192x192.png',
     vibrate: [100, 50, 100],
     data: {
-      url: data.url || '/',
+      url: data.url || '/dashboard/notifications',
       // Pass the unread count from the push payload if available
       unreadCount: data.unreadCount ?? null,
     },
@@ -83,7 +83,7 @@ self.addEventListener('push', function(event) {
 self.addEventListener('notificationclick', function(event) {
   event.notification.close();
 
-  const urlToOpen = event.notification.data?.url || '/';
+  const urlToOpen = event.notification.data?.url || '/dashboard/notifications';
 
   event.waitUntil(
     clients

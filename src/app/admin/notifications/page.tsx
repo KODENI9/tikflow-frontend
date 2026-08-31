@@ -9,6 +9,7 @@ import { useAuth } from "@clerk/nextjs";
 export default function AdminNotificationsPage() {
   const { getToken } = useAuth();
   const [isSending, setIsSending] = useState(false);
+  const [isTriggeringMarketing, setIsTriggeringMarketing] = useState(false);
   const [users, setUsers] = useState<any[]>([]);
   
   const [title, setTitle] = useState("");
@@ -84,6 +85,33 @@ export default function AdminNotificationsPage() {
       toast.error("Erreur serveur lors de l'envoi.");
     } finally {
       setIsSending(false);
+    }
+  };
+
+  const handleTriggerMarketing = async () => {
+    if (!confirm("Voulez-vous vraiment déclencher les campagnes marketing maintenant ? Cela analysera toute la base de données.")) return;
+    
+    setIsTriggeringMarketing(true);
+    try {
+      const token = await getToken();
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL_ADMIN}/marketing/trigger`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await res.json();
+      
+      if (res.ok && data.success) {
+        toast.success(data.message || "Campagnes déclenchées avec succès !");
+      } else {
+        toast.error(data.message || "Erreur lors du déclenchement.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Erreur serveur.");
+    } finally {
+      setIsTriggeringMarketing(false);
     }
   };
 
@@ -264,6 +292,26 @@ export default function AdminNotificationsPage() {
               </div>
             </div>
             
+          </div>
+
+          <div className="bg-card-bg border border-glass-border rounded-3xl p-6 shadow-sm mt-6">
+            <h2 className="text-sm font-bold uppercase text-tikflow-slate mb-4 flex items-center gap-2">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-tikflow-primary opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-tikflow-accent"></span>
+              </span>
+              Marketing Automatisé
+            </h2>
+            <p className="text-xs text-tikflow-slate mb-4 leading-relaxed">
+              Le système analyse chaque jour à 10h les paniers abandonnés et les clients inactifs pour envoyer des relances automatiques. Vous pouvez forcer l'analyse maintenant.
+            </p>
+            <button
+              onClick={handleTriggerMarketing}
+              disabled={isTriggeringMarketing}
+              className="w-full bg-foreground/5 hover:bg-foreground/10 border border-glass-border text-foreground py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {isTriggeringMarketing ? "Analyse en cours..." : "Déclencher l'analyse"}
+            </button>
           </div>
         </div>
 

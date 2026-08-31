@@ -98,7 +98,7 @@ export interface Notification {
   user_id: string;
   title: string;
   message: string;
-  type: 'recharge_success' | 'recharge_error' | 'order_delivered' | 'system_alert' | 'payment_received' | 'success' | 'warning';
+  type: 'recharge_success' | 'recharge_error' | 'order_delivered' | 'system_alert' | 'payment_received' | 'success' | 'warning' | 'marketing' | 'announcement' | 'info' | string;
   link?: string;
   read: boolean;
   created_at: any;

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button';
 
 const Navbar = () => {
     const [scrolled, setScrolled] = useState(false);
-    const { isSignedIn } = useAuth();
+    const { isSignedIn, isLoaded } = useAuth();
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -37,7 +37,9 @@ const Navbar = () => {
 
                 <div className="flex items-center gap-4">
                     <ThemeToggle />
-                    {isSignedIn ? (
+                    {!isLoaded ? (
+                        <div className="w-24 h-9 bg-white/10 rounded-xl animate-pulse" />
+                    ) : isSignedIn ? (
                         <Link href="/dashboard">
                             <Button variant="primary">Mon Espace</Button>
                         </Link>

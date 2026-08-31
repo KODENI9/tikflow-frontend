@@ -19,10 +19,13 @@ import {
   LayoutDashboard,
   Landmark,
   X,
-  Headset
+  Headset,
+  Bell
 } from "lucide-react";
-import { useClerk, useUser, useAuth, UserButton } from "@clerk/nextjs";
+import { useClerk, useUser, useAuth, UserButton, SignOutButton } from "@clerk/nextjs";
 import { recipientsApi } from "@/lib/api";
+import { db } from "@/lib/firebase";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -37,6 +40,35 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const { getToken, isLoaded: authLoaded } = useAuth();
   const { signOut } = useClerk();
   const [supportPhone, setSupportPhone] = useState("");
+  const [unreadNotifsCount, setUnreadNotifsCount] = useState(0);
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+    } catch (err) {
+      console.error("Erreur déconnexion:", err);
+    } finally {
+      window.location.href = "/";
+    }
+  };
+
+  useEffect(() => {
+    if (!userLoaded || !user?.id) return;
+
+    const q = query(
+      collection(db, "notifications"),
+      where("user_id", "==", user.id),
+      where("read", "==", false)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setUnreadNotifsCount(snapshot.docs.length);
+    }, (err) => {
+      console.error("Sidebar notifs error:", err);
+    });
+
+    return () => unsubscribe();
+  }, [userLoaded, user?.id]);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -55,6 +87,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const menuItems = [
     { name: "Mon Portefeuille", icon: Wallet, href: "/dashboard", active: pathname === "/dashboard" },
     { name: "Acheter des Coins", icon: ShoppingCart, href: "/dashboard/buy", active: pathname.startsWith("/dashboard/buy") },
+    { name: "Notifications", icon: Bell, href: "/dashboard/notifications", active: pathname.startsWith("/dashboard/notifications"), badge: unreadNotifsCount },
     { name: "Convertir mon Bonus", icon: Gift, href: "#", active: pathname === "/dashboard/convert" }, // Bientôt disponible
     { name: "Historique", icon: History, href: "/dashboard/history", active: pathname === "/dashboard/history" },
     { name: "Aide & Tutoriels", icon: HelpCircle, href: "/dashboard/help", active: pathname === "/dashboard/help" },
@@ -66,7 +99,9 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     { name: "Nous Appeler", icon: Phone, href: `tel:${supportPhone.replace(/\s+/g, '')}`, color: "text-blue-600" },
   ];
 
-  const displayUserName = userLoaded ? (user?.firstName || user?.username || "Utilisateur") : "...";
+  const displayUserName = userLoaded 
+    ? (user?.firstName || user?.fullName || user?.username || user?.primaryEmailAddress?.emailAddress?.split('@')[0] || "Utilisateur") 
+    : "...";
 
   return (
     <>
@@ -104,14 +139,25 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 key={item.name}
                 href={item.href}
                 onClick={onClose}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${
+                className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all font-medium ${
                   item.active 
                     ? "bg-tikflow-primary text-white shadow-md shadow-tikflow-primary/20" 
                     : "text-tikflow-slate hover:bg-foreground/5 hover:text-foreground"
                 }`}
               >
-                <item.icon size={20} />
-                <span className="text-sm">{item.name}</span>
+                <div className="flex items-center gap-3">
+                  <item.icon size={20} />
+                  <span className="text-sm">{item.name}</span>
+                </div>
+                {item.badge !== undefined && item.badge > 0 && (
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-black tracking-tight animate-pulse ${
+                    item.active 
+                      ? "bg-white text-tikflow-primary" 
+                      : "bg-tikflow-primary text-white shadow-sm shadow-tikflow-primary/30"
+                  }`}>
+                    {item.badge}
+                  </span>
+                )}
               </Link>
             ))}
           </nav>
@@ -142,13 +188,16 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             </div>
           </div>
 
-          <button 
-             onClick={() => signOut({ redirectUrl: "/" })}
-             className="mx-2 mt-2 flex items-center justify-center gap-2 py-3 bg-red-500/10 text-red-500 rounded-xl font-black uppercase text-xs hover:bg-red-500/20 transition-colors"
-          >
-             <LogOut size={16} />
-             Se déconnecter
-          </button>
+          <SignOutButton redirectUrl="/">
+            <button 
+               type="button"
+               onClick={handleLogout}
+               className="mx-2 mt-2 flex items-center justify-center gap-2 py-3 bg-red-500/10 text-red-500 rounded-xl font-black uppercase text-xs hover:bg-red-500/20 transition-colors cursor-pointer w-[calc(100%-16px)]"
+            >
+               <LogOut size={16} />
+               Se déconnecter
+            </button>
+          </SignOutButton>
 
           <div className="mt-auto border-t border-glass-border pt-4 flex items-center gap-3 px-2">
             <UserButton afterSignOutUrl="/" />

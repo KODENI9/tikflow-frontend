@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Menu, LogOut } from "lucide-react";
-import { UserButton, useUser, useClerk } from "@clerk/nextjs";
+import { UserButton, useUser, useClerk, SignOutButton } from "@clerk/nextjs";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { SyncUser } from "@/components/auth/SyncUser";
 import dynamic from "next/dynamic";
@@ -18,6 +18,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [dbUser, setDbUser] = useState<any>(null);
   const { isLoaded, user } = useUser();
   const { signOut } = useClerk();
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+    } catch (err) {
+      console.error("Erreur déconnexion:", err);
+    } finally {
+      window.location.href = "/";
+    }
+  };
 
   useEffect(() => {
     const checkFeedback = async () => {
@@ -88,13 +98,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="flex items-center gap-3">
              <ThemeToggle />
              <NotificationBell />
-             <button 
-               onClick={() => signOut({ redirectUrl: "/" })}
-               className="hidden sm:flex items-center gap-2 text-red-500 hover:bg-red-500/10 p-2 px-3 rounded-xl transition-colors font-bold text-xs uppercase"
-             >
-               <LogOut size={16} />
-               Déconnexion
-             </button>
+             <SignOutButton redirectUrl="/">
+               <button 
+                 type="button"
+                 onClick={handleLogout}
+                 className="hidden sm:flex items-center gap-2 text-red-500 hover:bg-red-500/10 p-2 px-3 rounded-xl transition-colors font-bold text-xs uppercase cursor-pointer"
+               >
+                 <LogOut size={16} />
+                 Déconnexion
+               </button>
+             </SignOutButton>
              <UserButton />
           </div>
         </header>

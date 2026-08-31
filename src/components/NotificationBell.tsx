@@ -228,13 +228,16 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
             )}
           </div>
 
-          {notifications.length > 0 && (
-            <div className="p-3 bg-foreground/5 text-center border-t border-glass-border">
-               <button className="text-xs text-tikflow-slate font-medium hover:text-foreground">
-                 Voir toutes les notifications
-               </button>
-            </div>
-          )}
+          <div className="p-3 bg-foreground/5 text-center border-t border-glass-border">
+             <Link 
+               href={isAdmin ? "/admin/notifications" : "/dashboard/notifications"}
+               onClick={() => setIsOpen(false)}
+               className="text-xs text-tikflow-primary font-bold hover:underline flex items-center justify-center gap-1.5 cursor-pointer py-1"
+             >
+               <span>Voir tout le centre de notifications</span>
+               <ExternalLink size={12} />
+             </Link>
+          </div>
         </div>
       )}
       {/* MODAL DE DÉTAILS */}

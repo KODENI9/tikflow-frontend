@@ -69,7 +69,9 @@ export default function DashboardPage() {
         <div className="relative z-10 space-y-3">
           <p className="text-white/70 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em]">Tableau de Bord</p>
           <h1 className="text-2xl md:text-4xl font-black text-white">
-            Bonjour, <span className="text-tikflow-primary">{user?.firstName || "Utilisateur"}</span> 👋
+            Bonjour, <span className="text-tikflow-primary">
+              {user?.firstName || user?.fullName || user?.username || user?.primaryEmailAddress?.emailAddress?.split('@')[0] || "Utilisateur"}
+            </span> 👋
           </h1>
           <p className="text-white/60 max-w-md text-sm leading-relaxed">
             Gérez vos transactions TikTok coins et suivez vos dépenses en temps réel.
