@@ -70,7 +70,7 @@ export default function UserNotificationsPage() {
           ...data,
           created_at: data.created_at?.toDate ? data.created_at.toDate() : (data.created_at ? new Date(data.created_at) : new Date())
         } as Notification;
-      });
+      }).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
       setNotifications(notifs);
       const unread = notifs.filter(n => !n.read).length;

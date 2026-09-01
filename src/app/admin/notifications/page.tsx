@@ -57,7 +57,7 @@ export default function AdminNotificationsPage() {
       const payload = {
         title,
         body,
-        url: url || "/",
+        url: url || "/dashboard/notifications",
         targetUserId
       };
 

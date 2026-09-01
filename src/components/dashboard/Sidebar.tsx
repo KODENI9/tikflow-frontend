@@ -57,12 +57,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
     const q = query(
       collection(db, "notifications"),
-      where("user_id", "==", user.id),
-      where("read", "==", false)
+      where("user_id", "in", [user.id, "all", "broadcast"])
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      setUnreadNotifsCount(snapshot.docs.length);
+      const unread = snapshot.docs.filter(d => !d.data().read).length;
+      setUnreadNotifsCount(unread);
     }, (err) => {
       console.error("Sidebar notifs error:", err);
     });

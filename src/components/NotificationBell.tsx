@@ -33,15 +33,12 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
     if (!isLoaded) return;
     if (!userId && !isAdmin) return;
 
-    const targetId = isAdmin ? 'admin' : userId;
-    if (!targetId) return;
-
-    console.log(`[NotificationBell] Setting up real-time listener for: ${targetId}`);
+    const targetIds = isAdmin ? ['admin'] : [userId, 'all', 'broadcast'];
+    console.log(`[NotificationBell] Setting up real-time listener for:`, targetIds);
 
     const q = query(
       collection(db, "notifications"),
-      where("user_id", "==", targetId),
-      orderBy("created_at", "desc"),
+      where("user_id", "in", targetIds),
       firestoreLimit(20)
     );
 
@@ -51,7 +48,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
         ...doc.data(),
         // Convert Firestore Timestamp to Date
         created_at: (doc.data() as any).created_at?.toDate ? (doc.data() as any).created_at.toDate() : (doc.data() as any).created_at
-      } as Notification));
+      } as Notification)).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
       
       setNotifications(notifs);
       const unread = notifs.filter(n => !n.read).length;
