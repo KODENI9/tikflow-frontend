@@ -17,7 +17,8 @@ import {
   ArrowRight,
   Filter,
   Clock,
-  Radio
+  Radio,
+  MessageSquare
 } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { notificationApi } from "@/lib/api";
@@ -48,6 +49,9 @@ export default function UserNotificationsPage() {
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isMarkingAll, setIsMarkingAll] = useState(false);
+  const [replyingTo, setReplyingTo] = useState<Notification | null>(null);
+  const [replyMessage, setReplyMessage] = useState("");
+  const [isSubmittingReply, setIsSubmittingReply] = useState(false);
 
   // Écoute en temps réel Firestore
   useEffect(() => {
@@ -150,6 +154,26 @@ export default function UserNotificationsPage() {
     } catch (error) {
       console.error("Erreur suppression:", error);
       toast.error("Erreur lors de la suppression");
+    }
+  };
+
+  const handleSubmitReply = async () => {
+    if (!replyingTo || !replyMessage.trim()) return;
+    setIsSubmittingReply(true);
+    try {
+      const token = await getToken();
+      if (!token) throw new Error("Non authentifié");
+      
+      await notificationApi.replyToNotification(token, replyingTo.id, replyMessage.trim());
+      
+      toast.success("Votre réponse a été envoyée avec succès");
+      setReplyingTo(null);
+      setReplyMessage("");
+    } catch (error: any) {
+      console.error("Erreur envoi réponse:", error);
+      toast.error("Une erreur est survenue lors de l'envoi de votre réponse");
+    } finally {
+      setIsSubmittingReply(false);
     }
   };
 
@@ -442,6 +466,16 @@ export default function UserNotificationsPage() {
                     </Link>
                   )}
 
+                  {/* Bouton répondre */}
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setReplyingTo(notif); }}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-tikflow-primary/10 hover:bg-tikflow-primary text-tikflow-primary hover:text-white font-bold text-xs uppercase tracking-wider transition-all"
+                    title="Répondre à cette notification"
+                  >
+                    <span>Répondre</span>
+                    <MessageSquare size={14} />
+                  </button>
+
                   {/* Bouton marquer comme lu */}
                   {isUnread && (
                     <button
@@ -465,6 +499,41 @@ export default function UserNotificationsPage() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Modal Réponse */}
+      {replyingTo && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setReplyingTo(null)}>
+          <div className="bg-[#0a0b10] border border-white/10 rounded-3xl p-6 w-full max-w-md shadow-2xl relative" onClick={e => e.stopPropagation()}>
+            <h3 className="text-xl font-bold text-white mb-2">Répondre à la notification</h3>
+            <p className="text-sm text-tikflow-slate mb-4">
+              Votre message sera envoyé directement à l'équipe.
+            </p>
+            <textarea
+              value={replyMessage}
+              onChange={(e) => setReplyMessage(e.target.value)}
+              placeholder="Écrivez votre message ici..."
+              autoFocus
+              className="w-full h-32 bg-card-bg border border-glass-border rounded-xl p-4 text-sm text-foreground placeholder:text-tikflow-slate/60 focus:outline-none focus:border-tikflow-primary/50 transition-colors resize-none mb-6"
+            />
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => { setReplyingTo(null); setReplyMessage(""); }}
+                className="px-5 py-2.5 rounded-xl font-bold text-sm text-tikflow-slate hover:text-white hover:bg-white/5 transition-colors"
+                disabled={isSubmittingReply}
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleSubmitReply}
+                disabled={isSubmittingReply || !replyMessage.trim()}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm bg-tikflow-primary text-white hover:bg-tikflow-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubmittingReply ? "Envoi..." : "Envoyer la réponse"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
