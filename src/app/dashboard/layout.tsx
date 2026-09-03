@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Menu, LogOut } from "lucide-react";
-import { UserButton, useUser, useClerk, SignOutButton } from "@clerk/nextjs";
+import { UserButton, useUser, useClerk, SignOutButton, RedirectToSignIn } from "@clerk/nextjs";
 import Sidebar from "@/components/dashboard/Sidebar";
 import { SyncUser } from "@/components/auth/SyncUser";
 import dynamic from "next/dynamic";
@@ -73,6 +73,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         localStorage.setItem(`feedback_dismissed_${user.id}`, 'true');
     }
   };
+
+  if (isLoaded && !user) {
+    return <RedirectToSignIn />;
+  }
 
   return (
     <div className="flex h-screen bg-background text-foreground overflow-hidden">
