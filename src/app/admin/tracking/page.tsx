@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@clerk/nextjs";
-import { Smartphone, Users, Search, RefreshCcw, CheckCircle2, XCircle, Monitor, Apple, ChevronLeft, ChevronRight, Send } from "lucide-react";
+import { Smartphone, Users, Search, RefreshCcw, CheckCircle2, XCircle, Monitor, Apple, ChevronLeft, ChevronRight, Send, BellRing, BellOff } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "react-hot-toast";
@@ -107,7 +107,7 @@ export default function AdminTrackingPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <div className="bg-card-bg rounded-3xl p-5 border border-glass-border shadow-sm">
           <p className="text-[10px] font-black uppercase text-tikflow-slate tracking-widest">Total Clients</p>
           <p className="text-3xl font-black text-foreground mt-2">{loading ? "—" : stats?.total_users ?? 0}</p>
@@ -129,6 +129,11 @@ export default function AdminTrackingPage() {
           <div className="mt-3 h-1.5 bg-white/20 rounded-full overflow-hidden">
             <div className="h-full bg-white rounded-full transition-all" style={{ width: `${stats?.install_rate ?? 0}%` }} />
           </div>
+        </div>
+        <div className="bg-card-bg rounded-3xl p-5 border border-glass-border shadow-sm">
+          <p className="text-[10px] font-black uppercase text-tikflow-slate tracking-widest">Notifications</p>
+          <p className="text-3xl font-black text-blue-500 mt-2">{loading ? "—" : stats?.push_enabled_count ?? 0}</p>
+          <p className="text-xs text-tikflow-slate mt-1 font-medium flex items-center gap-1"><BellRing size={12} className="text-blue-500" /> abonnés</p>
         </div>
       </div>
 
@@ -162,6 +167,7 @@ export default function AdminTrackingPage() {
                 <th className="p-5 text-[10px] font-black uppercase text-tikflow-slate">Utilisateur</th>
                 <th className="p-5 text-[10px] font-black uppercase text-tikflow-slate">Contact</th>
                 <th className="p-5 text-[10px] font-black uppercase text-tikflow-slate">Statut PWA</th>
+                <th className="p-5 text-[10px] font-black uppercase text-tikflow-slate">Notifications</th>
                 <th className="p-5 text-[10px] font-black uppercase text-tikflow-slate">Plateforme</th>
                 <th className="p-5 text-[10px] font-black uppercase text-tikflow-slate">Dernière ouverture</th>
                 <th className="p-5 text-[10px] font-black uppercase text-tikflow-slate">1ère installation</th>
@@ -174,6 +180,7 @@ export default function AdminTrackingPage() {
                     <td className="p-5"><div className="h-10 bg-foreground/5 rounded-2xl w-40" /></td>
                     <td className="p-5"><div className="h-6 bg-foreground/5 rounded-xl w-32" /></td>
                     <td className="p-5"><div className="h-6 bg-foreground/5 rounded-xl w-24" /></td>
+                    <td className="p-5"><div className="h-6 bg-foreground/5 rounded-xl w-16" /></td>
                     <td className="p-5"><div className="h-6 bg-foreground/5 rounded-xl w-16" /></td>
                     <td className="p-5"><div className="h-6 bg-foreground/5 rounded-xl w-28" /></td>
                     <td className="p-5"><div className="h-6 bg-foreground/5 rounded-xl w-28" /></td>
@@ -213,6 +220,17 @@ export default function AdminTrackingPage() {
                           <Send size={14} />
                         </button>
                       </div>
+                    )}
+                  </td>
+                  <td className="p-5">
+                    {user.push_enabled ? (
+                      <span className="flex items-center gap-1.5 text-[10px] font-black uppercase px-3 py-1.5 rounded-full w-fit bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                        <BellRing size={12} /> Activées
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1.5 text-[10px] font-black uppercase px-3 py-1.5 rounded-full w-fit bg-foreground/5 text-tikflow-slate border border-glass-border">
+                        <BellOff size={12} /> Désactivées
+                      </span>
                     )}
                   </td>
                   <td className="p-5">
