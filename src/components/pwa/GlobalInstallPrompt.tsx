@@ -54,11 +54,15 @@ export function GlobalInstallPrompt({ forceShow = false, onDismiss }: GlobalInst
     if (!isLoaded || !isSignedIn || !userId) return;
 
     const docRef = doc(db, "pwa_tracking", userId);
+    console.log("[GlobalInstallPrompt] Listening to Firestore for admin triggers on:", userId);
+    
     const unsubscribe = onSnapshot(docRef, async (snapshot) => {
+      console.log("[GlobalInstallPrompt] Received snapshot:", snapshot.exists() ? snapshot.data() : "No data");
       if (!snapshot.exists()) return;
 
       const data = snapshot.data();
       if (data?.install_prompt_trigger === true) {
+        console.log("[GlobalInstallPrompt] Admin trigger detected! Displaying modal...");
         setIsAdminTriggered(true);
         setShowMainPrompt(true);
         const token = await getToken();
