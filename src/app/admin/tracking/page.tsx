@@ -5,7 +5,7 @@ import { useAuth } from "@clerk/nextjs";
 import { Smartphone, Users, Search, RefreshCcw, CheckCircle2, XCircle, Monitor, Apple, ChevronLeft, ChevronRight, Send, BellRing, BellOff } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 
 const BACKEND_URL = (process.env.NEXT_PUBLIC_BACKEND_URL || "").replace(/\/$/, "");
 
