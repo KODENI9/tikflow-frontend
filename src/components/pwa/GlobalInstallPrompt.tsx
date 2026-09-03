@@ -2,6 +2,22 @@
 
 import { useState, useEffect } from "react";
 import { Download, Share, PlusSquare, X } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
+import { db } from "@/lib/firebase";
+import { doc, onSnapshot } from "firebase/firestore";
+
+const BACKEND_URL = (process.env.NEXT_PUBLIC_BACKEND_URL || "").replace(/\/$/, "");
+
+async function clearTrigger(token: string) {
+  try {
+    await fetch(`${BACKEND_URL}/api/tracking/clear-trigger`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch {
+    // Silently ignore
+  }
+}
 
 interface GlobalInstallPromptProps {
   forceShow?: boolean;   // If true, bypasses the 3s delay and localStorage dismissal
@@ -9,6 +25,7 @@ interface GlobalInstallPromptProps {
 }
 
 export function GlobalInstallPrompt({ forceShow = false, onDismiss }: GlobalInstallPromptProps = {}) {
+  const { getToken, userId, isLoaded, isSignedIn } = useAuth();
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isIOS, setIsIOS] = useState(false);
   const [isIOSChrome, setIsIOSChrome] = useState(false);
@@ -18,6 +35,25 @@ export function GlobalInstallPrompt({ forceShow = false, onDismiss }: GlobalInst
   const [showIOSPrompt, setShowIOSPrompt] = useState(false);
   const [showIOSChromePrompt, setShowIOSChromePrompt] = useState(false);
 
+  // Firestore listener for admin-triggered prompt
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn || !userId) return;
+
+    const docRef = doc(db, "pwa_tracking", userId);
+    const unsubscribe = onSnapshot(docRef, async (snapshot) => {
+      if (!snapshot.exists()) return;
+
+      const data = snapshot.data();
+      if (data?.install_prompt_trigger === true) {
+        setShowMainPrompt(true);
+        const token = await getToken();
+        if (token) clearTrigger(token);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [isLoaded, isSignedIn, userId, getToken]);
+
   useEffect(() => {
     // Check if already installed
     if (window.matchMedia("(display-mode: standalone)").matches || (window.navigator as any).standalone) {
@@ -25,7 +61,7 @@ export function GlobalInstallPrompt({ forceShow = false, onDismiss }: GlobalInst
       return;
     }
 
-    // If forced by admin, skip the localStorage/timing checks and show immediately
+    // If forced by admin via props, skip the localStorage/timing checks and show immediately
     if (forceShow) {
       setShowMainPrompt(true);
     } else {
