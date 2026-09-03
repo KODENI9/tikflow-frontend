@@ -68,6 +68,9 @@ export function GlobalInstallPrompt({ forceShow = false, onDismiss }: GlobalInst
         const token = await getToken();
         if (token) clearTrigger(token);
       }
+    }, (error) => {
+      console.error("[GlobalInstallPrompt] Firestore Listener Error:", error);
+      toast.error(`Erreur connexion Firestore: ${error.message}`);
     });
 
     return () => unsubscribe();
