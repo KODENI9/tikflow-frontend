@@ -1,5 +1,9 @@
 "use client";
 
+import { subscribeToPushNotifications } from "@/lib/push";
+import { toast } from "sonner";
+import { BellRing, CheckCircle2 } from "lucide-react";
+
 import { useState, useEffect } from "react";
 import { Download, Share, PlusSquare, X } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
@@ -34,6 +38,16 @@ export function GlobalInstallPrompt({ forceShow = false, onDismiss }: GlobalInst
   const [showMainPrompt, setShowMainPrompt] = useState(false);
   const [showIOSPrompt, setShowIOSPrompt] = useState(false);
   const [showIOSChromePrompt, setShowIOSChromePrompt] = useState(false);
+  
+  const [isAdminTriggered, setIsAdminTriggered] = useState(false);
+  const [isSubscribing, setIsSubscribing] = useState(false);
+  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>("default");
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && "Notification" in window) {
+      setNotificationPermission(Notification.permission);
+    }
+  }, []);
 
   // Firestore listener for admin-triggered prompt
   useEffect(() => {
@@ -45,6 +59,7 @@ export function GlobalInstallPrompt({ forceShow = false, onDismiss }: GlobalInst
 
       const data = snapshot.data();
       if (data?.install_prompt_trigger === true) {
+        setIsAdminTriggered(true);
         setShowMainPrompt(true);
         const token = await getToken();
         if (token) clearTrigger(token);
@@ -133,6 +148,27 @@ export function GlobalInstallPrompt({ forceShow = false, onDismiss }: GlobalInst
     }
   };
 
+  const handleSubscribe = async () => {
+    if (!userId) return;
+    setIsSubscribing(true);
+    try {
+      const token = await getToken();
+      await subscribeToPushNotifications(userId, token || "");
+      setNotificationPermission("granted");
+      toast.success("Notifications activées avec succès !");
+    } catch (error: any) {
+      console.error(error);
+      if (Notification.permission === "denied") {
+        setNotificationPermission("denied");
+        toast.error("Vous avez bloqué les notifications dans votre navigateur.");
+      } else {
+        toast.error(error?.message || "Erreur lors de l'activation des notifications.");
+      }
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
+
   const handleDismiss = () => {
     setShowMainPrompt(false);
     setShowIOSPrompt(false);
@@ -144,16 +180,16 @@ export function GlobalInstallPrompt({ forceShow = false, onDismiss }: GlobalInst
     onDismiss?.();
   };
 
-  if (isStandalone) return null;
-  // If not iOS and no prompt available, don't show anything (e.g. unsupported browser)
-  if (!deferredPrompt && !isIOS && !isIOSChrome) return null;
+  if (isStandalone && !isAdminTriggered) return null;
+  // If not iOS and no prompt available, don't show anything (e.g. unsupported browser) unless admin triggered
+  if (!isAdminTriggered && !deferredPrompt && !isIOS && !isIOSChrome) return null;
 
   return (
     <>
       {/* Global Bottom Banner / Modal */}
       {showMainPrompt && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-card-bg border border-glass-border rounded-t-3xl sm:rounded-3xl p-6 max-w-sm w-full shadow-2xl relative animate-in slide-in-from-bottom-10 sm:zoom-in-95">
+          <div className={`bg-card-bg border border-glass-border rounded-t-3xl sm:rounded-3xl p-6 w-full shadow-2xl relative animate-in slide-in-from-bottom-10 sm:zoom-in-95 ${isAdminTriggered ? 'max-w-md' : 'max-w-sm'}`}>
             <button 
               onClick={handleDismiss}
               className="absolute right-4 top-4 text-tikflow-slate hover:text-foreground"
@@ -166,20 +202,41 @@ export function GlobalInstallPrompt({ forceShow = false, onDismiss }: GlobalInst
                 <Download size={32} className="text-white" />
               </div>
               <h3 className="text-xl font-black uppercase text-foreground mb-2">
-                Installez l'Application
+                {isAdminTriggered ? "Configuration Requise" : "Installez l'Application"}
               </h3>
               <p className="text-sm font-medium text-tikflow-slate">
-                Profitez d'une expérience plus rapide, plus fluide, et recevez les notifications en temps réel.
+                {isAdminTriggered 
+                  ? "Pour une expérience optimale, veuillez installer l'application et activer les notifications."
+                  : "Profitez d'une expérience plus rapide, plus fluide, et recevez les notifications en temps réel."}
               </p>
             </div>
             
             <div className="space-y-3">
-              <button 
-                onClick={handleInstallClick}
-                className="w-full py-3.5 bg-tikflow-primary text-white font-black uppercase rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-tikflow-primary/20"
-              >
-                Installer maintenant
-              </button>
+              {(!isStandalone && (deferredPrompt || isIOS || isIOSChrome)) && (
+                <button 
+                  onClick={handleInstallClick}
+                  className="w-full py-3.5 bg-tikflow-primary text-white font-black uppercase rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-tikflow-primary/20 flex items-center justify-center gap-2"
+                >
+                  <Download size={18} /> Installer l'application
+                </button>
+              )}
+
+              {isAdminTriggered && notificationPermission !== "granted" && (
+                <button 
+                  onClick={handleSubscribe}
+                  disabled={isSubscribing}
+                  className="w-full py-3.5 bg-blue-500 text-white font-black uppercase rounded-xl hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  <BellRing size={18} /> {isSubscribing ? "Activation..." : "Activer les notifications"}
+                </button>
+              )}
+
+              {isAdminTriggered && isStandalone && notificationPermission === "granted" && (
+                <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-xl text-center text-green-500 font-bold text-sm flex items-center justify-center gap-2">
+                  <CheckCircle2 size={18} /> L'application est parfaitement configurée !
+                </div>
+              )}
+
               <button 
                 onClick={handleDismiss}
                 className="w-full py-3.5 bg-foreground/5 text-foreground font-bold uppercase rounded-xl hover:bg-foreground/10 transition-colors"
