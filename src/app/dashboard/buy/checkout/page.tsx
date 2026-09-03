@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { AtSign, CheckCircle2, Loader2, Mail } from "lucide-react";
+import { AtSign, CheckCircle2, Loader2, Mail, Lock } from "lucide-react";
 import { toast } from "sonner"; // Ou ton système de notification
 import { useEffect, useState, Suspense } from "react";
 import { useAuth } from "@clerk/nextjs";
@@ -24,6 +24,7 @@ function CheckoutContent() {
   const [paymentMethod, setPaymentMethod] = useState<'moneyfusion' | 'wallet'>('moneyfusion');
   const [formData, setFormData] = useState({
     tiktok_username: "",
+    tiktok_password: "",
     phone: "",
     nomclient: "",
   });
@@ -92,8 +93,8 @@ function CheckoutContent() {
 
   const handlePayment = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!useLinked && !formData.tiktok_username) {
-      return toast.error("Veuillez remplir l'adresse e-mail TikTok");
+    if (!useLinked && (!formData.tiktok_username || !formData.tiktok_password)) {
+      return toast.error("Veuillez remplir l'adresse e-mail et le mot de passe TikTok");
     }
 
     setLoading(true);
@@ -103,7 +104,7 @@ function CheckoutContent() {
         packageId: packId || undefined,
         amount_coins: customAmount?.coins,
         tiktok_username: useLinked ? (linkedAccount?.username || "") : formData.tiktok_username,
-        tiktok_password: "",
+        tiktok_password: useLinked ? "" : formData.tiktok_password,
       });
 
       if (result.success) {
@@ -126,7 +127,7 @@ function CheckoutContent() {
         packageId: packId || undefined,
         amount_coins: customAmount?.coins,
         tiktok_username: useLinked ? (linkedAccount?.username || "") : formData.tiktok_username,
-        tiktok_password: "",
+        tiktok_password: useLinked ? "" : formData.tiktok_password,
         useLinkedAccount: useLinked
       });
 
@@ -297,6 +298,21 @@ function CheckoutContent() {
                       className="w-full pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-900 placeholder:text-slate-400"
                       value={formData.tiktok_username}
                       onChange={(e) => setFormData({...formData, tiktok_username: e.target.value})}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Mot de passe du compte TikTok</label>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={20} />
+                    <input 
+                      required={!useLinked}
+                      disabled={useLinked}
+                      type="password" 
+                      placeholder="Votre mot de passe TikTok"
+                      className="w-full pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-900 placeholder:text-slate-400"
+                      value={formData.tiktok_password}
+                      onChange={(e) => setFormData({...formData, tiktok_password: e.target.value})}
                     />
                   </div>
                 </div>
