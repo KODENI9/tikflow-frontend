@@ -41,7 +41,7 @@ export default function OrderDetail() {
 
   const handleAction = async (status: 'completed' | 'rejected') => {
     if (status === 'rejected' && !adminNote) {
-      alert("Veuillez saisir un motif de rejet");
+      toast.error("Veuillez saisir un motif de rejet");
       return;
     }
 

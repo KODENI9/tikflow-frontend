@@ -44,7 +44,7 @@ export default function TransactionDetail() {
  const handleAction = async (status: 'completed' | 'rejected') => {
     // 1. Sécurité Motif de Rejet
     if (status === 'rejected' && !adminNote) {
-      alert("Veuillez saisir un motif de rejet");
+      toast.error("Veuillez saisir un motif de rejet");
       return;
     }
 
@@ -69,12 +69,11 @@ export default function TransactionDetail() {
     const errorMessage = error.message || "Erreur inconnue";
 
     if (errorMessage.includes("insuffisant")) {
-       alert(`💰 SOLDE SMS : ${errorMessage}`);
-      //  alert(`💰 SOLDE SMS : ${errorMessage}`, { duration: 6000 });
+       toast.error(`💰 Solde SMS : ${errorMessage}`);
     } else if (error.status === 404) {
        toast.error("❌ Erreur : La transaction n'existe plus sur le serveur.");
     } else {
-       toast.error(`L'API a dit : ${errorMessage}`);
+       toast.error(errorMessage || "Une erreur est survenue lors de l'opération.");
     }
   } finally {
     setActionLoading(false);

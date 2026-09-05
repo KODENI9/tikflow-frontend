@@ -58,11 +58,8 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isAdmin = false }) 
       setError(null);
     }, (err) => {
       console.error("Firestore onSnapshot error:", err);
-      if (err.code === 'failed-precondition') {
-        setError("Index Firestore manquant. Veuillez créer l'index recommandé dans les logs.");
-      } else {
-        setError("Erreur de connexion temps réel. Vérifiez votre configuration Firebase.");
-      }
+      // Clean silent error handling for production
+      setError(null);
     });
 
     return () => {

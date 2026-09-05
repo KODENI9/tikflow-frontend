@@ -70,7 +70,6 @@ export function GlobalInstallPrompt({ forceShow = false, onDismiss }: GlobalInst
       }
     }, (error) => {
       console.error("[GlobalInstallPrompt] Firestore Listener Error:", error);
-      toast.error(`Erreur connexion Firestore: ${error.message}`);
     });
 
     return () => unsubscribe();
