@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
+import Link from "next/link";
 import { db } from "@/lib/firebase";
 import { collection, onSnapshot, query, where, limit } from "firebase/firestore";
 import { botApi, adminApi } from "@/lib/api";
@@ -67,6 +68,24 @@ export default function AdminBotLivePage() {
   const [actionLoading, setActionLoading] = useState(false);
   const [manualOrderId, setManualOrderId] = useState("");
   const [now, setNow] = useState(Date.now());
+  const [botEnabled, setBotEnabled] = useState(true);
+
+  useEffect(() => {
+    const checkSettings = async () => {
+      try {
+        const token = await getToken();
+        if (token) {
+          const settings: any = await adminApi.getSettings(token);
+          if (settings && settings.bot_enabled === false) {
+            setBotEnabled(false);
+          } else {
+            setBotEnabled(true);
+          }
+        }
+      } catch (e) {}
+    };
+    checkSettings();
+  }, [getToken]);
 
   // Timer tick for live countdowns
   useEffect(() => {
@@ -354,6 +373,31 @@ export default function AdminBotLivePage() {
           </button>
         </div>
       </div>
+
+      {/* Global Bot Disabled Banner */}
+      {!botEnabled && (
+        <div className="p-5 bg-red-500/10 border-2 border-red-500/30 rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-md">
+          <div className="flex items-center gap-3">
+            <div className="size-10 rounded-2xl bg-red-500/20 text-red-500 flex items-center justify-center font-bold text-lg shrink-0">
+              🔴
+            </div>
+            <div>
+              <h3 className="text-sm font-black uppercase text-red-500">
+                Robot de livraison désactivé globalement
+              </h3>
+              <p className="text-xs text-red-500/80 font-medium mt-0.5">
+                L'interrupteur principal du robot est actuellement ÉTEINT dans les Paramètres Admin. Aucune tâche automatique ne sera exécutée.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/admin/settings"
+            className="px-5 py-2.5 bg-red-500 text-white rounded-xl text-xs font-black hover:bg-red-600 transition-all shrink-0 text-center shadow-lg shadow-red-500/20"
+          >
+            Activer dans les Paramètres →
+          </Link>
+        </div>
+      )}
 
       {/* SECTION: Commandes en attente (Auto-Trigger 5 Min) */}
       <div className="bg-card-bg border border-glass-border rounded-3xl p-6 space-y-4 shadow-sm">

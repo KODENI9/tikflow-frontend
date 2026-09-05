@@ -16,7 +16,9 @@ import {
   ChevronRight,
   Loader2,
   X,
-  Smartphone
+  Smartphone,
+  Bot,
+  Power
 } from "lucide-react";
 import { adminApi } from "@/lib/api";
 import { useAuth } from "@clerk/nextjs";
@@ -51,7 +53,7 @@ export default function SettingsAuditPage() {
   const [updatingRecipient, setUpdatingRecipient] = useState(false);
 
   // Global Settings State
-  const [globalSettings, setGlobalSettings] = useState({ support_phone: "" });
+  const [globalSettings, setGlobalSettings] = useState<{ support_phone: string; bot_enabled?: boolean }>({ support_phone: "", bot_enabled: true });
   const [savingSettings, setSavingSettings] = useState(false);
 
   const fetchData = async () => {
@@ -71,7 +73,10 @@ export default function SettingsAuditPage() {
       setPackages(pkgs || []);
       setLogs(payments || []);
       setRecipients(recips || []);
-      setGlobalSettings(settings || { support_phone: "" });
+      setGlobalSettings({
+        support_phone: settings?.support_phone || "",
+        bot_enabled: settings?.bot_enabled !== false
+      });
     } catch (error) {
       console.error("Error fetching settings data:", error);
     } finally {
@@ -90,6 +95,23 @@ export default function SettingsAuditPage() {
         toast.error(error.message);
     } finally {
         setSavingSettings(false);
+    }
+  };
+
+  const handleToggleBot = async (enabled: boolean) => {
+    const updated = { ...globalSettings, bot_enabled: enabled };
+    setGlobalSettings(updated);
+    try {
+      setSavingSettings(true);
+      const token = await getToken();
+      if (!token) return;
+      await adminApi.updateSettings(token, updated);
+      toast.success(enabled ? "Robot de livraison activé globalement ! 🟢" : "Robot de livraison désactivé globalement ! 🔴");
+    } catch (error: any) {
+      toast.error(error.message);
+      setGlobalSettings(globalSettings); // rollback
+    } finally {
+      setSavingSettings(false);
     }
   };
 
@@ -439,7 +461,55 @@ export default function SettingsAuditPage() {
             <p className="text-[10px] font-bold text-tikflow-slate uppercase tracking-tighter">Paramètres globaux visibles par tous les utilisateurs.</p>
           </div>
           
-          <div className="max-w-md space-y-4">
+          {/* BOT MASTER TOGGLE SWITCH */}
+          <div className="p-6 bg-foreground/5 rounded-3xl border border-glass-border space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className={`size-14 rounded-2xl flex items-center justify-center border-2 transition-all ${
+                  globalSettings.bot_enabled !== false 
+                    ? 'bg-green-500/10 border-green-500/30 text-green-500 shadow-md shadow-green-500/10' 
+                    : 'bg-red-500/10 border-red-500/30 text-red-500'
+                }`}>
+                  <Bot size={28} />
+                </div>
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h4 className="font-black text-sm text-foreground uppercase tracking-wide">
+                      Robot de Livraison Automatique (Bot TikTok Coins)
+                    </h4>
+                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase ${
+                      globalSettings.bot_enabled !== false ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'
+                    }`}>
+                      {globalSettings.bot_enabled !== false ? '🟢 ACTIVÉ (24h/7j)' : '🔴 DÉSACTIVÉ (ÉTEINT)'}
+                    </span>
+                  </div>
+                  <p className="text-xs font-medium text-tikflow-slate mt-1">
+                    Interrupteur principal : activez ou éteignez complètement le fonctionnement autonome du robot en arrière-plan.
+                  </p>
+                </div>
+              </div>
+
+              {/* TOGGLE SWITCH */}
+              <button
+                type="button"
+                onClick={() => handleToggleBot(globalSettings.bot_enabled === false)}
+                disabled={savingSettings}
+                className={`relative inline-flex h-8 w-16 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-none ${
+                  globalSettings.bot_enabled !== false ? 'bg-green-500' : 'bg-slate-700'
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block size-7 transform rounded-full bg-white shadow-lg ring-0 transition duration-300 ease-in-out flex items-center justify-center ${
+                    globalSettings.bot_enabled !== false ? 'translate-x-8' : 'translate-x-0'
+                  }`}
+                >
+                  <Power size={14} className={globalSettings.bot_enabled !== false ? 'text-green-600' : 'text-slate-500'} />
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <div className="max-w-md space-y-4 pt-2">
               <div>
                 <label className="text-[10px] font-black text-tikflow-slate uppercase ml-1">Numéro de Support (WhatsApp / Appel)</label>
                 <div className="flex gap-2">
