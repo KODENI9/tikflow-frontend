@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { db } from "@/lib/firebase";
 import { collection, onSnapshot, query, where, limit } from "firebase/firestore";
-import { botApi } from "@/lib/api";
+import { botApi, adminApi } from "@/lib/api";
 import { toast } from "sonner";
 import {
   Bot,
@@ -105,39 +105,69 @@ export default function AdminBotLivePage() {
     return () => unsubscribe();
   }, [selectedTask?.orderId]);
 
-  // Firestore listener for pending orders
+  // Firestore listener for pending orders (single field query avoids missing composite index)
   useEffect(() => {
+    const fetchApiPending = async () => {
+      try {
+        const token = await getToken();
+        if (!token) return;
+        const res = await adminApi.getPendingTransactions(token);
+        if (Array.isArray(res)) {
+          const coinOrders = res.filter(
+            (o: any) => o.type === "achat_coins" || o.type === "PURCHASE" || o.amount_coins > 0 || o.coins_count > 0
+          ).map((o: any) => ({
+            ...o,
+            created_at: o.created_at ? new Date(o.created_at) : new Date(),
+          }));
+          setPendingOrders(coinOrders);
+        }
+      } catch (err) {
+        console.error("Error fetching pending transactions via API:", err);
+      }
+    };
+
+    fetchApiPending();
+    const interval = setInterval(fetchApiPending, 5000);
+
     const q = query(
       collection(db, "transactions"),
-      where("type", "==", "achat_coins"),
       where("status", "==", "pending")
     );
 
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
-        const orders: PendingOrder[] = snapshot.docs.map((docSnap) => {
-          const data = docSnap.data();
-          return {
-            id: docSnap.id,
-            ...data,
-            created_at: data.created_at?.toDate
-              ? data.created_at.toDate()
-              : data.created_at
-              ? new Date(data.created_at)
-              : new Date(),
-          } as PendingOrder;
-        });
+        const orders: PendingOrder[] = snapshot.docs
+          .map((docSnap) => {
+            const data = docSnap.data();
+            return {
+              id: docSnap.id,
+              ...data,
+              created_at: data.created_at?.toDate
+                ? data.created_at.toDate()
+                : data.created_at
+                ? new Date(data.created_at)
+                : new Date(),
+            } as PendingOrder;
+          })
+          .filter(
+            (o: any) => o.type === "achat_coins" || o.type === "PURCHASE" || o.amount_coins > 0 || o.coins_count > 0
+          );
 
-        setPendingOrders(orders);
+        if (orders.length > 0) {
+          setPendingOrders(orders);
+        }
       },
       (error) => {
         console.error("Firestore pending transactions listener error:", error);
       }
     );
 
-    return () => unsubscribe();
-  }, []);
+    return () => {
+      clearInterval(interval);
+      unsubscribe();
+    };
+  }, [getToken]);
 
   // Action handlers
   const handleStartBot = async (orderToStart?: PendingOrder | string) => {
