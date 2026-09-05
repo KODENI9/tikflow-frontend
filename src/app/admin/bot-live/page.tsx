@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { db } from "@/lib/firebase";
-import { collection, onSnapshot, query, orderBy, limit } from "firebase/firestore";
+import { collection, onSnapshot, query, where, limit } from "firebase/firestore";
 import { botApi } from "@/lib/api";
 import { toast } from "sonner";
 import {
@@ -21,6 +21,8 @@ import {
   Loader2,
   ShieldCheck,
   MonitorPlay,
+  Coins,
+  Zap,
 } from "lucide-react";
 
 interface BotLog {
@@ -45,29 +47,49 @@ interface BotTask {
   error?: string;
 }
 
+interface PendingOrder {
+  id: string;
+  tiktok_username?: string;
+  tiktok_password?: string;
+  coins_count?: number;
+  amount_coins?: number;
+  amount_cfa?: number;
+  created_at?: any;
+  user_id?: string;
+}
+
 export default function AdminBotLivePage() {
   const { getToken } = useAuth();
   const [tasks, setTasks] = useState<BotTask[]>([]);
+  const [pendingOrders, setPendingOrders] = useState<PendingOrder[]>([]);
   const [selectedTask, setSelectedTask] = useState<BotTask | null>(null);
   const [twoFACode, setTwoFACode] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
   const [manualOrderId, setManualOrderId] = useState("");
+  const [now, setNow] = useState(Date.now());
 
-  // Firestore real-time listener for bot_tasks collection
+  // Timer tick for live countdowns
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Firestore listener for active bot tasks
   useEffect(() => {
     const q = query(collection(db, "bot_tasks"), limit(20));
 
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
-        const loadedTasks: BotTask[] = snapshot.docs.map((docSnap) => ({
-          id: docSnap.id,
-          ...docSnap.data(),
-        } as BotTask)).sort((a, b) => new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime());
+        const loadedTasks: BotTask[] = snapshot.docs
+          .map((docSnap) => ({
+            id: docSnap.id,
+            ...docSnap.data(),
+          } as BotTask))
+          .sort((a, b) => new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime());
 
         setTasks(loadedTasks);
 
-        // Keep selected task synchronized
         if (selectedTask) {
           const updated = loadedTasks.find((t) => t.orderId === selectedTask.orderId);
           if (updated) setSelectedTask(updated);
@@ -83,17 +105,60 @@ export default function AdminBotLivePage() {
     return () => unsubscribe();
   }, [selectedTask?.orderId]);
 
+  // Firestore listener for pending orders
+  useEffect(() => {
+    const q = query(
+      collection(db, "transactions"),
+      where("type", "==", "achat_coins"),
+      where("status", "==", "pending")
+    );
+
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const orders: PendingOrder[] = snapshot.docs.map((docSnap) => {
+          const data = docSnap.data();
+          return {
+            id: docSnap.id,
+            ...data,
+            created_at: data.created_at?.toDate
+              ? data.created_at.toDate()
+              : data.created_at
+              ? new Date(data.created_at)
+              : new Date(),
+          } as PendingOrder;
+        });
+
+        setPendingOrders(orders);
+      },
+      (error) => {
+        console.error("Firestore pending transactions listener error:", error);
+      }
+    );
+
+    return () => unsubscribe();
+  }, []);
+
   // Action handlers
-  const handleStartBot = async (orderIdToStart?: string) => {
-    const target = orderIdToStart || manualOrderId;
-    if (!target) return toast.error("Veuillez saisir un ID de commande.");
+  const handleStartBot = async (orderToStart?: PendingOrder | string) => {
+    let targetId = typeof orderToStart === "string" ? orderToStart : orderToStart?.id || manualOrderId;
+    if (!targetId) return toast.error("Veuillez saisir un ID de commande.");
+
+    const orderObj = typeof orderToStart === "object" ? orderToStart : pendingOrders.find(o => o.id === targetId);
 
     try {
       setActionLoading(true);
       const token = await getToken();
       if (!token) return toast.error("Non autorisé");
 
-      const res = await botApi.startBot(token, { orderId: target, coins: 1000 });
+      const res = await botApi.startBot(token, {
+        orderId: targetId,
+        username: orderObj?.tiktok_username,
+        password: orderObj?.tiktok_password,
+        coins: orderObj?.coins_count || orderObj?.amount_coins || 1000,
+        userId: orderObj?.user_id,
+      });
+
       if (res.success) {
         toast.success("Robot de livraison démarré en arrière-plan !");
         setManualOrderId("");
@@ -179,6 +244,24 @@ export default function AdminBotLivePage() {
     }
   };
 
+  // Helper for 5-minute auto-trigger countdown calculation
+  const getAutoTriggerTimeRemaining = (createdAt: Date) => {
+    const createdAtMs = new Date(createdAt).getTime();
+    const timeoutMs = createdAtMs + 5 * 60 * 1000;
+    const diffSec = Math.floor((timeoutMs - now) / 1000);
+
+    if (diffSec <= 0) {
+      return { expired: true, text: "Déclenchement auto en cours..." };
+    }
+
+    const min = Math.floor(diffSec / 60);
+    const sec = diffSec % 60;
+    return {
+      expired: false,
+      text: `Auto-déclenchement dans ${min}m ${sec < 10 ? "0" : ""}${sec}s`,
+    };
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "running":
@@ -218,7 +301,7 @@ export default function AdminBotLivePage() {
               Robot de Livraison Live 🤖
             </h1>
             <p className="text-tikflow-slate text-xs font-medium mt-0.5">
-              Supervision en temps réel des recharges automatiques TikTok Coins 24h/24 & prise en main manuelle
+              Supervision en temps réel des recharges automatiques TikTok Coins 24h/24 & Auto-déclenchement (5 min)
             </p>
           </div>
         </div>
@@ -242,14 +325,85 @@ export default function AdminBotLivePage() {
         </div>
       </div>
 
+      {/* SECTION: Commandes en attente (Auto-Trigger 5 Min) */}
+      <div className="bg-card-bg border border-glass-border rounded-3xl p-6 space-y-4 shadow-sm">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="size-10 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center">
+              <Zap size={20} />
+            </div>
+            <div>
+              <h2 className="text-sm font-black uppercase tracking-wider text-foreground">
+                Commandes en attente de livraison ({pendingOrders.length})
+              </h2>
+              <p className="text-[11px] text-tikflow-slate font-medium">
+                Si aucune intervention admin sous 5 minutes, le robot démarre automatiquement la livraison.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {pendingOrders.length === 0 ? (
+          <div className="p-8 text-center bg-foreground/5 rounded-2xl border border-glass-border text-xs text-tikflow-slate font-bold">
+            ✅ Aucune commande en attente. Tout est à jour !
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {pendingOrders.map((order) => {
+              const timing = getAutoTriggerTimeRemaining(order.created_at);
+              const coins = order.coins_count || order.amount_coins || 1000;
+
+              return (
+                <div
+                  key={order.id}
+                  className="p-5 bg-foreground/5 border border-glass-border rounded-2xl space-y-3 hover:border-tikflow-primary/50 transition-all"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-black text-foreground">#{order.id.substring(0, 12)}</span>
+                    <span className="px-2.5 py-1 bg-tikflow-primary/10 text-tikflow-primary rounded-lg text-xs font-black flex items-center gap-1">
+                      <Coins size={12} /> {coins.toLocaleString()} Coins
+                    </span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <p className="text-xs font-bold text-foreground">
+                      Compte : <span className="text-tikflow-primary">@{order.tiktok_username || "Non spécifié"}</span>
+                    </p>
+                    <p className="text-[10px] font-bold text-tikflow-slate">
+                      Montant : {(order.amount_cfa || 0).toLocaleString()} FCFA
+                    </p>
+                  </div>
+
+                  {/* Auto-Trigger Countdown Bar */}
+                  <div className="p-2.5 rounded-xl bg-card-bg border border-glass-border space-y-1.5">
+                    <div className="flex items-center justify-between text-[10px] font-bold">
+                      <span className="text-amber-500 flex items-center gap-1">
+                        <Clock size={12} /> {timing.text}
+                      </span>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => handleStartBot(order)}
+                    disabled={actionLoading}
+                    className="w-full py-2.5 bg-tikflow-primary hover:bg-tikflow-primary-dark text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+                  >
+                    <Play size={14} /> Lancer le Robot Maintenant
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Task List */}
         <div className="bg-card-bg border border-glass-border rounded-3xl p-6 space-y-4 shadow-sm h-fit">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-black uppercase tracking-wider text-foreground flex items-center gap-2">
-              <Clock size={16} className="text-tikflow-primary" /> Tâches en cours & récentes
+              <Clock size={16} className="text-tikflow-primary" /> Tâches Robot Récentes ({tasks.length})
             </h2>
-            <span className="text-xs font-bold text-tikflow-slate">{tasks.length} tâches</span>
           </div>
 
           <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1">
