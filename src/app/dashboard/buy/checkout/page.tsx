@@ -94,7 +94,7 @@ function CheckoutContent() {
   const handlePayment = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!useLinked && (!formData.tiktok_username || !formData.tiktok_password)) {
-      return toast.error("Veuillez remplir l'adresse e-mail et le mot de passe TikTok");
+      return toast.error("Veuillez remplir le nom d'utilisateur / e-mail et le mot de passe TikTok");
     }
 
     setLoading(true);
@@ -284,17 +284,17 @@ function CheckoutContent() {
                 </div>
               )}
 
-              {/* Adresse e-mail TikTok */}
+              {/* Identifiant ou E-mail TikTok */}
               <div className={`space-y-5 transition-all duration-300 ${useLinked ? 'opacity-50 pointer-events-none grayscale-[0.5]' : ''}`}>
                 <div className="space-y-2">
-                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Adresse e-mail du compte TikTok</label>
+                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Nom d'utilisateur ou E-mail TikTok</label>
                   <div className="relative">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={20} />
                     <input 
                       required={!useLinked}
                       disabled={useLinked}
-                      type="email" 
-                      placeholder="exemple@gmail.com"
+                      type="text" 
+                      placeholder="Ex: @nom_utilisateur ou exemple@gmail.com"
                       className="w-full pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-900 placeholder:text-slate-400"
                       value={formData.tiktok_username}
                       onChange={(e) => setFormData({...formData, tiktok_username: e.target.value})}
