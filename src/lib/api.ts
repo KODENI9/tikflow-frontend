@@ -146,7 +146,7 @@ export const adminApi = {
 
   // 13. SETTINGS GLOBAUX
   getSettings: (token: string) =>
-    fetchApi<{ support_phone: string }>(`${ADMIN_BASE}/settings`, token),
+    fetchApi<{ support_phone: string; bot_enabled?: boolean }>(`${ADMIN_BASE}/settings`, token),
 
   updateSettings: (token: string, data: any) =>
     fetchApi<{ success: boolean }>(`${ADMIN_BASE}/settings`, token, {
