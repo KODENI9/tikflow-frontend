@@ -18,11 +18,13 @@ import {
   Bell,
   Smartphone,
   Landmark,
+  Bot,
 } from "lucide-react";
 import { SignOutButton } from "@clerk/nextjs";
 
 const menuItems = [
   { name: "Dashboard",         href: "/admin/dashboard",    icon: LayoutDashboard, group: "main" },
+  { name: "Robot Live 🤖",     href: "/admin/bot-live",     icon: Bot,             group: "main" },
   { name: "Analytics",         href: "/admin/analytics",    icon: TrendingUp,      group: "main" },
   { name: "Utilisateurs",      href: "/admin/users",        icon: Users,           group: "main" },
   { name: "Transactions",      href: "/admin/transactions", icon: ArrowLeftRight,  group: "finance" },

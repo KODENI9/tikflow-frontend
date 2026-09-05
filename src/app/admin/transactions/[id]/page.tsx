@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { 
   ShieldCheck, MessageSquare, CheckCircle2, XCircle, 
-  Copy, LayoutGrid, Loader2, ArrowLeft, AlertTriangle
+  Copy, LayoutGrid, Loader2, ArrowLeft, AlertTriangle, Bot
 } from "lucide-react";
 import Link from "next/link";
 import { adminApi } from "@/lib/api";
@@ -119,10 +119,17 @@ export default function TransactionDetail() {
           </p>
         </div>
         
-        {/* Badge Type de commande */}
-        <div className="px-4 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-tighter">
-          TYPE: {transaction.type.replace('_', ' ')}
-        </div>
+        <Link
+          href="/admin/bot-live"
+          className="px-4 py-2.5 bg-tikflow-primary/10 text-tikflow-primary hover:bg-tikflow-primary/20 border border-tikflow-primary/30 rounded-xl text-xs font-bold flex items-center gap-2 transition-colors"
+        >
+          <Bot size={16} /> Suivre/Lancer le Robot Live 🤖
+        </Link>
+      </div>  
+      
+      {/* Badge Type de commande */}
+      <div className="px-4 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-tighter w-fit">
+        TYPE: {transaction.type.replace('_', ' ')}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

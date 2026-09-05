@@ -235,3 +235,38 @@ export const userApi = {
   getTransactionById: (token: string, id: string) =>
     fetchApi<Transaction>(`${USER_BASE}/transactions/${id}`, token),
 };
+
+const BOT_BASE = `${ADMIN_BASE}/bot`;
+
+export const botApi = {
+  startBot: (token: string, data: { orderId: string; username?: string; password?: string; coins?: number; userId?: string }) =>
+    fetchApi<{ success: boolean; message: string }>(`${BOT_BASE}/start`, token, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  pauseBot: (token: string, orderId: string) =>
+    fetchApi<{ success: boolean; message: string }>(`${BOT_BASE}/pause/${orderId}`, token, {
+      method: 'POST',
+    }),
+
+  resumeBot: (token: string, orderId: string) =>
+    fetchApi<{ success: boolean; message: string }>(`${BOT_BASE}/resume/${orderId}`, token, {
+      method: 'POST',
+    }),
+
+  submit2FA: (token: string, orderId: string, code: string) =>
+    fetchApi<{ success: boolean; message: string }>(`${BOT_BASE}/2fa/${orderId}`, token, {
+      method: 'POST',
+      body: JSON.stringify({ code }),
+    }),
+
+  cancelBot: (token: string, orderId: string) =>
+    fetchApi<{ success: boolean; message: string }>(`${BOT_BASE}/cancel/${orderId}`, token, {
+      method: 'POST',
+    }),
+
+  getAllTasks: (token: string) =>
+    fetchApi<{ success: boolean; tasks: any[] }>(`${BOT_BASE}/tasks`, token),
+};
+
