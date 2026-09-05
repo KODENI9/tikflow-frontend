@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { 
   ShieldCheck, MessageSquare, CheckCircle2, XCircle, 
-  Copy, LayoutGrid, Loader2, ArrowLeft, User, Key, Coins, Smartphone, Lock
+  Copy, LayoutGrid, Loader2, ArrowLeft, User, Key, Coins, Smartphone, Lock, Bot
 } from "lucide-react";
 import Link from "next/link";
-import { adminApi } from "@/lib/api";
+import { adminApi, botApi } from "@/lib/api";
 import { useAuth } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
 
@@ -57,6 +57,27 @@ export default function OrderDetail() {
       router.push('/admin/transactions');
     } catch (error: any) {
       toast.error(error.message || "Une erreur est survenue");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const [input2FA, setInput2FA] = useState("");
+
+  const handleSubmit2FACode = async () => {
+    if (!input2FA) return toast.error("Veuillez entrer le code à 6 chiffres");
+    try {
+      setActionLoading(true);
+      const token = await getToken();
+      const res = await botApi.submit2FA(token!, id as string, input2FA);
+      if (res.success) {
+        toast.success("Code 2FA transmis au robot ! Le robot continue la livraison...");
+        setInput2FA("");
+      } else {
+        toast.error(res.message || "Erreur lors de la transmission");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Erreur lors de la transmission du code 2FA");
     } finally {
       setActionLoading(false);
     }
@@ -230,6 +251,31 @@ export default function OrderDetail() {
                   {actionLoading ? <Loader2 className="animate-spin" /> : <MessageSquare size={20} />} 
                   Demander le code de confirmation (Gmail)
                 </button>
+
+                {/* Saisie & Transmettre le Code 2FA au Bot */}
+                <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl space-y-2">
+                  <label className="text-[10px] font-black text-amber-500 uppercase tracking-widest block">Transmettre le Code 2FA au Bot (6 chiffres)</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Ex: 849204"
+                      value={input2FA}
+                      onChange={(e) => setInput2FA(e.target.value)}
+                      className="flex-1 px-4 py-3 bg-card-bg border border-glass-border rounded-xl text-xs font-bold text-foreground outline-none focus:ring-2 ring-amber-500/30"
+                    />
+                    <button
+                      disabled={actionLoading || !input2FA}
+                      onClick={handleSubmit2FACode}
+                      className="px-5 py-3 bg-amber-500 text-white rounded-xl font-black text-xs hover:bg-amber-600 transition-all shadow-md shadow-amber-500/20 flex items-center gap-2 shrink-0 disabled:opacity-50"
+                    >
+                      {actionLoading ? <Loader2 className="animate-spin" size={14} /> : <Bot size={14} />}
+                      Transmettre au Bot 🤖
+                    </button>
+                  </div>
+                  <Link href="/admin/bot-live" className="text-[10px] font-bold text-tikflow-primary hover:underline block pt-1 text-center">
+                    Voir la capture d'écran & l'exécution live sur Robot Live 🤖 →
+                  </Link>
+                </div>
 
                 <div className="flex gap-4">
                   <button 
